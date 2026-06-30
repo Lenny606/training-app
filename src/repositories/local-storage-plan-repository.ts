@@ -126,14 +126,10 @@ export class LocalStoragePlanRepository implements PlanRepository {
       ...existingPlan,
       ...patch,
       id, // keep original id
-    }
-
-    // If activities are updated, make sure they all have ids
-    if (patch.activities) {
-      updatedPlan.activities = patch.activities.map((act) => ({
-        ...act,
-        id: act.id || createId('act'),
-      }))
+      // If activities are updated, make sure they all have ids
+      activities: patch.activities
+        ? patch.activities.map((act) => ({ ...act, id: act.id || createId('act') }))
+        : existingPlan.activities,
     }
 
     this.validate(updatedPlan)

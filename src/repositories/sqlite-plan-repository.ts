@@ -1,0 +1,181 @@
+import { asc, eq, inArray } from 'drizzle-orm'
+import type { Activity, NewTrainingPlan, TrainingPlan } from '../domain/plans'
+import type { DbClient } from '../db/client'
+import { db as defaultDb } from '../db/client'
+import { activities, plans } from '../db/schema'
+import type { ActivityRow } from '../db/schema'
+import { newPlanInput } from '../db/validation'
+import { createId } from '../utils/id'
+import type { PlanRepository } from './plan-repository'
+import { PlanNotFoundError, PlanValidationError } from './plan-repository'
+
+/** Drizzle/SQLite-backed repository. Server-only — relies on better-sqlite3. */
+export class SqlitePlanRepository implements PlanRepository {
+  constructor(private readonly db: DbClient = defaultDb) {}
+
+  private toActivity(row: ActivityRow): Activity {
+    return {
+      id: row.id,
+      name: row.name,
+      duration: row.duration,
+      type: row.type,
+      sets: row.sets ?? undefined,
+      reps: row.reps ?? undefined,
+      weight: row.weight ?? undefined,
+    }
+  }
+
+  private validate(plan: NewTrainingPlan): void {
+    const result = newPlanInput.safeParse(plan)
+    if (!result.success) {
+      throw new PlanValidationError(result.error.issues.map((i) => i.message))
+    }
+  }
+
+  async list(): Promise<TrainingPlan[]> {
+    const planRows = this.db.select().from(plans).orderBy(asc(plans.createdAt)).all()
+    if (planRows.length === 0) return []
+
+    const activityRows = this.db
+      .select()
+      .from(activities)
+      .where(
+        inArray(
+          activities.planId,
+          planRows.map((p) => p.id),
+        ),
+      )
+      .orderBy(asc(activities.position))
+      .all()
+
+    return planRows.map((plan) => ({
+      id: plan.id,
+      name: plan.name,
+      description: plan.description,
+      daysPerWeek: plan.daysPerWeek,
+      activities: activityRows
+        .filter((a) => a.planId === plan.id)
+        .map((a) => this.toActivity(a)),
+    }))
+  }
+
+  async getById(id: string): Promise<TrainingPlan | null> {
+    const plan = this.db.select().from(plans).where(eq(plans.id, id)).get()
+    if (!plan) return null
+
+    const activityRows = this.db
+      .select()
+      .from(activities)
+      .where(eq(activities.planId, id))
+      .orderBy(asc(activities.position))
+      .all()
+
+    return {
+      id: plan.id,
+      name: plan.name,
+      description: plan.description,
+      daysPerWeek: plan.daysPerWeek,
+      activities: activityRows.map((a) => this.toActivity(a)),
+    }
+  }
+
+  async create(newPlan: NewTrainingPlan): Promise<TrainingPlan> {
+    this.validate(newPlan)
+
+    const planId = createId('plan')
+    const now = new Date()
+    const created: TrainingPlan = {
+      ...newPlan,
+      id: planId,
+      activities: newPlan.activities.map((act) => ({
+        ...act,
+        id: act.id || createId('act'),
+      })),
+    }
+
+    this.db.transaction((tx) => {
+      tx.insert(plans)
+        .values({
+          id: planId,
+          name: created.name,
+          description: created.description,
+          daysPerWeek: created.daysPerWeek,
+          createdAt: now,
+          updatedAt: now,
+        })
+        .run()
+
+      this.insertActivities(tx, planId, created.activities)
+    })
+
+    return created
+  }
+
+  async update(id: string, patch: Partial<NewTrainingPlan>): Promise<TrainingPlan> {
+    const existing = await this.getById(id)
+    if (!existing) throw new PlanNotFoundError(id)
+
+    const merged: TrainingPlan = {
+      ...existing,
+      ...patch,
+      id,
+      activities: patch.activities
+        ? patch.activities.map((act) => ({ ...act, id: act.id || createId('act') }))
+        : existing.activities,
+    }
+
+    this.validate({
+      name: merged.name,
+      description: merged.description,
+      daysPerWeek: merged.daysPerWeek,
+      activities: merged.activities,
+    })
+
+    this.db.transaction((tx) => {
+      tx.update(plans)
+        .set({
+          name: merged.name,
+          description: merged.description,
+          daysPerWeek: merged.daysPerWeek,
+          updatedAt: new Date(),
+        })
+        .where(eq(plans.id, id))
+        .run()
+
+      // Reorder/replace activities via delete + insert (small plans → fine).
+      if (patch.activities) {
+        tx.delete(activities).where(eq(activities.planId, id)).run()
+        this.insertActivities(tx, id, merged.activities)
+      }
+    })
+
+    return merged
+  }
+
+  async remove(id: string): Promise<void> {
+    // Idempotent; FK cascade removes child activities.
+    this.db.delete(plans).where(eq(plans.id, id)).run()
+  }
+
+  private insertActivities(
+    tx: Parameters<Parameters<DbClient['transaction']>[0]>[0],
+    planId: string,
+    list: Activity[],
+  ): void {
+    list.forEach((activity, position) => {
+      tx.insert(activities)
+        .values({
+          id: activity.id,
+          planId,
+          position,
+          name: activity.name,
+          duration: activity.duration,
+          type: activity.type,
+          sets: activity.sets ?? null,
+          reps: activity.reps ?? null,
+          weight: activity.weight ?? null,
+        })
+        .run()
+    })
+  }
+}

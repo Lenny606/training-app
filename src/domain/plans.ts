@@ -16,7 +16,15 @@ export interface TrainingPlan {
   activities: Activity[]
 }
 
-export type NewTrainingPlan = Omit<TrainingPlan, 'id'>
+/** An activity before persistence: `id` is assigned by the repository if absent. */
+export type NewActivity = Omit<Activity, 'id'> & { id?: string }
+
+export interface NewTrainingPlan {
+  name: string
+  description: string
+  daysPerWeek: number
+  activities: NewActivity[]
+}
 
 export const DEFAULT_PLANS: TrainingPlan[] = [
   {

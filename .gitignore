@@ -12,6 +12,12 @@ dist-ssr
 __unconfig*
 todos.json
 
+# SQLite database (path via DATABASE_URL)
+/data
+*.db
+*.db-shm
+*.db-wal
+
 # Claude Code personal files
 CLAUDE.local.md
 .claude/settings.local.json
