@@ -49,7 +49,7 @@ function SidebarItem({ plan, isSelected, onSelect, onDelete }: SidebarItemProps)
             e.stopPropagation()
             onDelete(plan.id)
           }}
-          className="text-red-400 hover:text-red-300 p-0.5 hover:bg-white/5 rounded"
+          className="demo-button demo-button-icon border-red-950/50 bg-red-950/10 text-red-400 hover:bg-red-950/30 hover:text-red-300"
           title="Delete Plan"
         >
           <Trash2 className="h-3.5 w-3.5" />
@@ -76,10 +76,10 @@ export function PlansSidebar({
           </h2>
           <button
             onClick={onCreateNewPlan}
-            className="demo-button p-2 text-xs flex items-center gap-1 bg-[rgba(0,240,255,0.15)] text-[var(--lagoon)] border-[rgba(0,240,255,0.3)]"
+            className="demo-button demo-button-sm bg-[rgba(0,240,255,0.15)] text-[var(--lagoon)] border-[rgba(0,240,255,0.3)] flex items-center gap-1"
             title="Create New Plan"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-3.5 w-3.5" />
             <span>New</span>
           </button>
         </div>
@@ -102,7 +102,7 @@ export function PlansSidebar({
           {plans.length === 0 && (
             <div className="text-center py-8 border border-dashed border-[var(--line)] rounded-xl">
               <p className="text-xs text-[var(--sea-ink-soft)] mb-3">No plans found</p>
-              <button onClick={onCreateNewPlan} className="demo-button text-xs py-1.5 px-3">
+              <button onClick={onCreateNewPlan} className="demo-button demo-button-sm">
                 Create your first plan
               </button>
             </div>

@@ -8,7 +8,7 @@ interface PlanEditorHeaderProps {
 }
 
 function getSaveButtonClass(hasUnsavedChanges: boolean) {
-  const base = 'demo-button py-2 px-4 text-xs flex items-center gap-1.5 transition-all'
+  const base = 'demo-button demo-button-sm flex items-center gap-1.5 transition-all'
   const modified = 'bg-[var(--lagoon-deep)] text-slate-900 border-[var(--lagoon)] shadow-[0_0_12px_rgba(0,240,255,0.25)] hover:bg-[var(--lagoon)]'
   const saved = 'bg-emerald-950/40 text-emerald-300 border-emerald-800 hover:bg-emerald-900/50'
   return `${base} ${hasUnsavedChanges ? modified : saved}`
@@ -41,7 +41,7 @@ export function PlanEditorHeader({
         {hasUnsavedChanges && (
           <button
             onClick={onDiscardChanges}
-            className="demo-button demo-button-secondary py-2 px-3 text-xs flex items-center gap-1.5"
+            className="demo-button demo-button-sm demo-button-secondary flex items-center gap-1.5"
             title="Discard changes"
           >
             <RotateCcw className="h-3.5 w-3.5" />

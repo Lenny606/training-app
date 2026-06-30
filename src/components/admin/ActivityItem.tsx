@@ -64,7 +64,7 @@ function ActivityActions({
       <button
         onClick={() => onMoveActivity(index, 'up')}
         disabled={isFirst}
-        className="p-1.5 rounded-lg border border-[var(--line)] bg-[var(--chip-bg)] text-[var(--sea-ink-soft)] hover:text-white disabled:opacity-30 disabled:hover:text-[var(--sea-ink-soft)]"
+        className="demo-button demo-button-icon border-[var(--line)] bg-[var(--chip-bg)] text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] disabled:opacity-30 disabled:hover:text-[var(--sea-ink-soft)]"
         title="Move Activity Up"
       >
         <ArrowUp className="h-3.5 w-3.5" />
@@ -72,14 +72,14 @@ function ActivityActions({
       <button
         onClick={() => onMoveActivity(index, 'down')}
         disabled={isLast}
-        className="p-1.5 rounded-lg border border-[var(--line)] bg-[var(--chip-bg)] text-[var(--sea-ink-soft)] hover:text-white disabled:opacity-30 disabled:hover:text-[var(--sea-ink-soft)]"
+        className="demo-button demo-button-icon border-[var(--line)] bg-[var(--chip-bg)] text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] disabled:opacity-30 disabled:hover:text-[var(--sea-ink-soft)]"
         title="Move Activity Down"
       >
         <ArrowDown className="h-3.5 w-3.5" />
       </button>
       <button
         onClick={() => onDeleteActivity(index)}
-        className="p-1.5 rounded-lg border border-red-950 bg-red-950/20 text-red-400 hover:bg-red-950/40 hover:text-red-300 ml-1"
+        className="demo-button demo-button-icon ml-1 border-red-950 bg-red-950/20 text-red-400 hover:bg-red-950/40 hover:text-red-300"
         title="Delete Activity"
       >
         <Trash2 className="h-3.5 w-3.5" />

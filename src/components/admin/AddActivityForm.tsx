@@ -251,7 +251,7 @@ export function AddActivityForm({ onAddActivity }: AddActivityFormProps) {
       <div className="flex justify-end mt-1">
         <button
           type="submit"
-          className="demo-button py-1.5 px-4 text-xs bg-[var(--lagoon-deep)] text-slate-900 border-[var(--lagoon)] font-bold flex items-center gap-1"
+          className="demo-button demo-button-sm bg-[var(--lagoon-deep)] text-slate-900 border-[var(--lagoon)] font-bold flex items-center gap-1"
         >
           <Plus className="h-3.5 w-3.5" />
           Add to Route
