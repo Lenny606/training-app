@@ -8,6 +8,28 @@
 }
 
 :root {
+  --sea-ink: #0F172A;
+  --sea-ink-soft: #475569;
+  --lagoon: #0ea5e9;
+  --lagoon-deep: #0284c7;
+  --palm: #38bdf8;
+  --sand: #F8FAFC;
+  --foam: #E2E8F0;
+  --surface: rgba(255, 255, 255, 0.7);
+  --surface-strong: rgba(255, 255, 255, 0.9);
+  --line: rgba(14, 165, 233, 0.15);
+  --inset-glint: rgba(0, 0, 0, 0.03);
+  --kicker: #0284c7;
+  --bg-base: #F8FAFC;
+  --header-bg: rgba(248, 250, 252, 0.8);
+  --chip-bg: rgba(226, 232, 240, 0.8);
+  --chip-line: rgba(14, 165, 233, 0.2);
+  --link-bg-hover: rgba(226, 232, 240, 0.5);
+  --hero-a: rgba(14, 165, 233, 0.1);
+  --hero-b: rgba(56, 189, 248, 0.05);
+}
+
+.dark {
   --sea-ink: #F8FAFC;
   --sea-ink-soft: #94A3B8;
   --lagoon: #00f0ff;
@@ -29,51 +51,6 @@
   --hero-b: rgba(56, 189, 248, 0.08);
 }
 
-:root[data-theme='dark'] {
-  --sea-ink: #F8FAFC;
-  --sea-ink-soft: #94A3B8;
-  --lagoon: #00f0ff;
-  --lagoon-deep: #00b8cc;
-  --palm: #38bdf8;
-  --sand: #0B0F19;
-  --foam: #0f172a;
-  --surface: rgba(20, 26, 45, 0.6);
-  --surface-strong: rgba(13, 18, 33, 0.9);
-  --line: rgba(0, 240, 255, 0.12);
-  --inset-glint: rgba(255, 255, 255, 0.05);
-  --kicker: #00f0ff;
-  --bg-base: #0B0F19;
-  --header-bg: rgba(11, 15, 25, 0.8);
-  --chip-bg: rgba(30, 41, 59, 0.8);
-  --chip-line: rgba(0, 240, 255, 0.2);
-  --link-bg-hover: rgba(30, 41, 59, 0.5);
-  --hero-a: rgba(0, 240, 255, 0.15);
-  --hero-b: rgba(56, 189, 248, 0.08);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --sea-ink: #F8FAFC;
-    --sea-ink-soft: #94A3B8;
-    --lagoon: #00f0ff;
-    --lagoon-deep: #00b8cc;
-    --palm: #38bdf8;
-    --sand: #0B0F19;
-    --foam: #0f172a;
-    --surface: rgba(20, 26, 45, 0.6);
-    --surface-strong: rgba(13, 18, 33, 0.9);
-    --line: rgba(0, 240, 255, 0.12);
-    --inset-glint: rgba(255, 255, 255, 0.05);
-    --kicker: #00f0ff;
-    --bg-base: #0B0F19;
-    --header-bg: rgba(11, 15, 25, 0.8);
-    --chip-bg: rgba(30, 41, 59, 0.8);
-    --chip-line: rgba(0, 240, 255, 0.2);
-    --link-bg-hover: rgba(30, 41, 59, 0.5);
-    --hero-a: rgba(0, 240, 255, 0.15);
-    --hero-b: rgba(56, 189, 248, 0.08);
-  }
-}
 
 * {
   box-sizing: border-box;
