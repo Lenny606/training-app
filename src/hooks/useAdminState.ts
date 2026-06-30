@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import type { TrainingPlan, Activity } from '../domain/plans'
-import { planRepository } from '../repositories'
+import { createPlan, deletePlan, listPlans, updatePlan } from '../server/plans'
 import { createId } from '../utils/id'
 
 function swapArrayElements<T>(arr: T[], i: number, j: number): T[] {
@@ -46,7 +46,7 @@ function usePlansList() {
 
   const loadPlans = async (selectId?: string) => {
     try {
-      const loaded = await planRepository.list()
+      const loaded = await listPlans()
       setPlans(loaded)
       const selected = resolveSelectedPlan(loaded, selectId, selectedPlanId)
       setSelectedPlanId(selected?.id ?? '')
@@ -172,7 +172,7 @@ function usePlanEditor({
       ]
     }
     try {
-      const created = await planRepository.create(newPlanData)
+      const created = await createPlan({ data: newPlanData })
       await loadPlans(created.id)
       setSaveSuccess(true)
       setTimeout(() => setSaveSuccess(false), 2000)
@@ -185,7 +185,7 @@ function usePlanEditor({
     if (!editingPlan) return
     try {
       const { id, ...patch } = editingPlan
-      await planRepository.update(id, patch)
+      await updatePlan({ data: { id, patch } })
       await loadPlans(id)
       setSaveSuccess(true)
       setTimeout(() => setSaveSuccess(false), 3000)
@@ -208,8 +208,8 @@ function usePlanEditor({
       return
     }
     try {
-      await planRepository.remove(id)
-      const loaded = await planRepository.list()
+      await deletePlan({ data: { id } })
+      const loaded = await listPlans()
       setPlans(loaded)
       const fallbackId = loaded[0]?.id ?? ''
       setSelectedPlanId(fallbackId)

@@ -9,7 +9,7 @@ Legenda stavu: 🔲 not started · 🚧 in progress · ✅ done · ⛔ blocked
 
 | Spec | Stav | Závisí na | Poznámka |
 | --- | --- | --- | --- |
-| [repository-layer](./repository-layer.md) | 🚧 | — | DB vrstva hotová (schéma, migrace, seed, SQLite repo + testy); zbývají server functions + migrace klienta. |
+| [repository-layer](./repository-layer.md) | ✅ | — | SQLite + Drizzle, server functions, klient přepojen; localStorage pro plány odstraněn. |
 | [auth-layer](./auth-layer.md) | 🔲 | repository-layer | JWT + User model. |
 | [ai-client](./ai-client.md) | 🔲 | repository-layer, auth-layer | Server-side tools scoped na usera. |
 | [deploy](./deploy.md) | 🔲 | repository-layer, auth-layer | VPS + GitHub Actions + PM2. |
@@ -27,16 +27,16 @@ Legenda stavu: 🔲 not started · 🚧 in progress · ✅ done · ⛔ blocked
 
 ## Milníky
 
-### repository-layer 🚧
-- [x] Repository pattern (interface + lokální implementace)
-- [x] Admin state hooks nad repository
+### repository-layer ✅
+- [x] Repository pattern (interface + impl)
 - [x] SQLite + Drizzle schema (`src/db/schema.ts`)
 - [x] DB klient (better-sqlite3 + drizzle, server-only) + seed
 - [x] Migrace (drizzle-kit) + `db:generate`/`db:migrate` skripty
 - [x] Zod / drizzle-zod schémata (`src/db/validation.ts`)
 - [x] `SqlitePlanRepository` + testy proti in-memory SQLite
-- [ ] Server functions (CRUD) — Zod validace na hranici klient↔server
-- [ ] Migrace klienta (`admin.tsx`/`index.tsx`) na server functions; odstranit localStorage pro plány
+- [x] Server functions (CRUD) — `src/server/plans.ts`, Zod validace na hranici
+- [x] Migrace klienta: `index.tsx` (loader/SSR), `useAdminState` (server fns)
+- [x] Úklid: odstraněn localStorage repo + `utils/plans.ts` + klíč `titan_training_plans`
 
 ### auth-layer 🔲
 - [ ] User model + DB tabulka

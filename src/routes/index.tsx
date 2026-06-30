@@ -1,27 +1,20 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
-import { planRepository } from '../repositories'
-import type { TrainingPlan } from '../domain/plans'
+import { listPlans } from '../server/plans'
 import { useWorkoutSession } from '../hooks/useWorkoutSession'
 import { WorkoutPlanSelector } from '../components/workout/WorkoutPlanSelector'
 import { TimerDisplay } from '../components/workout/TimerDisplay'
 import { NextActivityCard } from '../components/workout/NextActivityCard'
 
-export const Route = createFileRoute('/')({ component: App })
+export const Route = createFileRoute('/')({
+  component: App,
+  loader: () => listPlans(),
+})
 
 export default function App() {
-  const [plans, setPlans] = useState<TrainingPlan[]>([])
-  const [selectedPlanId, setSelectedPlanId] = useState<string>('')
+  const plans = Route.useLoaderData()
+  const [selectedPlanId, setSelectedPlanId] = useState<string>(plans[0]?.id ?? '')
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true)
-
-  useEffect(() => {
-    planRepository.list().then((loadedPlans) => {
-      setPlans(loadedPlans)
-      if (loadedPlans.length > 0) {
-        setSelectedPlanId(loadedPlans[0].id)
-      }
-    })
-  }, [])
 
   const selectedPlan = plans.find((p) => p.id === selectedPlanId)
   
