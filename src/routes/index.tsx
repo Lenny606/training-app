@@ -36,6 +36,24 @@ export default function App() {
     handleStop,
   } = useWorkoutSession({ selectedPlan, soundEnabled })
 
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.code !== 'Space' && e.key !== ' ') return
+      const target = e.target as HTMLElement | null
+      if (
+        target &&
+        (target.isContentEditable ||
+          ['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON'].includes(target.tagName))
+      ) {
+        return
+      }
+      e.preventDefault()
+      handlePlayPause()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [handlePlayPause])
+
   const currentActivity = selectedPlan?.activities[currentActivityIndex]
   const nextActivity = selectedPlan?.activities[currentActivityIndex + 1]
 
