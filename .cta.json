@@ -1,5 +1,5 @@
 {
-  "projectName": "temp-scaffold",
+  "projectName": "training-app",
   "mode": "file-router",
   "typescript": true,
   "tailwind": true,
