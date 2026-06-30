@@ -20,7 +20,7 @@ export function PlaybackControls({
   onSkipForward,
 }: PlaybackControlsProps) {
   return (
-    <div className="flex items-center gap-4 z-10">
+    <div className="flex items-center gap-3 sm:gap-4 z-10">
       <button
         onClick={onSkipBackward}
         disabled={!canSkipBackward}

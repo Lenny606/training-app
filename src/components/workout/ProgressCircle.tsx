@@ -39,7 +39,7 @@ export function ProgressCircle({
   const timeText = isCompleted ? '00:00' : formatTime(secondsRemaining)
 
   return (
-    <div className="relative w-64 h-64 flex items-center justify-center select-none">
+    <div className="relative w-full max-w-64 aspect-square mx-auto flex items-center justify-center select-none">
       <svg className="absolute w-full h-full -rotate-90" viewBox="0 0 240 240">
         <circle
           cx="120"

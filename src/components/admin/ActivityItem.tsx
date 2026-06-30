@@ -121,7 +121,7 @@ interface ActivityInputsProps {
 function ActivityInputs({ activity, index, onActivityChange }: ActivityInputsProps) {
   const isRest = activity.type === 'rest'
   return (
-    <div className="flex-grow grid gap-2 grid-cols-12">
+    <div className="flex-grow min-w-0 grid gap-2 grid-cols-12">
       <div className="col-span-12 sm:col-span-4">
         <input
           type="text"
