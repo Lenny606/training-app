@@ -31,7 +31,7 @@ jobs:
         run: |
           tar -czf release.tar.gz \
             dist package.json package-lock.json \
-            ecosystem.config.cjs drizzle drizzle.config.ts
+            ecosystem.config.cjs drizzle scripts
 
       - name: Copy artifact via SCP (password auth)
         uses: appleboy/scp-action@v0.1.7
@@ -59,7 +59,8 @@ jobs:
             # Load runtime env (DATABASE_URL, etc.) from the server-side .env so
             # migrations run against the production DB before the new code boots.
             set -a; [ -f .env ] && . ./.env; set +a
-            npm run db:migrate
+            # Runs the drizzle-orm migrator (prod dep), not drizzle-kit (dev).
+            npm run db:migrate:prod
             # Zero-downtime reload; first-ever deploy falls back to start.
             pm2 reload ecosystem.config.cjs --update-env || \
               pm2 start ecosystem.config.cjs
