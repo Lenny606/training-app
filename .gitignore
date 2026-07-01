@@ -21,3 +21,4 @@ todos.json
 # Claude Code personal files
 CLAUDE.local.md
 .claude/settings.local.json
+.claude/worktrees/
