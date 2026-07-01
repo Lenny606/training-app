@@ -1,7 +1,31 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 
+export const users = sqliteTable('users', {
+  id: text('id').primaryKey(),
+  email: text('email').notNull().unique(),
+  passwordHash: text('password_hash').notNull(),
+  role: text('role', { enum: ['user', 'admin'] })
+    .notNull()
+    .default('user'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+})
+
+export const refreshTokens = sqliteTable('refresh_tokens', {
+  id: text('id').primaryKey(), // jti — matches the claim in the refresh JWT
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+  revokedAt: integer('revoked_at', { mode: 'timestamp' }), // null = still valid
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+})
+
 export const plans = sqliteTable('plans', {
   id: text('id').primaryKey(),
+  ownerId: text('owner_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
   description: text('description').notNull().default(''),
   daysPerWeek: integer('days_per_week').notNull(),
@@ -25,3 +49,5 @@ export const activities = sqliteTable('activities', {
 
 export type PlanRow = typeof plans.$inferSelect
 export type ActivityRow = typeof activities.$inferSelect
+export type UserRow = typeof users.$inferSelect
+export type RefreshTokenRow = typeof refreshTokens.$inferSelect
