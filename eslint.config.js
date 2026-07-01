@@ -35,4 +35,11 @@ export default tseslint.config(
       globals: { ...globals.node },
     },
   },
+  {
+    // ESM Node scripts (e.g. scripts/migrate.mjs).
+    files: ['**/*.mjs'],
+    languageOptions: {
+      globals: { ...globals.node },
+    },
+  },
 )
