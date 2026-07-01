@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
 import { listPlans } from '../../server/plans'
-import { useWorkoutSession } from '../../hooks/useWorkoutSession'
+import { useWorkoutSession, getPersistedPlanId } from '../../hooks/useWorkoutSession'
 import { WorkoutPlanSelector } from '../../components/workout/WorkoutPlanSelector'
 import { TimerDisplay } from '../../components/workout/TimerDisplay'
 import { NextActivityCard } from '../../components/workout/NextActivityCard'
@@ -17,7 +17,17 @@ export default function App() {
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true)
 
   const selectedPlan = plans.find((p) => p.id === selectedPlanId)
-  
+
+  // After mount (post-hydration → SSR-safe), reselect the plan from a persisted
+  // session so a refresh mid-workout restores the right plan and timer.
+  useEffect(() => {
+    const persistedId = getPersistedPlanId()
+    if (persistedId && persistedId !== selectedPlanId && plans.some((p) => p.id === persistedId)) {
+      setSelectedPlanId(persistedId)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const {
     currentActivityIndex,
     secondsRemaining,

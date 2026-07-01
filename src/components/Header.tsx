@@ -77,14 +77,7 @@ export default function Header() {
               >
                 {user.email}
               </span>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="hidden sm:inline-flex demo-button demo-button-secondary demo-button-sm min-h-11 items-center gap-1.5"
-              >
-                <LogOut className="h-4 w-4" />
-                Sign out
-              </button>
+
 
               {/* Hamburger — only on mobile */}
               <button
