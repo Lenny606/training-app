@@ -1,6 +1,7 @@
 # Specifikace: Auth Layer (JWT + User model)
 
-Status: Draft · Cíl: vývojový plán pro autentizaci a autorizaci
+Status: ✅ Implemented (2026-07-01) — viz [PROGRESS.md](./PROGRESS.md) pro odchylky
+· Cíl: vývojový plán pro autentizaci a autorizaci
 Předpoklad: hotová datová vrstva dle [`repository-layer.md`](./repository-layer.md)
 (SQLite + Drizzle + Zod + server functions, repository pattern).
 

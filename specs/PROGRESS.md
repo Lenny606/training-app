@@ -10,7 +10,7 @@ Legenda stavu: 🔲 not started · 🚧 in progress · ✅ done · ⛔ blocked
 | Spec | Stav | Závisí na | Poznámka |
 | --- | --- | --- | --- |
 | [repository-layer](./repository-layer.md) | ✅ | — | SQLite + Drizzle, server functions, klient přepojen; localStorage pro plány odstraněn. |
-| [auth-layer](./auth-layer.md) | 🔲 | repository-layer | JWT + User model. |
+| [auth-layer](./auth-layer.md) | ✅ | repository-layer | JWT (jose HS256) access+refresh v HttpOnly cookies, argon2id, User model, requireAuth/requireRole, `_authenticated` guard, login/register/logout UI. Plány scoped na `ownerId`, klon default plánů při registraci. |
 | [ai-client](./ai-client.md) | 🔲 | repository-layer, auth-layer | Server-side tools scoped na usera. |
 | [deploy](./deploy.md) | 🔲 | repository-layer, auth-layer | VPS + GitHub Actions + PM2. |
 | [admin-drag-drop](./admin-drag-drop.md) | 🔲 | — (řazení šipkami hotové) | Nahrazuje řazení šipkami za DnD. |
@@ -38,13 +38,24 @@ Legenda stavu: 🔲 not started · 🚧 in progress · ✅ done · ⛔ blocked
 - [x] Migrace klienta: `index.tsx` (loader/SSR), `useAdminState` (server fns)
 - [x] Úklid: odstraněn localStorage repo + `utils/plans.ts` + klíč `titan_training_plans`
 
-### auth-layer 🔲
-- [ ] User model + DB tabulka
-- [ ] JWT issue/verify (server)
-- [ ] Session cookie (HttpOnly/Secure/SameSite)
-- [ ] Login/register/logout server functions
-- [ ] Route guards (`beforeLoad`)
-- [ ] Scoping repository na usera
+### auth-layer ✅
+- [x] User model + DB tabulka (`users`, `refresh_tokens`) + migrace `0001`
+- [x] `UserRepository` + `RefreshTokenStore` (sqlite impl + testy, 23 → 37 testů total)
+- [x] JWT issue/verify (jose HS256, access 15 min + refresh 30 d s rotací a revokací)
+- [x] argon2id hash (`@node-rs/argon2`) + enumeration defense na login
+- [x] Session cookies (HttpOnly + Secure v prod + SameSite=Lax + `__Host-` v prod) — ověřeno E2E
+- [x] Server functions `register/login/logout/refresh/me` + Zod + rate limit + CSRF origin check
+- [x] `requireAuth` / `requireRole` server-fn middleware (data boundary)
+- [x] Route guard `_authenticated` (`beforeLoad`) + router context (`user` z `me`)
+- [x] Login/register/logout UI + Header stav uživatele
+- [x] Scoping plánů na `ownerId`; klon `DEFAULT_PLANS` při registraci
+- [x] Verifikace: tsc ✅, test 37/37 ✅, build ✅, E2E (register→klon→guard→logout) ✅
+
+**Odchylky od spec (k potvrzení):**
+- `admin.tsx` gated `requireAuth` (ne `requireRole('admin')`) — plány jsou per-user, každý edituje svoje; admin role zatím nevyužita (reserved). Spec §7 chtěl admin-only.
+- Global middleware v `src/start.ts` vynecháno — `requireAuth`/`requireRole` skládány per server-fn (guidance: data boundary patří na fn, ne globálně; vyhne se double-run). Spec §6.1 chtěl global.
+- Tichý auto-refresh v middleware → **iterace 2** (spec §12). `refresh` endpoint + rotace + reuse-revokace hotové.
+- `JWT_SECRET`: fail-fast v prod, insecure dev fallback (viz `.env.example`).
 
 ### ai-client 🔲
 - [ ] TanStack AI SDK setup

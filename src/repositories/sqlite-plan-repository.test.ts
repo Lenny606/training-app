@@ -1,36 +1,52 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { createDb } from '../db/client'
+import type { DbClient } from '../db/client'
 import { runMigrations } from '../db/migrate'
-import { seedIfEmpty } from '../db/seed'
+import { seedDefaultPlansForOwner } from '../db/seed'
 import { DEFAULT_PLANS } from '../domain/plans'
 import { PlanNotFoundError, PlanValidationError } from './plan-repository'
 import { SqlitePlanRepository } from './sqlite-plan-repository'
+import { SqliteUserRepository } from './sqlite-user-repository'
+
+async function makeOwner(db: DbClient, email: string): Promise<string> {
+  const users = new SqliteUserRepository(db)
+  const user = await users.create({ email, passwordHash: 'x' })
+  return user.id
+}
 
 describe('SqlitePlanRepository', () => {
   let repository: SqlitePlanRepository
+  let ownerId: string
 
-  beforeEach(() => {
+  beforeEach(async () => {
     const db = createDb(':memory:')
     runMigrations(db)
-    seedIfEmpty(db)
+    ownerId = await makeOwner(db, 'owner@example.com')
+    seedDefaultPlansForOwner(ownerId, db)
     repository = new SqlitePlanRepository(db)
   })
 
+  async function firstPlanId(): Promise<string> {
+    const plans = await repository.list(ownerId)
+    return plans[0].id
+  }
+
   describe('list / seed', () => {
-    it('returns the seeded DEFAULT_PLANS with ordered activities', async () => {
-      const plans = await repository.list()
+    it('returns the cloned DEFAULT_PLANS with ordered activities', async () => {
+      const plans = await repository.list(ownerId)
       expect(plans).toHaveLength(DEFAULT_PLANS.length)
 
-      const first = plans.find((p) => p.id === DEFAULT_PLANS[0].id)
-      expect(first?.name).toBe(DEFAULT_PLANS[0].name)
-      expect(first?.activities.map((a) => a.id)).toEqual(
-        DEFAULT_PLANS[0].activities.map((a) => a.id),
+      const first = plans[0]
+      expect(first.name).toBe(DEFAULT_PLANS[0].name)
+      expect(first.activities.map((a) => a.name)).toEqual(
+        DEFAULT_PLANS[0].activities.map((a) => a.name),
       )
     })
 
     it('omits null optional fields rather than exposing them', async () => {
-      const plan = await repository.getById(DEFAULT_PLANS[2].id) // HIIT: activities without sets/reps
-      const restActivity = plan?.activities.find((a) => a.type === 'rest')
+      const plans = await repository.list(ownerId)
+      const hiit = plans.find((p) => p.name === DEFAULT_PLANS[2].name)
+      const restActivity = hiit?.activities.find((a) => a.type === 'rest')
       expect(restActivity).toBeDefined()
       expect(restActivity).not.toHaveProperty('sets', null)
       expect(restActivity?.sets).toBeUndefined()
@@ -38,86 +54,98 @@ describe('SqlitePlanRepository', () => {
   })
 
   describe('getById', () => {
-    it('returns a plan when it exists', async () => {
-      const plan = await repository.getById('push-legs-split')
-      expect(plan?.id).toBe('push-legs-split')
+    it('returns a plan when it exists and is owned', async () => {
+      const id = await firstPlanId()
+      const plan = await repository.getById(id, ownerId)
+      expect(plan?.id).toBe(id)
     })
 
     it('returns null when missing', async () => {
-      expect(await repository.getById('nope')).toBeNull()
+      expect(await repository.getById('nope', ownerId)).toBeNull()
     })
   })
 
   describe('create', () => {
     it('assigns a plan id and generates missing activity ids', async () => {
-      const created = await repository.create({
-        name: 'New Workout',
-        description: 'New',
-        daysPerWeek: 4,
-        activities: [
-          { name: 'Bench', duration: 120, type: 'exercise' },
-          { id: 'act-fixed', name: 'Rest', duration: 60, type: 'rest' },
-        ],
-      })
+      const created = await repository.create(
+        {
+          name: 'New Workout',
+          description: 'New',
+          daysPerWeek: 4,
+          activities: [
+            { name: 'Bench', duration: 120, type: 'exercise' },
+            { id: 'act-fixed', name: 'Rest', duration: 60, type: 'rest' },
+          ],
+        },
+        ownerId,
+      )
 
       expect(created.id).toMatch(/^plan-/)
       expect(created.activities[0].id).toMatch(/^act-/)
       expect(created.activities[1].id).toBe('act-fixed')
 
-      const persisted = await repository.getById(created.id)
+      const persisted = await repository.getById(created.id, ownerId)
       expect(persisted?.activities).toHaveLength(2)
       expect(persisted?.activities[0].name).toBe('Bench')
     })
 
     it('throws PlanValidationError on invalid input', async () => {
       await expect(
-        repository.create({
-          name: '',
-          description: '',
-          daysPerWeek: 8,
-          activities: [{ name: '', duration: -10, type: 'exercise' }],
-        }),
+        repository.create(
+          {
+            name: '',
+            description: '',
+            daysPerWeek: 8,
+            activities: [{ name: '', duration: -10, type: 'exercise' }],
+          },
+          ownerId,
+        ),
       ).rejects.toThrow(PlanValidationError)
     })
   })
 
   describe('update', () => {
     it('merges scalar patch fields, preserving the rest', async () => {
-      const updated = await repository.update('push-legs-split', {
-        name: 'Updated Push',
-        daysPerWeek: 5,
-      })
+      const id = await firstPlanId()
+      const updated = await repository.update(id, { name: 'Updated Push', daysPerWeek: 5 }, ownerId)
 
       expect(updated.name).toBe('Updated Push')
       expect(updated.daysPerWeek).toBe(5)
       expect(updated.description).toBe(DEFAULT_PLANS[0].description)
-      // activities untouched when not in patch
-      expect(updated.activities.map((a) => a.id)).toEqual(
-        DEFAULT_PLANS[0].activities.map((a) => a.id),
+      expect(updated.activities.map((a) => a.name)).toEqual(
+        DEFAULT_PLANS[0].activities.map((a) => a.name),
       )
     })
 
     it('replaces and reorders activities when provided', async () => {
-      const updated = await repository.update('push-legs-split', {
-        activities: [
-          { id: 'a-new', name: 'Squat', duration: 100, type: 'exercise' },
-          { name: 'Pause', duration: 30, type: 'rest' },
-        ],
-      })
+      const id = await firstPlanId()
+      const updated = await repository.update(
+        id,
+        {
+          activities: [
+            { id: 'a-new', name: 'Squat', duration: 100, type: 'exercise' },
+            { name: 'Pause', duration: 30, type: 'rest' },
+          ],
+        },
+        ownerId,
+      )
 
       expect(updated.activities).toHaveLength(2)
 
-      const persisted = await repository.getById('push-legs-split')
+      const persisted = await repository.getById(id, ownerId)
       expect(persisted?.activities.map((a) => a.name)).toEqual(['Squat', 'Pause'])
       expect(persisted?.activities[0].id).toBe('a-new')
     })
 
     it('throws PlanNotFoundError for a missing plan', async () => {
-      await expect(repository.update('nope', { name: 'X' })).rejects.toThrow(PlanNotFoundError)
+      await expect(repository.update('nope', { name: 'X' }, ownerId)).rejects.toThrow(
+        PlanNotFoundError,
+      )
     })
 
     it('validates merged input', async () => {
-      await expect(repository.update('push-legs-split', { name: '' })).rejects.toThrow(
+      const id = await firstPlanId()
+      await expect(repository.update(id, { name: '' }, ownerId)).rejects.toThrow(
         PlanValidationError,
       )
     })
@@ -125,21 +153,34 @@ describe('SqlitePlanRepository', () => {
 
   describe('remove', () => {
     it('deletes the plan and cascades to activities', async () => {
-      await repository.remove('push-legs-split')
-      expect(await repository.getById('push-legs-split')).toBeNull()
-
-      // activities gone too — recreating the id starts clean
-      const recreated = await repository.create({
-        name: 'Fresh',
-        description: '',
-        daysPerWeek: 1,
-        activities: [],
-      })
-      expect(recreated.activities).toHaveLength(0)
+      const id = await firstPlanId()
+      await repository.remove(id, ownerId)
+      expect(await repository.getById(id, ownerId)).toBeNull()
     })
 
     it('is idempotent for a missing plan', async () => {
-      await expect(repository.remove('nope')).resolves.not.toThrow()
+      await expect(repository.remove('nope', ownerId)).resolves.not.toThrow()
+    })
+  })
+
+  describe('owner scoping', () => {
+    it('never exposes or mutates another owner’s plans', async () => {
+      const db = (repository as unknown as { db: DbClient }).db
+      const otherId = await makeOwner(db, 'intruder@example.com')
+
+      // intruder starts with no plans
+      expect(await repository.list(otherId)).toHaveLength(0)
+
+      const victimPlanId = await firstPlanId()
+      // cannot read
+      expect(await repository.getById(victimPlanId, otherId)).toBeNull()
+      // cannot update
+      await expect(
+        repository.update(victimPlanId, { name: 'hijacked' }, otherId),
+      ).rejects.toThrow(PlanNotFoundError)
+      // cannot delete — owner still has it afterwards
+      await repository.remove(victimPlanId, otherId)
+      expect(await repository.getById(victimPlanId, ownerId)).not.toBeNull()
     })
   })
 })

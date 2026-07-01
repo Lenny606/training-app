@@ -7,6 +7,8 @@ export function getRouter() {
     scrollRestoration: true,
     defaultPreload: 'intent',
     defaultPreloadStaleTime: 0,
+    // Placeholder — the real user is injected by the root route's beforeLoad.
+    context: { user: null },
   })
 
   return router

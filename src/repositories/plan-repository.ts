@@ -14,10 +14,12 @@ export class PlanValidationError extends Error {
   }
 }
 
+// Every method is scoped to `ownerId`: a plan is only ever visible or mutable by
+// its owner. Reads for a non-owned id return null; writes throw PlanNotFoundError.
 export interface PlanRepository {
-  list(): Promise<TrainingPlan[]>
-  getById(id: string): Promise<TrainingPlan | null>
-  create(plan: NewTrainingPlan): Promise<TrainingPlan>
-  update(id: string, patch: Partial<NewTrainingPlan>): Promise<TrainingPlan>
-  remove(id: string): Promise<void>
+  list(ownerId: string): Promise<TrainingPlan[]>
+  getById(id: string, ownerId: string): Promise<TrainingPlan | null>
+  create(plan: NewTrainingPlan, ownerId: string): Promise<TrainingPlan>
+  update(id: string, patch: Partial<NewTrainingPlan>, ownerId: string): Promise<TrainingPlan>
+  remove(id: string, ownerId: string): Promise<void>
 }

@@ -1,7 +1,7 @@
-import { asc, eq, inArray } from 'drizzle-orm'
+import { and, asc, eq, inArray } from 'drizzle-orm'
 import type { Activity, NewTrainingPlan, TrainingPlan } from '../domain/plans'
 import type { DbClient } from '../db/client'
-import { db as defaultDb } from '../db/client'
+import { getDb } from '../db/client'
 import { activities, plans } from '../db/schema'
 import type { ActivityRow } from '../db/schema'
 import { newPlanInput } from '../db/validation'
@@ -11,7 +11,7 @@ import { PlanNotFoundError, PlanValidationError } from './plan-repository'
 
 /** Drizzle/SQLite-backed repository. Server-only — relies on better-sqlite3. */
 export class SqlitePlanRepository implements PlanRepository {
-  constructor(private readonly db: DbClient = defaultDb) {}
+  constructor(private readonly db: DbClient = getDb()) {}
 
   private toActivity(row: ActivityRow): Activity {
     return {
@@ -32,8 +32,13 @@ export class SqlitePlanRepository implements PlanRepository {
     }
   }
 
-  async list(): Promise<TrainingPlan[]> {
-    const planRows = this.db.select().from(plans).orderBy(asc(plans.createdAt)).all()
+  async list(ownerId: string): Promise<TrainingPlan[]> {
+    const planRows = this.db
+      .select()
+      .from(plans)
+      .where(eq(plans.ownerId, ownerId))
+      .orderBy(asc(plans.createdAt))
+      .all()
     if (planRows.length === 0) return []
 
     const activityRows = this.db
@@ -59,8 +64,12 @@ export class SqlitePlanRepository implements PlanRepository {
     }))
   }
 
-  async getById(id: string): Promise<TrainingPlan | null> {
-    const plan = this.db.select().from(plans).where(eq(plans.id, id)).get()
+  async getById(id: string, ownerId: string): Promise<TrainingPlan | null> {
+    const plan = this.db
+      .select()
+      .from(plans)
+      .where(and(eq(plans.id, id), eq(plans.ownerId, ownerId)))
+      .get()
     if (!plan) return null
 
     const activityRows = this.db
@@ -79,7 +88,7 @@ export class SqlitePlanRepository implements PlanRepository {
     }
   }
 
-  async create(newPlan: NewTrainingPlan): Promise<TrainingPlan> {
+  async create(newPlan: NewTrainingPlan, ownerId: string): Promise<TrainingPlan> {
     this.validate(newPlan)
 
     const planId = createId('plan')
@@ -97,6 +106,7 @@ export class SqlitePlanRepository implements PlanRepository {
       tx.insert(plans)
         .values({
           id: planId,
+          ownerId,
           name: created.name,
           description: created.description,
           daysPerWeek: created.daysPerWeek,
@@ -111,8 +121,12 @@ export class SqlitePlanRepository implements PlanRepository {
     return created
   }
 
-  async update(id: string, patch: Partial<NewTrainingPlan>): Promise<TrainingPlan> {
-    const existing = await this.getById(id)
+  async update(
+    id: string,
+    patch: Partial<NewTrainingPlan>,
+    ownerId: string,
+  ): Promise<TrainingPlan> {
+    const existing = await this.getById(id, ownerId)
     if (!existing) throw new PlanNotFoundError(id)
 
     const merged: TrainingPlan = {
@@ -139,7 +153,7 @@ export class SqlitePlanRepository implements PlanRepository {
           daysPerWeek: merged.daysPerWeek,
           updatedAt: new Date(),
         })
-        .where(eq(plans.id, id))
+        .where(and(eq(plans.id, id), eq(plans.ownerId, ownerId)))
         .run()
 
       // Reorder/replace activities via delete + insert (small plans → fine).
@@ -152,9 +166,9 @@ export class SqlitePlanRepository implements PlanRepository {
     return merged
   }
 
-  async remove(id: string): Promise<void> {
-    // Idempotent; FK cascade removes child activities.
-    this.db.delete(plans).where(eq(plans.id, id)).run()
+  async remove(id: string, ownerId: string): Promise<void> {
+    // Idempotent + owner-scoped; FK cascade removes child activities.
+    this.db.delete(plans).where(and(eq(plans.id, id), eq(plans.ownerId, ownerId))).run()
   }
 
   private insertActivities(

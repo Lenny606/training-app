@@ -27,5 +27,14 @@ export function createDb(path: string = DB_PATH): DbClient {
   return drizzle(createSqlite(path), { schema })
 }
 
-/** Shared, process-wide DB client. Server-only — never import into the client bundle. */
-export const db: DbClient = createDb()
+let cachedDb: DbClient | undefined
+
+/**
+ * Shared, process-wide DB client, created lazily on first use. Server-only —
+ * never import into the client bundle. Lazy so merely importing a repository
+ * module (e.g. in a test that uses its own in-memory db) does not open the
+ * production database file and contend on its WAL lock.
+ */
+export function getDb(): DbClient {
+  return (cachedDb ??= createDb())
+}

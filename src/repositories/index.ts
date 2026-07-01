@@ -1,4 +1,6 @@
-// Repository contract (interface + domain errors). Implementations are
-// server-only (see ./sqlite-plan-repository) and consumed via server functions
-// in src/server/plans.ts — never imported directly by the client.
+// Repository contracts (interfaces + domain errors). Implementations are
+// server-only (see ./sqlite-*) and consumed via server functions — never
+// imported directly by the client.
 export * from './plan-repository'
+export * from './user-repository'
+export * from './refresh-token-store'
