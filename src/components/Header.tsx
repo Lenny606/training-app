@@ -42,16 +42,6 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--header-bg)] px-4 backdrop-blur-lg">
       <nav className="page-wrap flex items-center gap-x-3 py-3 sm:py-4">
-        {/* Logo */}
-        <h2 className="m-0 flex-shrink-0 text-base font-bold tracking-tight">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 rounded-full border border-[var(--chip-line)] bg-[var(--chip-bg)] px-3 py-1.5 text-sm text-[var(--sea-ink)] no-underline shadow-[0_8px_24px_rgba(0,240,255,0.05)] sm:px-4 sm:py-2"
-          >
-            <span className="h-2.5 w-2.5 rounded-full bg-[var(--lagoon)] shadow-[0_0_8px_var(--lagoon)] animate-pulse" />
-            <span className="font-display font-black tracking-wider uppercase text-xs">Titan Training</span>
-          </Link>
-        </h2>
 
         {/* Desktop nav links — only when signed in */}
         {user && (
