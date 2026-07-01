@@ -42,6 +42,14 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--header-bg)] px-4 backdrop-blur-lg">
       <nav className="page-wrap flex items-center gap-x-3 py-3 sm:py-4">
+        {/* Home Link Symbol */}
+        <Link
+          to="/"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--line)] bg-[var(--chip-bg)] font-display font-bold text-sm text-[var(--sea-ink)] no-underline hover:border-[var(--lagoon)] transition-all"
+          aria-label="Home"
+        >
+          ▲
+        </Link>
 
         {/* Desktop nav links — only when signed in */}
         {user && (
