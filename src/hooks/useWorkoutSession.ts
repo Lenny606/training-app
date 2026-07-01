@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import type { TrainingPlan } from '../domain/plans'
 import { playTimerBeep, playWorkoutCompleteBeep } from '../utils/audio'
+import { useWakeLock } from './useWakeLock'
 
 interface UseWorkoutSessionOptions {
   selectedPlan: TrainingPlan | undefined
@@ -97,6 +98,9 @@ export function useWorkoutSession({ selectedPlan, soundEnabled }: UseWorkoutSess
     setSecondsRemaining(duration)
     if (soundEnabled) playTimerBeep(false)
   }
+
+  // Keep the screen awake while a workout is actively running.
+  useWakeLock(isPlaying && !isCompleted)
 
   useEffect(() => {
     if (!isPlaying || isCompleted) return
