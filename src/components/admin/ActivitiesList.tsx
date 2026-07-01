@@ -3,7 +3,7 @@ import type { Activity } from '../../domain/plans'
 
 interface ActivitiesListProps {
   activities: Activity[]
-  onActivityChange: (index: number, field: keyof Activity, value: any) => void
+  onActivityChange: (index: number, field: keyof Activity, value: string) => void
   onMoveActivity: (index: number, direction: 'up' | 'down') => void
   onDeleteActivity: (index: number) => void
 }

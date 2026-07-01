@@ -11,15 +11,15 @@ function swapArrayElements<T>(arr: T[], i: number, j: number): T[] {
   return copy
 }
 
-function parseDurationField(value: any): number {
+function parseDurationField(value: string): number {
   return Math.max(1, parseInt(value) || 0)
 }
 
-function parseSetsField(value: any): number | undefined {
+function parseSetsField(value: string): number | undefined {
   return value === '' ? undefined : Math.max(1, parseInt(value) || 0)
 }
 
-function parseActivityField(field: keyof Activity, value: any) {
+function parseActivityField(field: keyof Activity, value: string) {
   if (field === 'duration') return parseDurationField(value)
   if (field === 'sets') return parseSetsField(value)
   return value
@@ -92,13 +92,13 @@ function usePlanEditor({
     setHasUnsavedChanges(false)
   }, [selectedPlanId, plans])
 
-  const handleMetaChange = (field: keyof TrainingPlan, value: any) => {
+  const handleMetaChange = (field: keyof TrainingPlan, value: string | number) => {
     if (!editingPlan) return
     setEditingPlan({ ...editingPlan, [field]: value })
     setHasUnsavedChanges(true)
   }
 
-  const handleActivityChange = (index: number, field: keyof Activity, value: any) => {
+  const handleActivityChange = (index: number, field: keyof Activity, value: string) => {
     if (!editingPlan) return
     const updatedActivities = [...editingPlan.activities]
     const activity = updatedActivities[index]

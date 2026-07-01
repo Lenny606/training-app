@@ -1,7 +1,8 @@
 // Audio Context helper
-function getAudioContextClass() {
+function getAudioContextClass(): typeof AudioContext | null {
   if (typeof window === 'undefined') return null
-  return window.AudioContext || (window as any).webkitAudioContext || null
+  const w = window as typeof window & { webkitAudioContext?: typeof AudioContext }
+  return w.AudioContext || w.webkitAudioContext || null
 }
 
 // Web Audio API beep synthesizer

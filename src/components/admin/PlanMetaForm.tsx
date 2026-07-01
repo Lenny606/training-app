@@ -2,7 +2,7 @@ import type { TrainingPlan } from '../../domain/plans'
 
 interface PlanMetaFormProps {
   plan: TrainingPlan
-  onChange: (field: keyof TrainingPlan, value: any) => void
+  onChange: (field: keyof TrainingPlan, value: string | number) => void
 }
 
 export function PlanMetaForm({ plan, onChange }: PlanMetaFormProps) {

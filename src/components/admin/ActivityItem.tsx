@@ -4,7 +4,7 @@ import type { Activity } from '../../domain/plans'
 interface ExerciseFieldsProps {
   activity: Activity
   index: number
-  onActivityChange: (index: number, field: keyof Activity, value: any) => void
+  onActivityChange: (index: number, field: keyof Activity, value: string) => void
 }
 
 function ExerciseFields({ activity, index, onActivityChange }: ExerciseFieldsProps) {
@@ -115,7 +115,7 @@ function ActivityItemBadge({ type, index }: ActivityItemBadgeProps) {
 interface ActivityInputsProps {
   activity: Activity
   index: number
-  onActivityChange: (index: number, field: keyof Activity, value: any) => void
+  onActivityChange: (index: number, field: keyof Activity, value: string) => void
 }
 
 function ActivityInputs({ activity, index, onActivityChange }: ActivityInputsProps) {
@@ -165,7 +165,7 @@ interface ActivityItemProps {
   index: number
   isFirst: boolean
   isLast: boolean
-  onActivityChange: (index: number, field: keyof Activity, value: any) => void
+  onActivityChange: (index: number, field: keyof Activity, value: string) => void
   onMoveActivity: (index: number, direction: 'up' | 'down') => void
   onDeleteActivity: (index: number) => void
 }
