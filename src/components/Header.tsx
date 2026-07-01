@@ -66,7 +66,10 @@ export default function Header() {
 
         {/* Right side: theme toggle + auth controls */}
         <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
-          <ThemeToggle />
+          {/* Theme toggle — hidden on mobile when signed in (moved into hamburger menu) */}
+          <span className={user ? 'hidden sm:inline-flex' : 'inline-flex'}>
+            <ThemeToggle />
+          </span>
 
           {user ? (
             <>
@@ -120,10 +123,14 @@ export default function Header() {
               {label}
             </Link>
           ))}
+          <div className="mt-1 flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold text-[var(--sea-ink-soft)]">
+            <span>Dark mode</span>
+            <ThemeToggle />
+          </div>
           <button
             type="button"
             onClick={handleLogout}
-            className="mt-1 flex items-center gap-2 rounded-xl px-4 py-3 text-left text-sm font-semibold text-[var(--sea-ink-soft)] transition-colors hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
+            className="flex items-center gap-2 rounded-xl px-4 py-3 text-left text-sm font-semibold text-[var(--sea-ink-soft)] transition-colors hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
           >
             <LogOut className="h-4 w-4" />
             Sign out
