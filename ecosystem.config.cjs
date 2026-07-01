@@ -9,7 +9,7 @@ module.exports = {
   apps: [
     {
       name: 'training-app',
-      script: 'dist/server/server.js',
+      script: '.output/server/index.mjs', // Nitro node-server entry (listens on PORT)
       instances: 1, // 'max' for cluster mode once the app is verified stateless
       exec_mode: 'fork',
       env: { NODE_ENV: 'production', PORT: 3000 },

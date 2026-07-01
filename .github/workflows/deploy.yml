@@ -30,7 +30,7 @@ jobs:
       - name: Bundle release artifact
         run: |
           tar -czf release.tar.gz \
-            dist package.json package-lock.json \
+            .output package.json package-lock.json \
             ecosystem.config.cjs drizzle scripts
 
       - name: Copy artifact via SCP (password auth)
