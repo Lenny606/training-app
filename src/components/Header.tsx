@@ -58,7 +58,7 @@ export default function Header() {
 
           {/* Hamburger — only on mobile */}
           <button
-            className="sm:hidden demo-button demo-button-icon border-[var(--line)] bg-[var(--chip-bg)] text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+            className="sm:hidden demo-button demo-button-icon min-h-11 min-w-11 border-[var(--line)] bg-[var(--chip-bg)] text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
             onClick={() => setMenuOpen((o) => !o)}
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={menuOpen}

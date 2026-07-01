@@ -79,10 +79,28 @@ Tabulka v reportu / issue:
 | Routa | Breakpoint | Problém | Závažnost | Návrh opravy |
 | --- | --- | --- | --- | --- |
 | /admin | 360 px | inputy aktivit přetékají vpravo | high | `flex-wrap` + `min-w-0` na řádek |
-| … | | | | |
 
 Závažnost: **high** (overflow / nepoužitelné) · **med** (kostrbaté) ·
 **low** (kosmetika).
+
+## 6.1 Výsledek auditu (2026-07-01)
+
+Metoda: headless Chrome (puppeteer-core) přes 3 routy × 360/390/414/768 px;
+overflow scan (§3.4) + tap-target scan (`getBoundingClientRect` < 44 px).
+
+**Overflow: 0 nálezů.** `document.body.scrollWidth == clientWidth` na všech 12
+kombinacích → root `overflow-x: hidden` reálný únik nemaskuje. ✅
+
+Tap targety < 44 px:
+
+| Routa | BP | Prvek | Velikost | Závažnost | Stav |
+| --- | --- | --- | --- | --- | --- |
+| všechny | vše | hamburger „Open menu" | 29×29 | high | **opraveno** → `min-h-11 min-w-11` (44×44) |
+| všechny | vše | theme toggle „Auto" | 58×34 | med | **opraveno** → `min-h-11` |
+| /admin | vše | ikonová tlačítka (posun/smazat) | 27×27 | med | follow-up PR |
+| /admin | vše | „New" / „Saved" (`demo-button-sm`) | ~80×27 | med | follow-up PR |
+| /admin | vše | inputy aktivit | výška 40 | low | follow-up PR |
+| všechny | vše | logo, desktop nav odkazy | 30 / 20 výška | low | ponecháno (text/brand) |
 
 ## 7. Plán
 
@@ -101,7 +119,8 @@ Závažnost: **high** (overflow / nepoužitelné) · **med** (kostrbaté) ·
 - Nálezy zdokumentované v tabulce se závažností a návrhem.
 - Tap targety hlavního ovládání ≥ 44 px.
 
-## 9. Otevřené otázky
+## 9. Otevřené otázky (vyřešeno)
 
-- Rovnou opravovat v rámci auditu, nebo jen reportovat a oddělit fix do PR?
-- Cílové minimum šířky — stačí 360 px, nebo i 320 px (iPhone SE 1. gen)?
+- ~~Rovnou opravovat, nebo oddělit fix do PR?~~ → Primární ovládání (hamburger,
+  theme toggle) opraveno rovnou; dense admin tap targety odděleny do follow-up PR.
+- ~~Minimum šířky — 360 nebo 320 px?~~ → Auditováno od 360 px (viz §2).

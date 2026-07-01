@@ -14,7 +14,7 @@ Legenda stavu: 🔲 not started · 🚧 in progress · ✅ done · ⛔ blocked
 | [ai-client](./ai-client.md) | 🔲 | repository-layer, auth-layer | Server-side tools scoped na usera. |
 | [deploy](./deploy.md) | 🔲 | repository-layer, auth-layer | VPS + GitHub Actions + PM2. |
 | [admin-drag-drop](./admin-drag-drop.md) | 🔲 | — (řazení šipkami hotové) | Nahrazuje řazení šipkami za DnD. |
-| [mobile-style-audit](./mobile-style-audit.md) | 🚧 | — | Header nav + high overflow fixes hotové; chybí projet 4 routy na 360/390/414/768. |
+| [mobile-style-audit](./mobile-style-audit.md) | ✅ | — | Audit 3 rout × 360/390/414/768: 0 overflow. Prim. tap targety (hamburger, theme toggle) na 44px; admin ikony <44 odděleny do follow-up. |
 
 ## Pořadí prací (doporučené)
 
@@ -65,11 +65,12 @@ Legenda stavu: 🔲 not started · 🚧 in progress · ✅ done · ⛔ blocked
 - [ ] A11y (keyboard) + fallback šipky
 - [ ] Odstranit / nechat staré řazení šipkami
 
-### mobile-style-audit 🚧
+### mobile-style-audit ✅
 - [x] Header — responzivní nav (hamburger + scroll lock)
 - [x] `ProgressCircle` — responzivní šířka (nepřetéká na 360 px)
 - [x] `PlaybackControls` — gap na úzké šířce
 - [x] `ActivityItem` — `min-w-0` na grid inputy
-- [ ] Projet `/`, `/admin`, `/about` na 360/390/414/768
-- [ ] Console overflow scan (§3.4 spec) bez nálezů
-- [ ] Ověřit tap targety ≥ 44 px
+- [x] Projet `/`, `/admin`, `/about` na 360/390/414/768 — puppeteer audit, 0 overflow
+- [x] Console overflow scan (§3.4 spec) bez nálezů — `body.scrollW == clientW` všude
+- [x] Ověřit tap targety ≥ 44 px — prim. ovládání (hamburger 44×44, theme toggle min-h-44) opraveno
+- [ ] (follow-up) admin ikonová tlačítka 27×27 + inputy 40px na 44 px — oddělený PR
