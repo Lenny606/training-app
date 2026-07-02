@@ -1,8 +1,58 @@
+import { useState, useEffect } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { ArrowUp, ArrowDown, GripVertical, Trash2 } from 'lucide-react'
 import type { Activity } from '../../domain/plans'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
+
+interface NumericFieldProps {
+  value: number | undefined
+  fallback: number
+  unit: string
+  placeholder: string
+  onCommit: (value: number) => void
+}
+
+// Locally-controlled numeric input: keystrokes stay local so intermediate or
+// invalid values don't fight the parent, and an invalid value snaps to the
+// fallback on blur.
+function NumericField({ value, fallback, unit, placeholder, onCommit }: NumericFieldProps) {
+  const [local, setLocal] = useState(value !== undefined ? value.toString() : '')
+
+  useEffect(() => {
+    setLocal(value !== undefined ? value.toString() : '')
+  }, [value])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    setLocal(val)
+    const parsed = parseInt(val)
+    if (!isNaN(parsed) && parsed > 0) onCommit(parsed)
+  }
+
+  const handleBlur = () => {
+    const parsed = parseInt(local)
+    const next = !isNaN(parsed) && parsed > 0 ? parsed : fallback
+    setLocal(next.toString())
+    onCommit(next)
+  }
+
+  return (
+    <div className="relative">
+      <input
+        type="number"
+        value={local}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        className="demo-input py-1.5 pl-2.5 pr-6 text-xs text-right font-mono"
+        placeholder={placeholder}
+      />
+      <span className="absolute right-2 top-2 text-[9px] text-[var(--sea-ink-soft)] font-mono">
+        {unit}
+      </span>
+    </div>
+  )
+}
 
 interface ExerciseFieldsProps {
   activity: Activity
@@ -14,16 +64,13 @@ function ExerciseFields({ activity, index, onActivityChange }: ExerciseFieldsPro
   return (
     <>
       <div className="col-span-4 sm:col-span-2">
-        <div className="relative">
-          <input
-            type="number"
-            value={activity.sets ?? ''}
-            onChange={(e) => onActivityChange(index, 'sets', e.target.value)}
-            className="demo-input py-1.5 pl-2.5 pr-6 text-xs text-right font-mono"
-            placeholder="Sets"
-          />
-          <span className="absolute right-2 top-2 text-[9px] text-[var(--sea-ink-soft)]">x</span>
-        </div>
+        <NumericField
+          value={activity.sets}
+          fallback={3}
+          unit="x"
+          placeholder="Sets"
+          onCommit={(v) => onActivityChange(index, 'sets', v.toString())}
+        />
       </div>
       <div className="col-span-4 sm:col-span-2">
         <input
@@ -123,6 +170,7 @@ interface ActivityInputsProps {
 
 function ActivityInputs({ activity, index, onActivityChange }: ActivityInputsProps) {
   const isRest = activity.type === 'rest'
+
   return (
     <div className="flex-grow min-w-0 grid gap-2 grid-cols-12">
       <div className="col-span-12 sm:col-span-4">
@@ -136,16 +184,13 @@ function ActivityInputs({ activity, index, onActivityChange }: ActivityInputsPro
       </div>
 
       <div className="col-span-4 sm:col-span-2">
-        <div className="relative">
-          <input
-            type="number"
-            value={activity.duration}
-            onChange={(e) => onActivityChange(index, 'duration', e.target.value)}
-            className="demo-input py-1.5 pl-2.5 pr-6 text-xs text-right font-mono"
-            placeholder="Sec"
-          />
-          <span className="absolute right-2 top-2 text-[9px] text-[var(--sea-ink-soft)] font-mono">s</span>
-        </div>
+        <NumericField
+          value={activity.duration}
+          fallback={120}
+          unit="s"
+          placeholder="Sec"
+          onCommit={(v) => onActivityChange(index, 'duration', v.toString())}
+        />
       </div>
 
       {!isRest ? (

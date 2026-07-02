@@ -7,10 +7,10 @@ interface AddActivityFormProps {
 }
 
 interface AddExerciseFieldsProps {
-  sets: number
+  sets: string | number
   reps: string
   weight: string
-  setSets: (val: number) => void
+  setSets: (val: string | number) => void
   setReps: (val: string) => void
   setWeight: (val: string) => void
 }
@@ -31,10 +31,18 @@ function AddExerciseFields({
         </label>
         <input
           type="number"
-          min="1"
           value={sets}
-          onChange={(e) => setSets(Math.max(1, parseInt(e.target.value) || 0))}
+          onChange={(e) => setSets(e.target.value)}
+          onBlur={() => {
+            const parsed = parseInt(sets.toString())
+            if (isNaN(parsed) || parsed <= 0) {
+              setSets(3)
+            } else {
+              setSets(parsed)
+            }
+          }}
           className="demo-input py-1.5 text-xs text-right font-mono"
+          placeholder="Sets"
         />
       </div>
 
@@ -82,19 +90,19 @@ function getDefaultName(type: 'exercise' | 'rest') {
 function useAddActivityForm(onAddActivity: (activity: Omit<Activity, 'id'>) => void) {
   const [type, setType] = useState<'exercise' | 'rest'>('exercise')
   const [name, setName] = useState('')
-  const [duration, setDuration] = useState<number>(90)
-  const [sets, setSets] = useState<number>(3)
+  const [duration, setDuration] = useState<string | number>(120)
+  const [sets, setSets] = useState<string | number>(3)
   const [reps, setReps] = useState('')
   const [weight, setWeight] = useState('')
 
   const handleTypeChange = (newType: 'exercise' | 'rest') => {
     setType(newType)
-    setDuration(newType === 'exercise' ? 120 : 90)
+    setDuration(120)
   }
 
   const resetForm = () => {
     setName('')
-    setDuration(type === 'exercise' ? 120 : 90)
+    setDuration(120)
     setSets(3)
     setReps('')
     setWeight('')
@@ -103,15 +111,19 @@ function useAddActivityForm(onAddActivity: (activity: Omit<Activity, 'id'>) => v
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const activityName = name.trim() || getDefaultName(type)
+    const parsedDuration = parseInt(duration.toString())
+    const finalDuration = isNaN(parsedDuration) || parsedDuration <= 0 ? 120 : parsedDuration
     
     const payload: Omit<Activity, 'id'> = {
       name: activityName,
       type,
-      duration,
+      duration: finalDuration,
     }
 
     if (type === 'exercise') {
-      Object.assign(payload, getExerciseParams(sets, reps, weight))
+      const parsedSets = parseInt(sets.toString())
+      const finalSets = isNaN(parsedSets) || parsedSets <= 0 ? 3 : parsedSets
+      Object.assign(payload, getExerciseParams(finalSets, reps, weight))
     }
 
     onAddActivity(payload)
@@ -138,9 +150,9 @@ function useAddActivityForm(onAddActivity: (activity: Omit<Activity, 'id'>) => v
 interface CoreFieldsProps {
   type: 'exercise' | 'rest'
   name: string
-  duration: number
+  duration: string | number
   setName: (val: string) => void
-  setDuration: (val: number) => void
+  setDuration: (val: string | number) => void
   handleTypeChange: (newType: 'exercise' | 'rest') => void
 }
 
@@ -187,10 +199,18 @@ function CoreFields({
         </label>
         <input
           type="number"
-          min="1"
           value={duration}
-          onChange={(e) => setDuration(Math.max(1, parseInt(e.target.value) || 0))}
+          onChange={(e) => setDuration(e.target.value)}
+          onBlur={() => {
+            const parsed = parseInt(duration.toString())
+            if (isNaN(parsed) || parsed <= 0) {
+              setDuration(120)
+            } else {
+              setDuration(parsed)
+            }
+          }}
           className="demo-input py-1.5 text-xs text-right font-mono"
+          placeholder="Sec"
         />
       </div>
     </>

@@ -11,11 +11,20 @@ import {
 import { createId } from '../utils/id'
 
 function parseDurationField(value: string): number {
-  return Math.max(1, parseInt(value) || 0)
+  const parsed = parseInt(value)
+  if (isNaN(parsed) || parsed <= 0) {
+    return 120
+  }
+  return parsed
 }
 
 function parseSetsField(value: string): number | undefined {
-  return value === '' ? undefined : Math.max(1, parseInt(value) || 0)
+  if (value === '') return undefined
+  const parsed = parseInt(value)
+  if (isNaN(parsed) || parsed <= 0) {
+    return 3
+  }
+  return parsed
 }
 
 function parseActivityField(field: keyof Activity, value: string) {
