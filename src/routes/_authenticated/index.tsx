@@ -71,14 +71,6 @@ export default function App() {
 
   return (
     <main className="page-wrap px-4 py-6 sm:py-10 max-w-lg mx-auto flex flex-col gap-6">
-      <WorkoutPlanSelector
-        plans={plans}
-        selectedPlanId={selectedPlanId}
-        soundEnabled={soundEnabled}
-        onPlanChange={setSelectedPlanId}
-        onToggleSound={() => setSoundEnabled((prev) => !prev)}
-      />
-
       <TimerDisplay
         selectedPlan={selectedPlan}
         currentActivity={currentActivity}
@@ -95,6 +87,14 @@ export default function App() {
       {selectedPlan && selectedPlan.activities.length > 0 && (
         <NextActivityCard nextActivity={nextActivity} isCompleted={isCompleted} />
       )}
+
+      <WorkoutPlanSelector
+        plans={plans}
+        selectedPlanId={selectedPlanId}
+        soundEnabled={soundEnabled}
+        onPlanChange={setSelectedPlanId}
+        onToggleSound={() => setSoundEnabled((prev) => !prev)}
+      />
     </main>
   )
 }
