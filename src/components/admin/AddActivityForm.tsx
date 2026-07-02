@@ -237,7 +237,7 @@ export function AddActivityForm({ onAddActivity }: AddActivityFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mt-3 p-4 rounded-xl border border-[rgba(0,240,255,0.15)] bg-[rgba(0,240,255,0.02)] flex flex-col gap-3"
+      className="mt-3 p-4 rounded-xl border border-lagoon/20 bg-lagoon/[0.03] flex flex-col gap-3"
     >
       <h4 className="m-0 text-xs font-bold text-ink flex items-center gap-1.5">
         <Plus className="h-3.5 w-3.5 text-lagoon" />
@@ -271,7 +271,7 @@ export function AddActivityForm({ onAddActivity }: AddActivityFormProps) {
       <div className="flex justify-end mt-1">
         <button
           type="submit"
-          className="demo-button demo-button-sm bg-lagoon-deep text-slate-900 border-lagoon font-bold flex items-center gap-1"
+          className="demo-button demo-button-sm bg-lagoon-deep text-lagoon-ink border-lagoon font-bold flex items-center gap-1"
         >
           <Plus className="h-3.5 w-3.5" />
           Add to Route

@@ -129,7 +129,7 @@ function ActivityActions({
       </button>
       <button
         onClick={() => onDeleteActivity(index)}
-        className="demo-button demo-button-icon ml-1 border-red-950 bg-red-950/20 text-red-400 hover:bg-red-950/40 hover:text-red-300"
+        className="demo-button demo-button-icon ml-1 border-danger/30 bg-danger/10 text-danger hover:bg-danger/20"
         title="Delete Activity"
       >
         <Trash2 className="h-3.5 w-3.5" />
@@ -147,8 +147,8 @@ function ActivityItemBadge({ type, index }: ActivityItemBadgeProps) {
   const isRest = type === 'rest'
   const badgeClass = `px-2 py-0.5 rounded text-[9px] uppercase font-black tracking-wider ${
     isRest
-      ? 'bg-sky-950/60 text-sky-400 border border-sky-800/40'
-      : 'bg-cyan-950/60 text-lagoon border border-[rgba(0,240,255,0.2)]'
+      ? 'bg-sky-500/10 text-sky-600 border border-sky-500/30 dark:text-sky-400'
+      : 'bg-lagoon/10 text-lagoon-deep border border-lagoon/30'
   }`
   return (
     <div className="flex items-center gap-2 sm:w-28 flex-shrink-0">
@@ -240,8 +240,8 @@ export function ActivityItem({
   }
   const containerClass = `demo-list-item flex flex-col gap-3 sm:flex-row sm:items-center p-3 border transition-all ${
     isRest
-      ? 'border-[rgba(255,255,255,0.05)] bg-[rgba(255,255,255,0.01)]'
-      : 'border-line bg-[rgba(0,240,255,0.01)]'
+      ? 'border-line/50'
+      : 'border-line bg-lagoon/[0.03]'
   }`
 
   return (

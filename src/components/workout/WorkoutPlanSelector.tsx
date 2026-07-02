@@ -29,7 +29,7 @@ export function WorkoutPlanSelector({
           onClick={onToggleSound}
           className={`p-1.5 rounded-lg border transition-all ${
             soundEnabled
-              ? 'border-line bg-[rgba(0,240,255,0.06)] text-lagoon'
+              ? 'border-line bg-lagoon/10 text-lagoon'
               : 'border-transparent bg-transparent text-ink-soft'
           }`}
           title={soundEnabled ? 'Mute Beeps' : 'Enable Beeps'}
@@ -42,7 +42,7 @@ export function WorkoutPlanSelector({
         <select
           value={selectedPlanId}
           onChange={(e) => onPlanChange(e.target.value)}
-          className="demo-select font-display font-bold text-sm bg-slate-900/90 text-white flex-grow cursor-pointer"
+          className="demo-select font-display font-bold text-sm flex-grow cursor-pointer"
         >
           {plans.map((p) => (
             <option key={p.id} value={p.id}>
@@ -53,7 +53,7 @@ export function WorkoutPlanSelector({
 
         <Link
           to="/admin"
-          className="demo-button demo-button-secondary p-2.5 rounded-xl border border-line hover:bg-[rgba(0,240,255,0.06)] text-ink flex items-center justify-center"
+          className="demo-button demo-button-secondary p-2.5 rounded-xl border border-line hover:bg-lagoon/10 text-ink flex items-center justify-center"
           title="Configure Plans"
         >
           <Settings className="h-4 w-4" />

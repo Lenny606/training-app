@@ -21,7 +21,7 @@ function ActivityMetadata({ activity }: { activity: Activity }) {
   return (
     <div className="flex items-center justify-center gap-2 mt-1.5">
       {items.map((text, idx) => (
-        <span key={idx} className="demo-pill text-[10px] py-0.5 px-2 bg-slate-900 border-line">
+        <span key={idx} className="demo-pill text-[10px] py-0.5 px-2">
           {text}
         </span>
       ))}

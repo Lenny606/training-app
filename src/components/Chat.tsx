@@ -96,7 +96,7 @@ function ChatSession({ model }: { model: ModelId }) {
       </div>
 
       {error && (
-        <div className="border-t border-line px-4 py-2 text-xs text-red-500">
+        <div className="border-t border-line px-4 py-2 text-xs text-danger">
           {error.message}
         </div>
       )}

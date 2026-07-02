@@ -108,7 +108,7 @@ export default function Header() {
             <Link
               key={to}
               to={to}
-              className="block rounded-xl px-4 py-3 text-sm font-semibold text-ink-soft transition-colors hover:bg-link-hover hover:text-ink [&.is-active]:text-lagoon [&.is-active]:bg-[rgba(0,240,255,0.06)]"
+              className="block rounded-xl px-4 py-3 text-sm font-semibold text-ink-soft transition-colors hover:bg-link-hover hover:text-ink [&.is-active]:text-lagoon-deep [&.is-active]:bg-lagoon/10"
               activeProps={{ className: 'is-active' }}
               onClick={() => setMenuOpen(false)}
             >

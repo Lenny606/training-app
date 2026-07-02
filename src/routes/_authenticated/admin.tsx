@@ -32,8 +32,8 @@ function PlanEditorPanel({ editingPlan, saveSuccess, hasUnsavedChanges, handlers
         onSavePlan={handlers.handleSavePlan}
       />
       {saveSuccess && (
-        <div className="flex items-center gap-2 bg-emerald-950/50 border border-emerald-500/30 rounded-xl px-4 py-2.5 text-xs text-emerald-300 animate-pulse">
-          <CheckCircle2 className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+        <div className="flex items-center gap-2 bg-success/10 border border-success/30 rounded-xl px-4 py-2.5 text-xs text-success">
+          <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
           <span>Workout program configuration successfully saved to active memory.</span>
         </div>
       )}

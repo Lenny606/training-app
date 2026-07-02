@@ -55,8 +55,8 @@ function SidebarItem({ plan, isSelected, onSelect, onDelete }: SidebarItemProps)
       onClick={() => onSelect(plan.id)}
       className={`demo-list-item cursor-pointer flex flex-col gap-1 transition-all ${
         isSelected
-          ? 'border-lagoon-deep bg-[rgba(0,240,255,0.06)] shadow-[0_0_12px_rgba(0,240,255,0.08)]'
-          : 'hover:border-[rgba(0,240,255,0.2)] hover:bg-[rgba(255,255,255,0.02)]'
+          ? 'border-lagoon-deep bg-lagoon/5 shadow-[0_0_12px_color-mix(in_oklab,var(--lagoon)_10%,transparent)]'
+          : 'hover:border-lagoon/30 hover:bg-link-hover'
       }`}
     >
       <div className="flex items-center justify-between gap-2">
@@ -83,7 +83,7 @@ function SidebarItem({ plan, isSelected, onSelect, onDelete }: SidebarItemProps)
       <p className="text-xs text-ink-soft m-0 line-clamp-2">
         {plan.description || 'No description provided.'}
       </p>
-      <div className="flex items-center justify-between mt-2 pt-2 border-t border-[rgba(255,255,255,0.04)] text-[10px] text-ink-soft">
+      <div className="flex items-center justify-between mt-2 pt-2 border-t border-line/60 text-[10px] text-ink-soft">
         <span className="flex items-center gap-1">
           <Calendar className="h-3 w-3 text-lagoon-deep" />
           {plan.daysPerWeek} days/wk
@@ -93,7 +93,7 @@ function SidebarItem({ plan, isSelected, onSelect, onDelete }: SidebarItemProps)
             e.stopPropagation()
             onDelete(plan.id)
           }}
-          className="demo-button demo-button-icon border-red-950/50 bg-red-950/10 text-red-400 hover:bg-red-950/30 hover:text-red-300"
+          className="demo-button demo-button-icon border-danger/30 bg-danger/10 text-danger hover:bg-danger/20"
           title="Delete Plan"
         >
           <Trash2 className="h-3.5 w-3.5" />
@@ -133,7 +133,7 @@ export function PlansSidebar({
           </h2>
           <button
             onClick={onCreateNewPlan}
-            className="demo-button demo-button-sm bg-[rgba(0,240,255,0.15)] text-lagoon border-[rgba(0,240,255,0.3)] flex items-center gap-1"
+            className="demo-button demo-button-sm bg-lagoon/15 text-lagoon-deep border-lagoon/30 flex items-center gap-1"
             title="Create New Plan"
           >
             <Plus className="h-3.5 w-3.5" />

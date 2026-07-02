@@ -18,10 +18,16 @@ interface TimerDisplayProps {
   onSkipForward: () => void
 }
 
+const TIMER_PANEL_CLASS =
+  'demo-panel p-6 rounded-[2.5rem] rise-in shadow-[0_22px_50px_color-mix(in_oklab,var(--lagoon)_6%,transparent)] relative overflow-hidden flex flex-col items-center justify-center gap-6'
+
+const TIMER_PANEL_GLOW_CLASS =
+  'pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,color-mix(in_oklab,var(--lagoon)_5%,transparent),transparent_60%)]'
+
 function EmptyTimerDisplay() {
   return (
-    <section className="demo-panel p-6 rounded-[2.5rem] rise-in shadow-[0_22px_50px_rgba(0,240,255,0.05)] relative overflow-hidden flex flex-col items-center justify-center gap-6">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,240,255,0.04),transparent_60%)]" />
+    <section className={TIMER_PANEL_CLASS}>
+      <div className={TIMER_PANEL_GLOW_CLASS} />
       <div className="text-center py-10">
         <Settings className="h-8 w-8 text-ink-soft mx-auto mb-3 animate-spin" />
         <h3 className="m-0 text-sm font-bold text-ink mb-2">
@@ -82,8 +88,8 @@ export function TimerDisplay({
   )
 
   return (
-    <section className="demo-panel p-6 rounded-[2.5rem] rise-in shadow-[0_22px_50px_rgba(0,240,255,0.05)] relative overflow-hidden flex flex-col items-center justify-center gap-6">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,240,255,0.04),transparent_60%)]" />
+    <section className={TIMER_PANEL_CLASS}>
+      <div className={TIMER_PANEL_GLOW_CLASS} />
 
       <ProgressCircle
         radius={radius}

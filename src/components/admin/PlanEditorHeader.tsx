@@ -9,8 +9,8 @@ interface PlanEditorHeaderProps {
 
 function getSaveButtonClass(hasUnsavedChanges: boolean) {
   const base = 'demo-button demo-button-sm flex items-center gap-1.5 transition-all'
-  const modified = 'bg-lagoon-deep text-slate-900 border-lagoon shadow-[0_0_12px_rgba(0,240,255,0.25)] hover:bg-lagoon'
-  const saved = 'bg-emerald-950/40 text-emerald-300 border-emerald-800 hover:bg-emerald-900/50'
+  const modified = 'bg-lagoon-deep text-lagoon-ink border-lagoon shadow-[0_0_12px_color-mix(in_oklab,var(--lagoon)_25%,transparent)] hover:bg-lagoon'
+  const saved = 'bg-success/10 text-success border-success/30 hover:bg-success/15'
   return `${base} ${hasUnsavedChanges ? modified : saved}`
 }
 

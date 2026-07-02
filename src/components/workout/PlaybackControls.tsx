@@ -24,7 +24,7 @@ export function PlaybackControls({
       <button
         onClick={onSkipBackward}
         disabled={!canSkipBackward}
-        className="p-3 rounded-2xl border border-line bg-chip text-ink-soft hover:text-white disabled:opacity-30"
+        className="p-3 rounded-2xl border border-line bg-chip text-ink-soft hover:text-ink disabled:opacity-30"
         title="Previous Activity"
       >
         <SkipBack className="h-5 w-5" />
@@ -34,8 +34,8 @@ export function PlaybackControls({
         onClick={onPlayPause}
         className={`p-5 rounded-full border flex items-center justify-center shadow-lg transition-all active:scale-95 ${
           isPlaying
-            ? 'border-amber-500 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20'
-            : 'border-lagoon bg-[rgba(0,240,255,0.12)] text-lagoon hover:bg-[rgba(0,240,255,0.22)] shadow-[0_0_15px_rgba(0,240,255,0.25)]'
+            ? 'border-amber-500 bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 dark:text-amber-400'
+            : 'border-lagoon bg-lagoon/10 text-lagoon-deep hover:bg-lagoon/20 shadow-[0_0_15px_color-mix(in_oklab,var(--lagoon)_25%,transparent)]'
         }`}
         title={isPlaying ? 'Pause Session' : 'Start Session'}
       >
@@ -44,7 +44,7 @@ export function PlaybackControls({
 
       <button
         onClick={onStop}
-        className="p-3 rounded-2xl border border-red-950 bg-red-950/20 text-red-400 hover:bg-red-950/40"
+        className="p-3 rounded-2xl border border-danger/30 bg-danger/10 text-danger hover:bg-danger/20"
         title="Stop / Reset Workout"
       >
         <RotateCcw className="h-5 w-5" />
@@ -53,7 +53,7 @@ export function PlaybackControls({
       <button
         onClick={onSkipForward}
         disabled={!canSkipForward}
-        className="p-3 rounded-2xl border border-line bg-chip text-ink-soft hover:text-white disabled:opacity-30"
+        className="p-3 rounded-2xl border border-line bg-chip text-ink-soft hover:text-ink disabled:opacity-30"
         title="Next Activity"
       >
         <SkipForward className="h-5 w-5" />

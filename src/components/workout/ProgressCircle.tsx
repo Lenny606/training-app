@@ -13,9 +13,10 @@ interface ProgressCircleProps {
 
 function getProgressCircleTheme(type: 'exercise' | 'rest' | undefined) {
   const isRest = type === 'rest'
+  const base = isRest ? 'var(--palm)' : 'var(--lagoon)'
   return {
-    strokeColor: isRest ? '#0ea5e9' : 'var(--lagoon)',
-    shadowColor: isRest ? 'rgba(14,165,233,0.35)' : 'rgba(0,240,255,0.35)',
+    strokeColor: base,
+    shadowColor: `color-mix(in oklab, ${base} 35%, transparent)`,
   }
 }
 
@@ -45,7 +46,7 @@ export function ProgressCircle({
           cx="120"
           cy="120"
           r={radius}
-          className="stroke-[rgba(255,255,255,0.03)] fill-none stroke-[8]"
+          className="stroke-line fill-none stroke-[8]"
         />
         <circle
           cx="120"
@@ -72,7 +73,7 @@ export function ProgressCircle({
           {timeText}
         </span>
         
-        <span className="text-[10px] text-ink-soft font-mono mt-1 px-2.5 py-0.5 border border-line bg-[rgba(255,255,255,0.02)] rounded-full">
+        <span className="text-[10px] text-ink-soft font-mono mt-1 px-2.5 py-0.5 border border-line bg-chip/40 rounded-full">
           Step {currentActivityIndex + 1} of {totalActivities}
         </span>
       </div>
