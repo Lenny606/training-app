@@ -33,6 +33,32 @@ function parseActivityField(field: keyof Activity, value: string) {
   return value
 }
 
+// Seed content for a freshly created plan (one exercise + one rest).
+function createDefaultPlanData() {
+  return {
+    name: 'New Training Plan',
+    description: 'Describe your program goals and focus area.',
+    daysPerWeek: 3,
+    activities: [
+      {
+        id: createId('act'),
+        name: 'Barbell Bench Press',
+        type: 'exercise' as const,
+        duration: 180,
+        sets: 3,
+        reps: '10',
+        weight: '60 kg',
+      },
+      {
+        id: createId('act'),
+        name: 'Rest',
+        type: 'rest' as const,
+        duration: 90,
+      },
+    ],
+  }
+}
+
 interface UsePlanEditorProps {
   plans: TrainingPlan[]
   selectedPlanId: string
@@ -98,6 +124,69 @@ function usePlansList() {
   }
 }
 
+// Activity-level edits against the in-progress editing draft. Split out of
+// usePlanEditor so the plan-level concerns (load, save, delete) stay readable.
+function useActivityEditor(
+  editingPlan: TrainingPlan | null,
+  setEditingPlan: React.Dispatch<React.SetStateAction<TrainingPlan | null>>,
+  markDirty: () => void,
+) {
+  const handleActivityChange = (index: number, field: keyof Activity, value: string) => {
+    if (!editingPlan) return
+    const updatedActivities = [...editingPlan.activities]
+    const activity = updatedActivities[index]
+    if (!activity) return
+
+    updatedActivities[index] = {
+      ...activity,
+      [field]: parseActivityField(field, value),
+    }
+
+    setEditingPlan({ ...editingPlan, activities: updatedActivities })
+    markDirty()
+  }
+
+  // Move an activity to an arbitrary position (drag & drop, or keyboard drag).
+  const reorderActivity = (from: number, to: number) => {
+    if (!editingPlan || from === to) return
+    if (to < 0 || to >= editingPlan.activities.length) return
+    setEditingPlan({
+      ...editingPlan,
+      activities: arrayMove(editingPlan.activities, from, to),
+    })
+    markDirty()
+  }
+
+  // Arrow-button fallback (a11y): one step up/down, mapped onto reorderActivity.
+  const moveActivity = (index: number, direction: 'up' | 'down') => {
+    reorderActivity(index, direction === 'up' ? index - 1 : index + 1)
+  }
+
+  const deleteActivity = (index: number) => {
+    if (!editingPlan) return
+    setEditingPlan({
+      ...editingPlan,
+      activities: editingPlan.activities.filter((_, i) => i !== index),
+    })
+    markDirty()
+  }
+
+  const handleAddActivity = (newActData: Omit<Activity, 'id'>) => {
+    if (!editingPlan) return
+    const newActivity: Activity = {
+      id: createId('act'),
+      ...newActData,
+    }
+    setEditingPlan({
+      ...editingPlan,
+      activities: [...editingPlan.activities, newActivity],
+    })
+    markDirty()
+  }
+
+  return { handleActivityChange, reorderActivity, moveActivity, deleteActivity, handleAddActivity }
+}
+
 function usePlanEditor({
   plans,
   selectedPlanId,
@@ -118,90 +207,19 @@ function usePlanEditor({
     setHasUnsavedChanges(false)
   }, [selectedPlanId, selectedPlan])
 
+  const activityEditor = useActivityEditor(editingPlan, setEditingPlan, () =>
+    setHasUnsavedChanges(true),
+  )
+
   const handleMetaChange = (field: keyof TrainingPlan, value: string | number) => {
     if (!editingPlan) return
     setEditingPlan({ ...editingPlan, [field]: value })
     setHasUnsavedChanges(true)
   }
 
-  const handleActivityChange = (index: number, field: keyof Activity, value: string) => {
-    if (!editingPlan) return
-    const updatedActivities = [...editingPlan.activities]
-    const activity = updatedActivities[index]
-    if (!activity) return
-
-    updatedActivities[index] = {
-      ...activity,
-      [field]: parseActivityField(field, value),
-    }
-
-    setEditingPlan({ ...editingPlan, activities: updatedActivities })
-    setHasUnsavedChanges(true)
-  }
-
-  // Move an activity to an arbitrary position (drag & drop, or keyboard drag).
-  const reorderActivity = (from: number, to: number) => {
-    if (!editingPlan || from === to) return
-    if (to < 0 || to >= editingPlan.activities.length) return
-    setEditingPlan({
-      ...editingPlan,
-      activities: arrayMove(editingPlan.activities, from, to),
-    })
-    setHasUnsavedChanges(true)
-  }
-
-  // Arrow-button fallback (a11y): one step up/down, mapped onto reorderActivity.
-  const moveActivity = (index: number, direction: 'up' | 'down') => {
-    reorderActivity(index, direction === 'up' ? index - 1 : index + 1)
-  }
-
-  const deleteActivity = (index: number) => {
-    if (!editingPlan) return
-    setEditingPlan({
-      ...editingPlan,
-      activities: editingPlan.activities.filter((_, i) => i !== index),
-    })
-    setHasUnsavedChanges(true)
-  }
-
-  const handleAddActivity = (newActData: Omit<Activity, 'id'>) => {
-    if (!editingPlan) return
-    const newActivity: Activity = {
-      id: createId('act'),
-      ...newActData,
-    }
-    setEditingPlan({
-      ...editingPlan,
-      activities: [...editingPlan.activities, newActivity],
-    })
-    setHasUnsavedChanges(true)
-  }
-
   const handleCreateNewPlan = async () => {
-    const newPlanData = {
-      name: 'New Training Plan',
-      description: 'Describe your program goals and focus area.',
-      daysPerWeek: 3,
-      activities: [
-        {
-          id: createId('act'),
-          name: 'Barbell Bench Press',
-          type: 'exercise' as const,
-          duration: 180,
-          sets: 3,
-          reps: '10',
-          weight: '60 kg'
-        },
-        {
-          id: createId('act'),
-          name: 'Rest',
-          type: 'rest' as const,
-          duration: 90
-        }
-      ]
-    }
     try {
-      const created = await createPlan({ data: newPlanData })
+      const created = await createPlan({ data: createDefaultPlanData() })
       await loadPlans(created.id)
       setSaveSuccess(true)
       setTimeout(() => setSaveSuccess(false), 2000)
@@ -253,11 +271,7 @@ function usePlanEditor({
     saveSuccess,
     hasUnsavedChanges,
     handleMetaChange,
-    handleActivityChange,
-    moveActivity,
-    reorderActivity,
-    deleteActivity,
-    handleAddActivity,
+    ...activityEditor,
     handleCreateNewPlan,
     handleSavePlan,
     handleDiscardChanges,
