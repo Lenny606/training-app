@@ -57,15 +57,23 @@ PM2 spouští `node dist/server/server.js`. Server poslouchá na `PORT`
 
 | Secret | Význam |
 | --- | --- |
-| `VPS_HOST` | IP / hostname serveru. |
-| `VPS_PORT` | SSH port (default 22). |
-| `VPS_USERNAME` | Uživatel na VPS. |
-| `VPS_PASSWORD` | Heslo uživatele (SCP + SSH). |
+| `HOST` | IP / hostname serveru. |
+| `PORT` | SSH port (default 22). |
+| `USERNAME` | Uživatel na VPS. |
+| `PASSWORD` | Heslo uživatele (SCP + SSH). |
 | `DEPLOY_PATH` | Cílový adresář na VPS, např. `/var/www/training-app`. |
+| `OPENAI_API_KEY` | AI provider klíč (default provider). Upsertuje se do serverového `.env`. |
+| `ANTHROPIC_API_KEY` | AI provider klíč (volitelný, jen když se používá Claude). Upsert do `.env`. |
 
-**Runtime env appky (`JWT_SECRET`, `ANTHROPIC_API_KEY`, `DATABASE_URL`) NEjsou
-v GitHub Secrets** — žijí v `.env` souboru **na serveru** (persistentní napříč
-deploymenty, mimo přenášený artefakt). Workflow tento soubor nikdy nepřepisuje.
+**AI provider klíče** (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`) jdou z GitHub
+Secrets a workflow je při deployi **upsertuje** do serverového `.env`
+(idempotentně — řádek se nejdřív smaže, pak připojí; prázdný/nenastavený secret
+se přeskočí, takže ručně nastavená hodnota se nepřepíše). Předává je
+`appleboy/ssh-action` přes `envs`, ne interpolací do skriptu.
+
+**Ostatní runtime env (`JWT_SECRET`, `DATABASE_URL`) NEjsou v GitHub Secrets** —
+žijí jen v `.env` **na serveru** (persistentní napříč deploymenty, mimo
+přenášený artefakt). Workflow je nikdy nepřepisuje.
 
 ## 5. PM2 konfigurace
 

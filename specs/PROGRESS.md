@@ -11,8 +11,8 @@ Legenda stavu: 🔲 not started · 🚧 in progress · ✅ done · ⛔ blocked
 | --- | --- | --- | --- |
 | [repository-layer](./repository-layer.md) | ✅ | — | SQLite + Drizzle, server functions, klient přepojen; localStorage pro plány odstraněn. |
 | [auth-layer](./auth-layer.md) | ✅ | repository-layer | JWT (jose HS256) access+refresh v HttpOnly cookies, argon2id, User model, requireAuth/requireRole, `_authenticated` guard, login/register/logout UI. Plány scoped na `ownerId`, klon default plánů při registraci. |
-| [ai-client](./ai-client.md) | 🔲 | repository-layer, auth-layer | Server-side tools scoped na usera. |
-| [deploy](./deploy.md) | 🔲 | repository-layer, auth-layer | VPS + GitHub Actions + PM2. |
+| [ai-client](./ai-client.md) | ✅ | repository-layer, auth-layer | TanStack AI (`@tanstack/ai`), tools scoped na usera, streaming SSE, tool approval, provider portability (Claude + GPT). |
+| [deploy](./deploy.md) | ✅ | repository-layer, auth-layer | Kód hotový: GH Actions + SCP + PM2 + Nitro node-server + prod migrace. Zbývá jen jednorázová příprava VPS (mimo repo). |
 | [admin-drag-drop](./admin-drag-drop.md) | 🔲 | — (řazení šipkami hotové) | Nahrazuje řazení šipkami za DnD. |
 | [mobile-style-audit](./mobile-style-audit.md) | ✅ | — | Audit 3 rout × 360/390/414/768: 0 overflow. Prim. tap targety (hamburger, theme toggle) na 44px; admin ikony <44 odděleny do follow-up. |
 
@@ -57,17 +57,32 @@ Legenda stavu: 🔲 not started · 🚧 in progress · ✅ done · ⛔ blocked
 - Tichý auto-refresh v middleware → **iterace 2** (spec §12). `refresh` endpoint + rotace + reuse-revokace hotové.
 - `JWT_SECRET`: fail-fast v prod, insecure dev fallback (viz `.env.example`).
 
-### ai-client 🔲
-- [ ] TanStack AI SDK setup
-- [ ] Server-side tools (scoped na usera)
-- [ ] UI asistenta
-- [ ] Napojení na repository + auth context
+### ai-client ✅
+- [x] TanStack AI SDK setup — `@tanstack/ai` + `-react` + `-anthropic` + `-openai`
+- [x] Provider adaptéry (portability): `src/ai/client.ts` registr, default `claude-opus-4.8`, haiku + GPT-5.2
+- [x] System prompt (`src/ai/system-prompt.ts`, server-only) + fail-fast `ANTHROPIC_API_KEY`
+- [x] Typed tools (`toolDefinition` + Zod): list/get/summarize/create/update/add_activity/delete/start_workout
+- [x] Tools scoped na usera přes factory `buildTools(userId, repo)` — ownerId nikdy z klienta
+- [x] `delete_plan` `needsApproval` → human-in-the-loop approval v UI
+- [x] Streaming SSE endpoint `src/routes/api.chat.ts` (server route), `requireAuth` (getSessionUser 401) + rate limit + usage middleware
+- [x] Chat UI `src/components/Chat.tsx` (streaming, thinking, tool-call viz, approval, provider picker) + route `_authenticated/assistant.tsx`
+- [x] `start_workout` → navigace na `/?plan=<id>` (index route `validateSearch`) → timer s předvybraným plánem
+- [x] Testy tools (`src/ai/tools.test.ts`, 16) proti in-memory SQLite vč. scoping/NotFound
+- [x] Verifikace: tsc ✅, test 53/53 ✅, lint 0 errors ✅, build ✅, žádný leak server-only do klient bundle
 
-### deploy 🔲
-- [ ] GitHub Actions workflow
-- [ ] SCP přenos buildu na VPS
-- [ ] PM2 process management
-- [ ] Env secrets + DB migrace v pipeline
+**Odchylky od spec (potvrdit):**
+- SDK: „TanStack AI SDK" = reálný balík `@tanstack/ai` (0.38.x, AG-UI). Vercel AI SDK fallback nebyl potřeba.
+- Model id je `claude-opus-4.8` (tečka — tak to má typová unie adaptéru), ne `claude-opus-4-8`.
+- Endpoint je **server route** `routes/api.chat.ts` (ne `server/chat.ts` server-fn) — `useChat` potřebuje HTTP SSE endpoint.
+- Perzistence historie konverzací do DB: mimo rozsah (§8), zatím klientský stav.
+
+### deploy ✅ (kód)
+- [x] GitHub Actions workflow (`.github/workflows/deploy.yml`) — build + lint/test/tsc gate + SCP + SSH
+- [x] SCP přenos buildu na VPS (`appleboy/scp-action`, heslo)
+- [x] PM2 process management (`ecosystem.config.cjs`, `pm2 reload` → fallback `start`)
+- [x] Env secrets + DB migrace v pipeline (`db:migrate:prod` z serverového `.env`)
+- [x] Runnable Node server přes Nitro (`.output/server/index.mjs`)
+- [ ] (mimo repo) jednorázová příprava VPS: Node/PM2/nginx+TLS, `.env` (600), `pm2 startup`, GitHub Secrets
 
 ### admin-drag-drop 🔲
 - [ ] Výběr DnD knihovny / přístupu

@@ -14,6 +14,8 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as ApiChatRouteImport } from './routes/api.chat'
+import { Route as AuthenticatedAssistantRouteImport } from './routes/_authenticated/assistant'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
 const RegisterRoute = RegisterRouteImport.update({
@@ -40,6 +42,16 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAssistantRoute = AuthenticatedAssistantRouteImport.update({
+  id: '/assistant',
+  path: '/assistant',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -52,12 +64,16 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/assistant': typeof AuthenticatedAssistantRoute
+  '/api/chat': typeof ApiChatRoute
 }
 export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/assistant': typeof AuthenticatedAssistantRoute
+  '/api/chat': typeof ApiChatRoute
   '/': typeof AuthenticatedIndexRoute
 }
 export interface FileRoutesById {
@@ -67,13 +83,29 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/assistant': typeof AuthenticatedAssistantRoute
+  '/api/chat': typeof ApiChatRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/login' | '/register' | '/admin'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/login'
+    | '/register'
+    | '/admin'
+    | '/assistant'
+    | '/api/chat'
   fileRoutesByTo: FileRoutesByTo
-  to: '/about' | '/login' | '/register' | '/admin' | '/'
+  to:
+    | '/about'
+    | '/login'
+    | '/register'
+    | '/admin'
+    | '/assistant'
+    | '/api/chat'
+    | '/'
   id:
     | '__root__'
     | '/_authenticated'
@@ -81,6 +113,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/_authenticated/admin'
+    | '/_authenticated/assistant'
+    | '/api/chat'
     | '/_authenticated/'
   fileRoutesById: FileRoutesById
 }
@@ -89,6 +123,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
+  ApiChatRoute: typeof ApiChatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -128,6 +163,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/assistant': {
+      id: '/_authenticated/assistant'
+      path: '/assistant'
+      fullPath: '/assistant'
+      preLoaderRoute: typeof AuthenticatedAssistantRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -140,11 +189,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAssistantRoute: typeof AuthenticatedAssistantRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAssistantRoute: AuthenticatedAssistantRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
 
@@ -157,6 +208,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
+  ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

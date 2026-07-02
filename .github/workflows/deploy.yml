@@ -45,15 +45,37 @@ jobs:
 
       - name: Extract, install prod deps, migrate, reload
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          # AI provider keys from GitHub Secrets, forwarded to the remote shell
+          # (via `envs`) and upserted into the server-side .env below. Leave a
+          # secret unset to skip it — a hand-set value in .env is never clobbered.
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         with:
           host: ${{ secrets.HOST }}
           port: ${{ secrets.PORT || '22' }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
+          envs: OPENAI_API_KEY,ANTHROPIC_API_KEY
           script: |
             set -e
             cd "${{ secrets.DEPLOY_PATH }}"
             tar -xzf release.tar.gz && rm release.tar.gz
+
+            # Upsert AI provider keys into the persistent, git-ignored .env.
+            # Idempotent: drop any existing line for the key, then append the
+            # current value (so redeploys don't pile up duplicate lines). Empty
+            # (unconfigured) secrets are skipped, never overwriting a manual value.
+            touch .env && chmod 600 .env
+            upsert_env() {
+              [ -z "$2" ] && return 0
+              grep -v "^$1=" .env > .env.tmp 2>/dev/null || true
+              mv .env.tmp .env
+              printf '%s=%s\n' "$1" "$2" >> .env
+            }
+            upsert_env OPENAI_API_KEY "$OPENAI_API_KEY"
+            upsert_env ANTHROPIC_API_KEY "$ANTHROPIC_API_KEY"
+
             # better-sqlite3 is a native module — build it for the server arch.
             npm ci --omit=dev
             # Load runtime env (DATABASE_URL, etc.) from the server-side .env so

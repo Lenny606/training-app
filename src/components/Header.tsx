@@ -8,6 +8,7 @@ import type { RouterContext } from '../routes/__root'
 const NAV_LINKS = [
   { to: '/', label: 'Workout' },
   { to: '/admin', label: 'Administration' },
+  { to: '/assistant', label: 'Assistant' },
 ] as const
 
 export default function Header() {

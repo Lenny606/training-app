@@ -9,18 +9,27 @@ import { NextActivityCard } from '../../components/workout/NextActivityCard'
 export const Route = createFileRoute('/_authenticated/')({
   component: App,
   loader: () => listPlans(),
+  // `?plan=<id>` lets the assistant's start_workout tool deep-link to a plan.
+  validateSearch: (search): { plan?: string } => ({
+    plan: typeof search.plan === 'string' ? search.plan : undefined,
+  }),
 })
 
 export default function App() {
   const plans = Route.useLoaderData()
-  const [selectedPlanId, setSelectedPlanId] = useState<string>(plans[0]?.id ?? '')
+  const { plan: planParam } = Route.useSearch()
+  const initialPlanId =
+    planParam && plans.some((p) => p.id === planParam) ? planParam : (plans[0]?.id ?? '')
+  const [selectedPlanId, setSelectedPlanId] = useState<string>(initialPlanId)
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true)
 
   const selectedPlan = plans.find((p) => p.id === selectedPlanId)
 
   // After mount (post-hydration → SSR-safe), reselect the plan from a persisted
-  // session so a refresh mid-workout restores the right plan and timer.
+  // session so a refresh mid-workout restores the right plan and timer. An
+  // explicit `?plan=` (e.g. from the assistant) wins over the persisted session.
   useEffect(() => {
+    if (planParam) return
     const persistedId = getPersistedPlanId()
     if (persistedId && persistedId !== selectedPlanId && plans.some((p) => p.id === persistedId)) {
       setSelectedPlanId(persistedId)
