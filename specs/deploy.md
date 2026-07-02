@@ -45,6 +45,7 @@ PM2 spouští `node dist/server/server.js`. Server poslouchá na `PORT`
 | Build | **na CI runneru** (`npm ci && npm run build`) | Čisté, reprodukovatelné prostředí; server nemusí mít dev toolchain. |
 | Přenos | **SCP přes jméno/heslo** (`appleboy/scp-action`) | Požadavek. Secrets v GitHub Secrets. |
 | Prod závislosti | **instalovat na VPS** (`npm ci --omit=dev`) | `better-sqlite3` je nativní modul — musí se sestavit pro arch serveru, **nekopírovat `node_modules` z CI**. |
+| Verze npm | **pinned `11.14.1`** (local == CI == VPS) | ubuntu-latest/VPS default = npm 10 s Node 22, řeší strom jinak než lokální npm 11 → `npm ci` padal na `Missing: lru-cache@… from lock file`. Pin: `packageManager` v `package.json` + `env.NPM_VERSION` ve workflow (CI `npm i -g npm@$NPM_VERSION`, VPS `npx npm@$NPM_VERSION ci`). |
 | Process manager | **PM2** + `ecosystem.config.cjs` | Požadavek; `pm2 reload` = zero-downtime restart. |
 | Migrace | **na VPS před reloadem** (`npm run db:migrate`) | Schéma musí být aktuální dřív, než poběží nový kód. |
 | Trigger | **push na `main`** (příp. tag/manual) | Jednoduché CI; lze zúžit na release tagy. |

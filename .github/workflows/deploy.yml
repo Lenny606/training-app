@@ -9,6 +9,14 @@ concurrency:
   group: deploy-production
   cancel-in-progress: false # never interrupt an in-flight deploy
 
+env:
+  # Pin npm so CI and the VPS resolve the lockfile identically to local dev.
+  # ubuntu-latest and the VPS ship npm 10 with Node 22, which resolves the tree
+  # differently than the npm 11 that generates the lock — hence `npm ci` used to
+  # fail with "Missing: lru-cache@... from lock file". Keep this in sync with
+  # package.json "packageManager"/"engines" and your local npm.
+  NPM_VERSION: '11.14.1'
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -19,6 +27,9 @@ jobs:
         with:
           node-version: 22
           cache: npm
+
+      # Match the npm that generated the lockfile (see top-level env).
+      - run: npm install -g npm@${{ env.NPM_VERSION }}
 
       # --- Test / lint / type gate: red = no deploy ---
       - run: npm ci
@@ -51,12 +62,14 @@ jobs:
           # secret unset to skip it — a hand-set value in .env is never clobbered.
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Same pinned npm as CI/local, so the VPS `npm ci` matches the lockfile.
+          NPM_VERSION: ${{ env.NPM_VERSION }}
         with:
           host: ${{ secrets.HOST }}
           port: ${{ secrets.PORT || '22' }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          envs: OPENAI_API_KEY,ANTHROPIC_API_KEY
+          envs: OPENAI_API_KEY,ANTHROPIC_API_KEY,NPM_VERSION
           script: |
             set -e
             cd "${{ secrets.DEPLOY_PATH }}"
@@ -77,7 +90,9 @@ jobs:
             upsert_env ANTHROPIC_API_KEY "$ANTHROPIC_API_KEY"
 
             # better-sqlite3 is a native module — build it for the server arch.
-            npm ci --omit=dev
+            # Use the pinned npm via npx (no global install / no sudo needed) so
+            # the lockfile resolves the same as CI and local dev.
+            npx -y "npm@${NPM_VERSION}" ci --omit=dev
             # Load runtime env (DATABASE_URL, etc.) from the server-side .env so
             # migrations run against the production DB before the new code boots.
             set -a; [ -f .env ] && . ./.env; set +a
