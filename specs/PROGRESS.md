@@ -54,7 +54,7 @@ Legenda stavu: 🔲 not started · 🚧 in progress · ✅ done · ⛔ blocked
 **Odchylky od spec (k potvrzení):**
 - `admin.tsx` gated `requireAuth` (ne `requireRole('admin')`) — plány jsou per-user, každý edituje svoje; admin role zatím nevyužita (reserved). Spec §7 chtěl admin-only.
 - Global middleware v `src/start.ts` vynecháno — `requireAuth`/`requireRole` skládány per server-fn (guidance: data boundary patří na fn, ne globálně; vyhne se double-run). Spec §6.1 chtěl global.
-- Tichý auto-refresh v middleware → **iterace 2** (spec §12). `refresh` endpoint + rotace + reuse-revokace hotové.
+- ~~Tichý auto-refresh → iterace 2~~ ✅ **hotovo**: `getSessionUser()` po expiraci access tokenu tiše razí nový z platného refresh cookie (`resolveSilentRefresh`, `src/auth/silent-refresh.ts`), kontroluje `isActive` (respektuje logout/revoke). **Bez rotace** refresh tokenu — silent refresh běží na každém chráněném requestu, rotace by při souběžných requestech spustila reuse-detektor a shodila živou session; rotace zůstává na explicitním `refresh` endpointu. Testy: `silent-refresh.test.ts` (5).
 - `JWT_SECRET`: fail-fast v prod, insecure dev fallback (viz `.env.example`).
 
 ### ai-client ✅
