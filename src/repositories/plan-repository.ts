@@ -22,4 +22,6 @@ export interface PlanRepository {
   create(plan: NewTrainingPlan, ownerId: string): Promise<TrainingPlan>
   update(id: string, patch: Partial<NewTrainingPlan>, ownerId: string): Promise<TrainingPlan>
   remove(id: string, ownerId: string): Promise<void>
+  /** Persists a new plan ordering; `orderedIds[i]` is assigned position `i`. Owner-scoped. */
+  reorder(orderedIds: string[], ownerId: string): Promise<void>
 }

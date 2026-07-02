@@ -15,6 +15,13 @@
       "when": 1782929417717,
       "tag": "0001_organic_phantom_reporter",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1783015064644,
+      "tag": "0002_eminent_swarm",
+      "breakpoints": true
     }
   ]
 }

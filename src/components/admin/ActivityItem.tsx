@@ -1,5 +1,8 @@
-import { ArrowUp, ArrowDown, Trash2 } from 'lucide-react'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { ArrowUp, ArrowDown, GripVertical, Trash2 } from 'lucide-react'
 import type { Activity } from '../../domain/plans'
+import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 
 interface ExerciseFieldsProps {
   activity: Activity
@@ -179,7 +182,17 @@ export function ActivityItem({
   onMoveActivity,
   onDeleteActivity,
 }: ActivityItemProps) {
+  const reducedMotion = usePrefersReducedMotion()
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } =
+    useSortable({ id: activity.id })
+
   const isRest = activity.type === 'rest'
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition: reducedMotion ? undefined : transition,
+    opacity: isDragging ? 0.4 : undefined,
+    zIndex: isDragging ? 1 : undefined,
+  }
   const containerClass = `demo-list-item flex flex-col gap-3 sm:flex-row sm:items-center p-3 border transition-all ${
     isRest
       ? 'border-[rgba(255,255,255,0.05)] bg-[rgba(255,255,255,0.01)]'
@@ -187,7 +200,17 @@ export function ActivityItem({
   }`
 
   return (
-    <div className={containerClass}>
+    <div ref={setNodeRef} style={style} className={containerClass}>
+      <button
+        ref={setActivatorNodeRef}
+        {...attributes}
+        {...listeners}
+        className="demo-button demo-button-icon flex-shrink-0 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 touch-none cursor-grab active:cursor-grabbing border-[var(--line)] bg-[var(--chip-bg)] text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+        title="Drag to reorder"
+        aria-label={`Reorder activity ${index + 1}: ${activity.name}`}
+      >
+        <GripVertical className="h-4 w-4" />
+      </button>
       <ActivityItemBadge type={activity.type} index={index} />
       <ActivityInputs
         activity={activity}

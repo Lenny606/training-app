@@ -58,3 +58,12 @@ export const deletePlan = createServerFn({ method: 'POST' })
     await repo.remove(data.id, context.user.id)
     return { id: data.id }
   })
+
+export const reorderPlans = createServerFn({ method: 'POST' })
+  .middleware([requireAuth])
+  .validator(z.object({ orderedIds: z.array(z.string().min(1)) }))
+  .handler(async ({ data, context }) => {
+    const repo = await getRepo()
+    await repo.reorder(data.orderedIds, context.user.id)
+    return { ok: true }
+  })

@@ -17,7 +17,7 @@ type Writer = DbClient | Parameters<Parameters<DbClient['transaction']>[0]>[0]
 export function seedDefaultPlansForOwner(ownerId: string, db: Writer = getDb()): void {
   const now = new Date()
 
-  for (const plan of DEFAULT_PLANS) {
+  DEFAULT_PLANS.forEach((plan, position) => {
     const planId = createId('plan')
     db.insert(plans)
       .values({
@@ -26,6 +26,7 @@ export function seedDefaultPlansForOwner(ownerId: string, db: Writer = getDb()):
         name: plan.name,
         description: plan.description,
         daysPerWeek: plan.daysPerWeek,
+        position,
         createdAt: now,
         updatedAt: now,
       })
@@ -46,5 +47,5 @@ export function seedDefaultPlansForOwner(ownerId: string, db: Writer = getDb()):
         })
         .run()
     })
-  }
+  })
 }

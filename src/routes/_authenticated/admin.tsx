@@ -17,7 +17,7 @@ interface PlanEditorPanelProps {
   saveSuccess: boolean
   hasUnsavedChanges: boolean
   handlers: Pick<ReturnType<typeof useAdminState>,
-    'handleMetaChange' | 'handleActivityChange' | 'moveActivity' |
+    'handleMetaChange' | 'handleActivityChange' | 'moveActivity' | 'reorderActivity' |
     'deleteActivity' | 'handleAddActivity' | 'handleDiscardChanges' | 'handleSavePlan'>
 }
 
@@ -47,6 +47,7 @@ function PlanEditorPanel({ editingPlan, saveSuccess, hasUnsavedChanges, handlers
           activities={editingPlan.activities}
           onActivityChange={handlers.handleActivityChange}
           onMoveActivity={handlers.moveActivity}
+          onReorderActivity={handlers.reorderActivity}
           onDeleteActivity={handlers.deleteActivity}
         />
         <AddActivityForm key={editingPlan.id} onAddActivity={handlers.handleAddActivity} />
@@ -59,8 +60,8 @@ function Admin() {
   const {
     plans, selectedPlanId, editingPlan, saveSuccess, hasUnsavedChanges,
     handleSelectPlan, handleMetaChange, handleActivityChange, moveActivity,
-    deleteActivity, handleAddActivity, handleCreateNewPlan, handleSavePlan,
-    handleDiscardChanges, handleDeletePlan,
+    reorderActivity, deleteActivity, handleAddActivity, handleCreateNewPlan,
+    handleSavePlan, handleDiscardChanges, handleDeletePlan, reorderPlans,
   } = useAdminState()
 
   return (
@@ -72,6 +73,7 @@ function Admin() {
           onSelectPlan={handleSelectPlan}
           onCreateNewPlan={handleCreateNewPlan}
           onDeletePlan={handleDeletePlan}
+          onReorderPlans={reorderPlans}
         />
         <section className="flex-grow">
           {editingPlan ? (
@@ -79,7 +81,7 @@ function Admin() {
               editingPlan={editingPlan}
               saveSuccess={saveSuccess}
               hasUnsavedChanges={hasUnsavedChanges}
-              handlers={{ handleMetaChange, handleActivityChange, moveActivity, deleteActivity, handleAddActivity, handleDiscardChanges, handleSavePlan }}
+              handlers={{ handleMetaChange, handleActivityChange, moveActivity, reorderActivity, deleteActivity, handleAddActivity, handleDiscardChanges, handleSavePlan }}
             />
           ) : (
             <EmptyPlanEditorState onCreateNewPlan={handleCreateNewPlan} />

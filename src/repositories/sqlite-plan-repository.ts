@@ -37,7 +37,7 @@ export class SqlitePlanRepository implements PlanRepository {
       .select()
       .from(plans)
       .where(eq(plans.ownerId, ownerId))
-      .orderBy(asc(plans.createdAt))
+      .orderBy(asc(plans.position), asc(plans.createdAt))
       .all()
     if (planRows.length === 0) return []
 
@@ -93,6 +93,8 @@ export class SqlitePlanRepository implements PlanRepository {
 
     const planId = createId('plan')
     const now = new Date()
+    // Append new plans to the end of the owner's ordering.
+    const position = this.db.select().from(plans).where(eq(plans.ownerId, ownerId)).all().length
     const created: TrainingPlan = {
       ...newPlan,
       id: planId,
@@ -110,6 +112,7 @@ export class SqlitePlanRepository implements PlanRepository {
           name: created.name,
           description: created.description,
           daysPerWeek: created.daysPerWeek,
+          position,
           createdAt: now,
           updatedAt: now,
         })
@@ -169,6 +172,19 @@ export class SqlitePlanRepository implements PlanRepository {
   async remove(id: string, ownerId: string): Promise<void> {
     // Idempotent + owner-scoped; FK cascade removes child activities.
     this.db.delete(plans).where(and(eq(plans.id, id), eq(plans.ownerId, ownerId))).run()
+  }
+
+  async reorder(orderedIds: string[], ownerId: string): Promise<void> {
+    const now = new Date()
+    // Owner-scoped: an id the user doesn't own updates zero rows (safe no-op).
+    this.db.transaction((tx) => {
+      orderedIds.forEach((id, position) => {
+        tx.update(plans)
+          .set({ position, updatedAt: now })
+          .where(and(eq(plans.id, id), eq(plans.ownerId, ownerId)))
+          .run()
+      })
+    })
   }
 
   private insertActivities(

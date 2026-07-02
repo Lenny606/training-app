@@ -1,5 +1,23 @@
-import { Plus, Trash2, Calendar, Layers } from 'lucide-react'
+import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import type { DragEndEvent } from '@dnd-kit/core'
+import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifiers'
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { Plus, Trash2, Calendar, GripVertical, Layers } from 'lucide-react'
 import type { TrainingPlan } from '../../domain/plans'
+import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 
 interface PlansSidebarProps {
   plans: TrainingPlan[]
@@ -7,6 +25,7 @@ interface PlansSidebarProps {
   onSelectPlan: (id: string) => void
   onCreateNewPlan: () => void
   onDeletePlan: (id: string) => void
+  onReorderPlans: (from: number, to: number) => void
 }
 
 interface SidebarItemProps {
@@ -17,10 +36,22 @@ interface SidebarItemProps {
 }
 
 function SidebarItem({ plan, isSelected, onSelect, onDelete }: SidebarItemProps) {
+  const reducedMotion = usePrefersReducedMotion()
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } =
+    useSortable({ id: plan.id })
   const exerciseCount = plan.activities.filter((a) => a.type === 'exercise').length
-  
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition: reducedMotion ? undefined : transition,
+    opacity: isDragging ? 0.4 : undefined,
+    zIndex: isDragging ? 1 : undefined,
+  }
+
   return (
     <div
+      ref={setNodeRef}
+      style={style}
       onClick={() => onSelect(plan.id)}
       className={`demo-list-item cursor-pointer flex flex-col gap-1 transition-all ${
         isSelected
@@ -28,11 +59,24 @@ function SidebarItem({ plan, isSelected, onSelect, onDelete }: SidebarItemProps)
           : 'hover:border-[rgba(0,240,255,0.2)] hover:bg-[rgba(255,255,255,0.02)]'
       }`}
     >
-      <div className="flex items-center justify-between">
-        <h3 className="m-0 text-sm font-semibold text-[var(--sea-ink)] truncate max-w-[160px]">
-          {plan.name}
-        </h3>
-        <span className="demo-pill px-2 py-0.5 text-[10px]">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <button
+            ref={setActivatorNodeRef}
+            {...attributes}
+            {...listeners}
+            onClick={(e) => e.stopPropagation()}
+            className="demo-button demo-button-icon flex-shrink-0 min-h-11 min-w-11 touch-none cursor-grab active:cursor-grabbing border-[var(--line)] bg-[var(--chip-bg)] text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+            title="Drag to reorder"
+            aria-label={`Reorder plan: ${plan.name}`}
+          >
+            <GripVertical className="h-4 w-4" />
+          </button>
+          <h3 className="m-0 text-sm font-semibold text-[var(--sea-ink)] truncate">
+            {plan.name}
+          </h3>
+        </div>
+        <span className="demo-pill px-2 py-0.5 text-[10px] flex-shrink-0">
           {exerciseCount} ex
         </span>
       </div>
@@ -65,7 +109,20 @@ export function PlansSidebar({
   onSelectPlan,
   onCreateNewPlan,
   onDeletePlan,
+  onReorderPlans,
 }: PlansSidebarProps) {
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  )
+
+  function handleDragEnd({ active, over }: DragEndEvent) {
+    if (!over || active.id === over.id) return
+    const from = plans.findIndex((p) => p.id === active.id)
+    const to = plans.findIndex((p) => p.id === over.id)
+    if (from !== -1 && to !== -1) onReorderPlans(from, to)
+  }
+
   return (
     <section className="w-full lg:w-80 flex-shrink-0">
       <div className="demo-panel p-5 rise-in h-full flex flex-col gap-4">
@@ -83,21 +140,33 @@ export function PlansSidebar({
             <span>New</span>
           </button>
         </div>
-        
+
         <p className="text-xs text-[var(--sea-ink-soft)] m-0">
           Select a plan to configure activities, sets, weights, and durations.
         </p>
 
         <div className="flex flex-col gap-2.5 overflow-y-auto max-h-[480px] lg:max-h-[640px] pr-1">
-          {plans.map((p) => (
-            <SidebarItem
-              key={p.id}
-              plan={p}
-              isSelected={p.id === selectedPlanId}
-              onSelect={onSelectPlan}
-              onDelete={onDeletePlan}
-            />
-          ))}
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+            modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+          >
+            <SortableContext
+              items={plans.map((p) => p.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {plans.map((p) => (
+                <SidebarItem
+                  key={p.id}
+                  plan={p}
+                  isSelected={p.id === selectedPlanId}
+                  onSelect={onSelectPlan}
+                  onDelete={onDeletePlan}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
 
           {plans.length === 0 && (
             <div className="text-center py-8 border border-dashed border-[var(--line)] rounded-xl">

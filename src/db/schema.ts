@@ -29,6 +29,7 @@ export const plans = sqliteTable('plans', {
   name: text('name').notNull(),
   description: text('description').notNull().default(''),
   daysPerWeek: integer('days_per_week').notNull(),
+  position: integer('position').notNull().default(0), // pořadí v sidebaru
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
 })

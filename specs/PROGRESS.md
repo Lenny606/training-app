@@ -13,7 +13,7 @@ Legenda stavu: 🔲 not started · 🚧 in progress · ✅ done · ⛔ blocked
 | [auth-layer](./auth-layer.md) | ✅ | repository-layer | JWT (jose HS256) access+refresh v HttpOnly cookies, argon2id, User model, requireAuth/requireRole, `_authenticated` guard, login/register/logout UI. Plány scoped na `ownerId`, klon default plánů při registraci. |
 | [ai-client](./ai-client.md) | ✅ | repository-layer, auth-layer | TanStack AI (`@tanstack/ai`), tools scoped na usera, streaming SSE, tool approval, provider portability (Claude + GPT). |
 | [deploy](./deploy.md) | ✅ | repository-layer, auth-layer | Kód hotový: GH Actions + SCP + PM2 + Nitro node-server + prod migrace. Zbývá jen jednorázová příprava VPS (mimo repo). |
-| [admin-drag-drop](./admin-drag-drop.md) | 🔲 | — (řazení šipkami hotové) | Nahrazuje řazení šipkami za DnD. |
+| [admin-drag-drop](./admin-drag-drop.md) | ✅ | repository-layer | @dnd-kit DnD pro aktivity i plány; `plans.position` (migrace 0002) + `reorder()`; šipky ponechány jako a11y fallback. |
 | [mobile-style-audit](./mobile-style-audit.md) | ✅ | — | Audit 3 rout × 360/390/414/768: 0 overflow. Prim. tap targety (hamburger, theme toggle) na 44px; admin ikony <44 odděleny do follow-up. |
 
 ## Pořadí prací (doporučené)
@@ -84,12 +84,20 @@ Legenda stavu: 🔲 not started · 🚧 in progress · ✅ done · ⛔ blocked
 - [x] Runnable Node server přes Nitro (`.output/server/index.mjs`)
 - [ ] (mimo repo) jednorázová příprava VPS: Node/PM2/nginx+TLS, `.env` (600), `pm2 startup`, GitHub Secrets
 
-### admin-drag-drop 🔲
-- [ ] Výběr DnD knihovny / přístupu
-- [ ] DnD řazení aktivit
-- [ ] Persist nového pořadí přes repository
-- [ ] A11y (keyboard) + fallback šipky
-- [ ] Odstranit / nechat staré řazení šipkami
+### admin-drag-drop ✅
+- [x] Knihovna: `@dnd-kit/core` + `/sortable` + `/modifiers` + `/utilities`
+- [x] DnD řazení **aktivit** (`ActivitiesList` DndContext/SortableContext, `ActivityItem` useSortable + GripVertical handle) → `reorderActivity` (`arrayMove`), uloží se přes existující Save
+- [x] Model pořadí plánů: `plans.position` (schema + migrace `0002_eminent_swarm`), `list()` řadí `position, createdAt`, `create()` append na konec, seed přiřazuje pozice
+- [x] `PlanRepository.reorder(orderedIds, ownerId)` (bulk update v transakci, owner-scoped) + server fn `reorderPlans` + testy (17 v repo)
+- [x] DnD řazení **plánů** (`PlansSidebar`) → `reorderPlans` s **okamžitou** perzistencí (optimistic + rollback); editor efekt keyuje na identitu vybraného plánu, takže reorder neztratí rozdělané změny
+- [x] A11y/touch: `KeyboardSensor` + `sortableKeyboardCoordinates`, `PointerSensor` activation distance 8px, handle ≥44px (touch target), `prefers-reduced-motion` (`usePrefersReducedMotion`), `touch-none` na handle
+- [x] Šipky ponechány jako sekundární a11y ovládání (`moveActivity` přemapováno na `reorderActivity`)
+- [x] Verifikace: tsc ✅, test 57/57 ✅, lint 0 errors ✅, build ✅
+
+**Odchylky od spec (potvrdit):**
+- `plans.position` je **jen DB/persistenční** sloupec, ne pole doménového `TrainingPlan` (§9 zmiňoval `TrainingPlan.position`) — klient se spoléhá na pořadí pole z `list()`; drží se tím position mimo AI planShape/validaci/DEFAULT_PLANS.
+- `DragOverlay` vynechán — feedback řešen `opacity` + built-in transform posunem (splňuje „viditelný feedback"); handle izoluje listeners, takže drag nekoliduje s editací inputů i bez overlaye.
+- Otevřené otázky §12: šipky **ponechány** (redundantní, ale bez a11y regrese); position = souvislé přečíslování (malý seznam); pořadí plánů se ukládá hned po dropu.
 
 ### mobile-style-audit ✅
 - [x] Header — responzivní nav (hamburger + scroll lock)

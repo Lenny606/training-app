@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react'
+import { arrayMove } from '@dnd-kit/sortable'
 import type { TrainingPlan, Activity } from '../domain/plans'
-import { createPlan, deletePlan, listPlans, updatePlan } from '../server/plans'
+import {
+  createPlan,
+  deletePlan,
+  listPlans,
+  reorderPlans as reorderPlansFn,
+  updatePlan,
+} from '../server/plans'
 import { createId } from '../utils/id'
-
-function swapArrayElements<T>(arr: T[], i: number, j: number): T[] {
-  const copy = [...arr]
-  const temp = copy[i]
-  copy[i] = copy[j]
-  copy[j] = temp
-  return copy
-}
 
 function parseDurationField(value: string): number {
   return Math.max(1, parseInt(value) || 0)
@@ -65,6 +64,20 @@ function usePlansList() {
     setSelectedPlanId(id)
   }
 
+  // Sidebar has no "Save" button, so a reorder persists immediately. Optimistic:
+  // apply the new order locally, then write it through; roll back on failure.
+  const reorderPlans = async (from: number, to: number) => {
+    if (from === to) return
+    const next = arrayMove(plans, from, to)
+    setPlans(next)
+    try {
+      await reorderPlansFn({ data: { orderedIds: next.map((p) => p.id) } })
+    } catch (error) {
+      console.error('Failed to reorder training plans:', error)
+      loadPlans(selectedPlanId)
+    }
+  }
+
   return {
     plans,
     setPlans,
@@ -72,6 +85,7 @@ function usePlansList() {
     setSelectedPlanId,
     loadPlans,
     handleSelectPlan,
+    reorderPlans,
   }
 }
 
@@ -86,11 +100,14 @@ function usePlanEditor({
   const [saveSuccess, setSaveSuccess] = useState(false)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
 
+  // Key on the selected plan's object identity, not the whole array: reordering
+  // the sidebar (arrayMove keeps element refs) must not reset unsaved edits, but
+  // a reload (fresh refs from the server) or a new selection should.
+  const selectedPlan = plans.find((p) => p.id === selectedPlanId) ?? null
   useEffect(() => {
-    const plan = plans.find((p) => p.id === selectedPlanId)
-    setEditingPlan(plan ? JSON.parse(JSON.stringify(plan)) : null)
+    setEditingPlan(selectedPlan ? JSON.parse(JSON.stringify(selectedPlan)) : null)
     setHasUnsavedChanges(false)
-  }, [selectedPlanId, plans])
+  }, [selectedPlanId, selectedPlan])
 
   const handleMetaChange = (field: keyof TrainingPlan, value: string | number) => {
     if (!editingPlan) return
@@ -113,17 +130,20 @@ function usePlanEditor({
     setHasUnsavedChanges(true)
   }
 
-  // fallow-ignore-next-line complexity
-  const moveActivity = (index: number, direction: 'up' | 'down') => {
-    if (!editingPlan) return
-    const targetIndex = direction === 'up' ? index - 1 : index + 1
-    if (targetIndex < 0 || targetIndex >= editingPlan.activities.length) return
-
+  // Move an activity to an arbitrary position (drag & drop, or keyboard drag).
+  const reorderActivity = (from: number, to: number) => {
+    if (!editingPlan || from === to) return
+    if (to < 0 || to >= editingPlan.activities.length) return
     setEditingPlan({
       ...editingPlan,
-      activities: swapArrayElements(editingPlan.activities, index, targetIndex),
+      activities: arrayMove(editingPlan.activities, from, to),
     })
     setHasUnsavedChanges(true)
+  }
+
+  // Arrow-button fallback (a11y): one step up/down, mapped onto reorderActivity.
+  const moveActivity = (index: number, direction: 'up' | 'down') => {
+    reorderActivity(index, direction === 'up' ? index - 1 : index + 1)
   }
 
   const deleteActivity = (index: number) => {
@@ -226,6 +246,7 @@ function usePlanEditor({
     handleMetaChange,
     handleActivityChange,
     moveActivity,
+    reorderActivity,
     deleteActivity,
     handleAddActivity,
     handleCreateNewPlan,

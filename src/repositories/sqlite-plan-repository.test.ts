@@ -163,6 +163,43 @@ describe('SqlitePlanRepository', () => {
     })
   })
 
+  describe('reorder', () => {
+    it('seeds plans in DEFAULT_PLANS order', async () => {
+      const plans = await repository.list(ownerId)
+      expect(plans.map((p) => p.name)).toEqual(DEFAULT_PLANS.map((p) => p.name))
+    })
+
+    it('appends newly created plans to the end of the ordering', async () => {
+      const created = await repository.create(
+        { name: 'Zzz Last', description: '', daysPerWeek: 3, activities: [] },
+        ownerId,
+      )
+      const plans = await repository.list(ownerId)
+      expect(plans[plans.length - 1].id).toBe(created.id)
+    })
+
+    it('persists a new ordering that survives a reload', async () => {
+      const before = await repository.list(ownerId)
+      const reversed = [...before].reverse().map((p) => p.id)
+      await repository.reorder(reversed, ownerId)
+
+      const after = await repository.list(ownerId)
+      expect(after.map((p) => p.id)).toEqual(reversed)
+    })
+
+    it('ignores ids the owner does not own', async () => {
+      const db = (repository as unknown as { db: DbClient }).db
+      const otherId = await makeOwner(db, 'other@example.com')
+      const victim = await repository.list(ownerId)
+      const victimIds = victim.map((p) => p.id)
+
+      // Intruder tries to reorder the victim's plans — no-op, order unchanged.
+      await repository.reorder([...victimIds].reverse(), otherId)
+      const after = await repository.list(ownerId)
+      expect(after.map((p) => p.id)).toEqual(victimIds)
+    })
+  })
+
   describe('owner scoping', () => {
     it('never exposes or mutates another owner’s plans', async () => {
       const db = (repository as unknown as { db: DbClient }).db
