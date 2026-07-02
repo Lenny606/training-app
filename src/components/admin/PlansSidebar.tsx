@@ -55,7 +55,7 @@ function SidebarItem({ plan, isSelected, onSelect, onDelete }: SidebarItemProps)
       onClick={() => onSelect(plan.id)}
       className={`demo-list-item cursor-pointer flex flex-col gap-1 transition-all ${
         isSelected
-          ? 'border-[var(--lagoon-deep)] bg-[rgba(0,240,255,0.06)] shadow-[0_0_12px_rgba(0,240,255,0.08)]'
+          ? 'border-lagoon-deep bg-[rgba(0,240,255,0.06)] shadow-[0_0_12px_rgba(0,240,255,0.08)]'
           : 'hover:border-[rgba(0,240,255,0.2)] hover:bg-[rgba(255,255,255,0.02)]'
       }`}
     >
@@ -66,13 +66,13 @@ function SidebarItem({ plan, isSelected, onSelect, onDelete }: SidebarItemProps)
             {...attributes}
             {...listeners}
             onClick={(e) => e.stopPropagation()}
-            className="demo-button demo-button-icon flex-shrink-0 min-h-11 min-w-11 touch-none cursor-grab active:cursor-grabbing border-[var(--line)] bg-[var(--chip-bg)] text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+            className="demo-button demo-button-icon flex-shrink-0 min-h-11 min-w-11 touch-none cursor-grab active:cursor-grabbing border-line bg-chip text-ink-soft hover:text-ink"
             title="Drag to reorder"
             aria-label={`Reorder plan: ${plan.name}`}
           >
             <GripVertical className="h-4 w-4" />
           </button>
-          <h3 className="m-0 text-sm font-semibold text-[var(--sea-ink)] truncate">
+          <h3 className="m-0 text-sm font-semibold text-ink truncate">
             {plan.name}
           </h3>
         </div>
@@ -80,12 +80,12 @@ function SidebarItem({ plan, isSelected, onSelect, onDelete }: SidebarItemProps)
           {exerciseCount} ex
         </span>
       </div>
-      <p className="text-xs text-[var(--sea-ink-soft)] m-0 line-clamp-2">
+      <p className="text-xs text-ink-soft m-0 line-clamp-2">
         {plan.description || 'No description provided.'}
       </p>
-      <div className="flex items-center justify-between mt-2 pt-2 border-t border-[rgba(255,255,255,0.04)] text-[10px] text-[var(--sea-ink-soft)]">
+      <div className="flex items-center justify-between mt-2 pt-2 border-t border-[rgba(255,255,255,0.04)] text-[10px] text-ink-soft">
         <span className="flex items-center gap-1">
-          <Calendar className="h-3 w-3 text-[var(--lagoon-deep)]" />
+          <Calendar className="h-3 w-3 text-lagoon-deep" />
           {plan.daysPerWeek} days/wk
         </span>
         <button
@@ -127,13 +127,13 @@ export function PlansSidebar({
     <section className="w-full lg:w-80 flex-shrink-0">
       <div className="demo-panel p-5 rise-in h-full flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-lg font-bold text-[var(--sea-ink)] flex items-center gap-2">
-            <Layers className="h-5 w-5 text-[var(--lagoon)]" />
+          <h2 className="font-display text-lg font-bold text-ink flex items-center gap-2">
+            <Layers className="h-5 w-5 text-lagoon" />
             Training Programs
           </h2>
           <button
             onClick={onCreateNewPlan}
-            className="demo-button demo-button-sm bg-[rgba(0,240,255,0.15)] text-[var(--lagoon)] border-[rgba(0,240,255,0.3)] flex items-center gap-1"
+            className="demo-button demo-button-sm bg-[rgba(0,240,255,0.15)] text-lagoon border-[rgba(0,240,255,0.3)] flex items-center gap-1"
             title="Create New Plan"
           >
             <Plus className="h-3.5 w-3.5" />
@@ -141,7 +141,7 @@ export function PlansSidebar({
           </button>
         </div>
 
-        <p className="text-xs text-[var(--sea-ink-soft)] m-0">
+        <p className="text-xs text-ink-soft m-0">
           Select a plan to configure activities, sets, weights, and durations.
         </p>
 
@@ -169,8 +169,8 @@ export function PlansSidebar({
           </DndContext>
 
           {plans.length === 0 && (
-            <div className="text-center py-8 border border-dashed border-[var(--line)] rounded-xl">
-              <p className="text-xs text-[var(--sea-ink-soft)] mb-3">No plans found</p>
+            <div className="text-center py-8 border border-dashed border-line rounded-xl">
+              <p className="text-xs text-ink-soft mb-3">No plans found</p>
               <button onClick={onCreateNewPlan} className="demo-button demo-button-sm">
                 Create your first plan
               </button>

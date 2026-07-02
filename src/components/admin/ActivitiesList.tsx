@@ -73,7 +73,7 @@ export function ActivitiesList({
       </DndContext>
 
       {activities.length === 0 && (
-        <div className="text-center py-6 border border-dashed border-[var(--line)] rounded-xl text-xs text-[var(--sea-ink-soft)]">
+        <div className="text-center py-6 border border-dashed border-line rounded-xl text-xs text-ink-soft">
           No activities added yet. Add one below to get started.
         </div>
       )}

@@ -39,8 +39,8 @@ function PlanEditorPanel({ editingPlan, saveSuccess, hasUnsavedChanges, handlers
       )}
       <PlanMetaForm plan={editingPlan} onChange={handlers.handleMetaChange} />
       <div className="flex flex-col gap-3">
-        <h3 className="m-0 text-sm font-bold text-[var(--sea-ink-soft)] uppercase tracking-wider flex items-center gap-2">
-          <Dumbbell className="h-4 w-4 text-[var(--lagoon)]" />
+        <h3 className="m-0 text-sm font-bold text-ink-soft uppercase tracking-wider flex items-center gap-2">
+          <Dumbbell className="h-4 w-4 text-lagoon" />
           Workout Route / Activities
         </h3>
         <ActivitiesList

@@ -26,7 +26,7 @@ function AddExerciseFields({
   return (
     <>
       <div className="sm:col-span-1">
-        <label className="block text-[10px] font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wider mb-1">
+        <label className="block text-[10px] font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Sets
         </label>
         <input
@@ -47,7 +47,7 @@ function AddExerciseFields({
       </div>
 
       <div className="sm:col-span-1">
-        <label className="block text-[10px] font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wider mb-1">
+        <label className="block text-[10px] font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Reps
         </label>
         <input
@@ -60,7 +60,7 @@ function AddExerciseFields({
       </div>
 
       <div className="sm:col-span-2">
-        <label className="block text-[10px] font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wider mb-1">
+        <label className="block text-[10px] font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Weight
         </label>
         <input
@@ -167,7 +167,7 @@ function CoreFields({
   return (
     <>
       <div className="sm:col-span-2">
-        <label className="block text-[10px] font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wider mb-1">
+        <label className="block text-[10px] font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Type
         </label>
         <select
@@ -181,7 +181,7 @@ function CoreFields({
       </div>
 
       <div className="sm:col-span-4">
-        <label className="block text-[10px] font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wider mb-1">
+        <label className="block text-[10px] font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Name
         </label>
         <input
@@ -194,7 +194,7 @@ function CoreFields({
       </div>
 
       <div className="sm:col-span-2">
-        <label className="block text-[10px] font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wider mb-1">
+        <label className="block text-[10px] font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Seconds
         </label>
         <input
@@ -239,8 +239,8 @@ export function AddActivityForm({ onAddActivity }: AddActivityFormProps) {
       onSubmit={handleSubmit}
       className="mt-3 p-4 rounded-xl border border-[rgba(0,240,255,0.15)] bg-[rgba(0,240,255,0.02)] flex flex-col gap-3"
     >
-      <h4 className="m-0 text-xs font-bold text-[var(--sea-ink)] flex items-center gap-1.5">
-        <Plus className="h-3.5 w-3.5 text-[var(--lagoon)]" />
+      <h4 className="m-0 text-xs font-bold text-ink flex items-center gap-1.5">
+        <Plus className="h-3.5 w-3.5 text-lagoon" />
         Add Activity
       </h4>
 
@@ -271,7 +271,7 @@ export function AddActivityForm({ onAddActivity }: AddActivityFormProps) {
       <div className="flex justify-end mt-1">
         <button
           type="submit"
-          className="demo-button demo-button-sm bg-[var(--lagoon-deep)] text-slate-900 border-[var(--lagoon)] font-bold flex items-center gap-1"
+          className="demo-button demo-button-sm bg-lagoon-deep text-slate-900 border-lagoon font-bold flex items-center gap-1"
         >
           <Plus className="h-3.5 w-3.5" />
           Add to Route

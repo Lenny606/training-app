@@ -47,7 +47,7 @@ function NumericField({ value, fallback, unit, placeholder, onCommit }: NumericF
         className="demo-input py-1.5 pl-2.5 pr-6 text-xs text-right font-mono"
         placeholder={placeholder}
       />
-      <span className="absolute right-2 top-2 text-[9px] text-[var(--sea-ink-soft)] font-mono">
+      <span className="absolute right-2 top-2 text-[9px] text-ink-soft font-mono">
         {unit}
       </span>
     </div>
@@ -114,7 +114,7 @@ function ActivityActions({
       <button
         onClick={() => onMoveActivity(index, 'up')}
         disabled={isFirst}
-        className="demo-button demo-button-icon border-[var(--line)] bg-[var(--chip-bg)] text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] disabled:opacity-30 disabled:hover:text-[var(--sea-ink-soft)]"
+        className="demo-button demo-button-icon border-line bg-chip text-ink-soft hover:text-ink disabled:opacity-30 disabled:hover:text-ink-soft"
         title="Move Activity Up"
       >
         <ArrowUp className="h-3.5 w-3.5" />
@@ -122,7 +122,7 @@ function ActivityActions({
       <button
         onClick={() => onMoveActivity(index, 'down')}
         disabled={isLast}
-        className="demo-button demo-button-icon border-[var(--line)] bg-[var(--chip-bg)] text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] disabled:opacity-30 disabled:hover:text-[var(--sea-ink-soft)]"
+        className="demo-button demo-button-icon border-line bg-chip text-ink-soft hover:text-ink disabled:opacity-30 disabled:hover:text-ink-soft"
         title="Move Activity Down"
       >
         <ArrowDown className="h-3.5 w-3.5" />
@@ -148,14 +148,14 @@ function ActivityItemBadge({ type, index }: ActivityItemBadgeProps) {
   const badgeClass = `px-2 py-0.5 rounded text-[9px] uppercase font-black tracking-wider ${
     isRest
       ? 'bg-sky-950/60 text-sky-400 border border-sky-800/40'
-      : 'bg-cyan-950/60 text-[var(--lagoon)] border border-[rgba(0,240,255,0.2)]'
+      : 'bg-cyan-950/60 text-lagoon border border-[rgba(0,240,255,0.2)]'
   }`
   return (
     <div className="flex items-center gap-2 sm:w-28 flex-shrink-0">
       <span className={badgeClass}>
         {type}
       </span>
-      <span className="text-xs text-[var(--sea-ink-soft)] font-mono font-bold">
+      <span className="text-xs text-ink-soft font-mono font-bold">
         #{index + 1}
       </span>
     </div>
@@ -200,7 +200,7 @@ function ActivityInputs({ activity, index, onActivityChange }: ActivityInputsPro
           onActivityChange={onActivityChange}
         />
       ) : (
-        <div className="col-span-12 sm:col-span-8 flex items-center text-xs text-[var(--sea-ink-soft)] italic px-2">
+        <div className="col-span-12 sm:col-span-8 flex items-center text-xs text-ink-soft italic px-2">
           Rest Period — No sets, reps or weight tracking needed.
         </div>
       )}
@@ -241,7 +241,7 @@ export function ActivityItem({
   const containerClass = `demo-list-item flex flex-col gap-3 sm:flex-row sm:items-center p-3 border transition-all ${
     isRest
       ? 'border-[rgba(255,255,255,0.05)] bg-[rgba(255,255,255,0.01)]'
-      : 'border-[var(--line)] bg-[rgba(0,240,255,0.01)]'
+      : 'border-line bg-[rgba(0,240,255,0.01)]'
   }`
 
   return (
@@ -250,7 +250,7 @@ export function ActivityItem({
         ref={setActivatorNodeRef}
         {...attributes}
         {...listeners}
-        className="demo-button demo-button-icon flex-shrink-0 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 touch-none cursor-grab active:cursor-grabbing border-[var(--line)] bg-[var(--chip-bg)] text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+        className="demo-button demo-button-icon flex-shrink-0 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 touch-none cursor-grab active:cursor-grabbing border-line bg-chip text-ink-soft hover:text-ink"
         title="Drag to reorder"
         aria-label={`Reorder activity ${index + 1}: ${activity.name}`}
       >

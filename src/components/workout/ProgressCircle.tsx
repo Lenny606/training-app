@@ -64,15 +64,15 @@ export function ProgressCircle({
       </svg>
 
       <div className="text-center flex flex-col items-center justify-center z-10">
-        <span className="text-[10px] tracking-[0.25em] font-black uppercase text-[var(--sea-ink-soft)] mb-0.5">
+        <span className="text-[10px] tracking-[0.25em] font-black uppercase text-ink-soft mb-0.5">
           {statusText}
         </span>
         
-        <span className="font-display text-5xl font-black tracking-tighter text-[var(--sea-ink)] leading-none select-all">
+        <span className="font-display text-5xl font-black tracking-tighter text-ink leading-none select-all">
           {timeText}
         </span>
         
-        <span className="text-[10px] text-[var(--sea-ink-soft)] font-mono mt-1 px-2.5 py-0.5 border border-[var(--line)] bg-[rgba(255,255,255,0.02)] rounded-full">
+        <span className="text-[10px] text-ink-soft font-mono mt-1 px-2.5 py-0.5 border border-line bg-[rgba(255,255,255,0.02)] rounded-full">
           Step {currentActivityIndex + 1} of {totalActivities}
         </span>
       </div>

@@ -9,7 +9,7 @@ export function PlanMetaForm({ plan, onChange }: PlanMetaFormProps) {
   return (
     <div className="grid gap-4 sm:grid-cols-3">
       <div className="sm:col-span-2">
-        <label className="block text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wider mb-1.5">
+        <label className="block text-xs font-semibold text-ink-soft uppercase tracking-wider mb-1.5">
           Program Name
         </label>
         <input
@@ -21,7 +21,7 @@ export function PlanMetaForm({ plan, onChange }: PlanMetaFormProps) {
         />
       </div>
       <div>
-        <label className="block text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wider mb-1.5">
+        <label className="block text-xs font-semibold text-ink-soft uppercase tracking-wider mb-1.5">
           Target Days / Week
         </label>
         <input
@@ -34,7 +34,7 @@ export function PlanMetaForm({ plan, onChange }: PlanMetaFormProps) {
         />
       </div>
       <div className="sm:col-span-3">
-        <label className="block text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wider mb-1.5">
+        <label className="block text-xs font-semibold text-ink-soft uppercase tracking-wider mb-1.5">
           Description & Objectives
         </label>
         <textarea

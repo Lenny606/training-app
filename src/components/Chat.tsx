@@ -13,12 +13,12 @@ export default function Chat() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-3">
-        <label className="text-xs font-semibold text-[var(--sea-ink-soft)]">
+        <label className="text-xs font-semibold text-ink-soft">
           Model
           <select
             value={model}
             onChange={(e) => setModel(e.target.value as ModelId)}
-            className="ml-2 rounded-lg border border-[var(--line)] bg-[var(--chip-bg)] px-2 py-1 text-xs font-semibold text-[var(--sea-ink)]"
+            className="ml-2 rounded-lg border border-line bg-chip px-2 py-1 text-xs font-semibold text-ink"
           >
             {MODELS.map((m) => (
               <option key={m.id} value={m.id}>
@@ -27,7 +27,7 @@ export default function Chat() {
             ))}
           </select>
         </label>
-        <span className="text-[10px] uppercase tracking-wide text-[var(--sea-ink-soft)]">
+        <span className="text-[10px] uppercase tracking-wide text-ink-soft">
           switching model starts a new chat
         </span>
       </div>
@@ -80,7 +80,7 @@ function ChatSession({ model }: { model: ModelId }) {
   }
 
   return (
-    <div className="flex flex-col rounded-2xl border border-[var(--line)] bg-[var(--chip-bg)]">
+    <div className="flex flex-col rounded-2xl border border-line bg-chip">
       <div
         ref={scrollRef}
         className="flex min-h-[50vh] flex-col gap-4 overflow-y-auto p-4"
@@ -91,17 +91,17 @@ function ChatSession({ model }: { model: ModelId }) {
           <MessageRow key={message.id} message={message} onApprove={addToolApprovalResponse} />
         ))}
         {isLoading && messages[messages.length - 1]?.role !== 'assistant' && (
-          <div className="text-xs text-[var(--sea-ink-soft)]">Thinking…</div>
+          <div className="text-xs text-ink-soft">Thinking…</div>
         )}
       </div>
 
       {error && (
-        <div className="border-t border-[var(--line)] px-4 py-2 text-xs text-red-500">
+        <div className="border-t border-line px-4 py-2 text-xs text-red-500">
           {error.message}
         </div>
       )}
 
-      <div className="flex items-end gap-2 border-t border-[var(--line)] p-3">
+      <div className="flex items-end gap-2 border-t border-line p-3">
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -113,7 +113,7 @@ function ChatSession({ model }: { model: ModelId }) {
           }}
           rows={1}
           placeholder="Ask about your plans, or say “start my push day”…"
-          className="min-h-11 flex-1 resize-none rounded-xl border border-[var(--line)] bg-[var(--header-bg)] px-3 py-2.5 text-sm text-[var(--sea-ink)] outline-none focus:border-[var(--lagoon)]"
+          className="min-h-11 flex-1 resize-none rounded-xl border border-line bg-header px-3 py-2.5 text-sm text-ink outline-none focus:border-lagoon"
         />
         {isLoading ? (
           <button
@@ -146,9 +146,9 @@ function ChatSession({ model }: { model: ModelId }) {
 
 function EmptyState() {
   return (
-    <div className="m-auto max-w-sm text-center text-sm text-[var(--sea-ink-soft)]">
-      <Bot className="mx-auto mb-2 h-6 w-6 text-[var(--lagoon)]" />
-      <p className="font-semibold text-[var(--sea-ink)]">Your training assistant</p>
+    <div className="m-auto max-w-sm text-center text-sm text-ink-soft">
+      <Bot className="mx-auto mb-2 h-6 w-6 text-lagoon" />
+      <p className="font-semibold text-ink">Your training assistant</p>
       <p className="mt-1">
         Try “list my plans”, “summarize my push day”, “add a 90s plank to my HIIT plan”, or “start
         my deadlift session”.
@@ -167,11 +167,11 @@ function MessageRow({
   const isUser = message.role === 'user'
   return (
     <div className={`flex gap-2.5 ${isUser ? 'flex-row-reverse' : ''}`}>
-      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-[var(--line)] bg-[var(--header-bg)]">
+      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-line bg-header">
         {isUser ? (
-          <User className="h-3.5 w-3.5 text-[var(--sea-ink-soft)]" />
+          <User className="h-3.5 w-3.5 text-ink-soft" />
         ) : (
-          <Bot className="h-3.5 w-3.5 text-[var(--lagoon)]" />
+          <Bot className="h-3.5 w-3.5 text-lagoon" />
         )}
       </div>
       <div className={`flex max-w-[85%] flex-col gap-2 ${isUser ? 'items-end' : 'items-start'}`}>
@@ -192,7 +192,7 @@ function MessagePart({
 }) {
   if (part.type === 'text' && part.content) {
     return (
-      <div className="whitespace-pre-wrap rounded-xl border border-[var(--line)] bg-[var(--header-bg)] px-3 py-2 text-sm text-[var(--sea-ink)]">
+      <div className="whitespace-pre-wrap rounded-xl border border-line bg-header px-3 py-2 text-sm text-ink">
         {part.content}
       </div>
     )
@@ -200,7 +200,7 @@ function MessagePart({
 
   if (part.type === 'thinking' && part.content) {
     return (
-      <details className="w-full text-xs text-[var(--sea-ink-soft)]">
+      <details className="w-full text-xs text-ink-soft">
         <summary className="cursor-pointer select-none">Thought process</summary>
         <pre className="mt-1 whitespace-pre-wrap font-sans">{part.content}</pre>
       </details>
@@ -210,14 +210,14 @@ function MessagePart({
   if (part.type === 'tool-call') {
     const needsApproval = part.state === 'approval-requested' && part.approval
     return (
-      <div className="flex flex-col gap-2 rounded-xl border border-dashed border-[var(--line)] px-3 py-2 text-xs text-[var(--sea-ink-soft)]">
+      <div className="flex flex-col gap-2 rounded-xl border border-dashed border-line px-3 py-2 text-xs text-ink-soft">
         <span className="flex items-center gap-1.5 font-semibold">
           <Wrench className="h-3 w-3" />
           {toolLabel(part.name, part.state)}
         </span>
         {needsApproval && (
           <div className="flex flex-col gap-2">
-            <pre className="whitespace-pre-wrap rounded bg-[var(--header-bg)] px-2 py-1 text-[11px]">
+            <pre className="whitespace-pre-wrap rounded bg-header px-2 py-1 text-[11px]">
               {part.arguments}
             </pre>
             <div className="flex gap-2">

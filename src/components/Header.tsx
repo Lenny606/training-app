@@ -41,12 +41,12 @@ export default function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--header-bg)] px-4 backdrop-blur-lg">
+    <header className="sticky top-0 z-50 border-b border-line bg-header px-4 backdrop-blur-lg">
       <nav className="page-wrap flex items-center gap-x-3 py-3 sm:py-4">
         {/* Home Link Symbol */}
         <Link
           to="/"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--line)] bg-[var(--chip-bg)] font-display font-bold text-sm text-[var(--sea-ink)] no-underline hover:border-[var(--lagoon)] transition-all"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-line bg-chip font-display font-bold text-sm text-ink no-underline hover:border-lagoon transition-all"
           aria-label="Home"
         >
           ▲
@@ -73,7 +73,7 @@ export default function Header() {
           {user ? (
             <>
               <span
-                className="hidden md:inline max-w-[16ch] truncate text-xs font-semibold text-[var(--sea-ink-soft)]"
+                className="hidden md:inline max-w-[16ch] truncate text-xs font-semibold text-ink-soft"
                 title={user.email}
               >
                 {user.email}
@@ -82,7 +82,7 @@ export default function Header() {
 
               {/* Hamburger — only on mobile */}
               <button
-                className="sm:hidden demo-button demo-button-icon min-h-11 min-w-11 border-[var(--line)] bg-[var(--chip-bg)] text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+                className="sm:hidden demo-button demo-button-icon min-h-11 min-w-11 border-line bg-chip text-ink-soft hover:text-ink"
                 onClick={() => setMenuOpen((o) => !o)}
                 aria-label={menuOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={menuOpen}
@@ -103,26 +103,26 @@ export default function Header() {
 
       {/* Mobile dropdown menu — only when signed in */}
       {user && menuOpen && (
-        <div className="sm:hidden border-t border-[var(--line)] bg-[var(--header-bg)] backdrop-blur-lg px-4 pb-4 pt-3 flex flex-col gap-1">
+        <div className="sm:hidden border-t border-line bg-header backdrop-blur-lg px-4 pb-4 pt-3 flex flex-col gap-1">
           {NAV_LINKS.map(({ to, label }) => (
             <Link
               key={to}
               to={to}
-              className="block rounded-xl px-4 py-3 text-sm font-semibold text-[var(--sea-ink-soft)] transition-colors hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)] [&.is-active]:text-[var(--lagoon)] [&.is-active]:bg-[rgba(0,240,255,0.06)]"
+              className="block rounded-xl px-4 py-3 text-sm font-semibold text-ink-soft transition-colors hover:bg-link-hover hover:text-ink [&.is-active]:text-lagoon [&.is-active]:bg-[rgba(0,240,255,0.06)]"
               activeProps={{ className: 'is-active' }}
               onClick={() => setMenuOpen(false)}
             >
               {label}
             </Link>
           ))}
-          <div className="mt-1 flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold text-[var(--sea-ink-soft)]">
+          <div className="mt-1 flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold text-ink-soft">
             <span>Dark mode</span>
             <ThemeToggle />
           </div>
           <button
             type="button"
             onClick={handleLogout}
-            className="flex items-center gap-2 rounded-xl px-4 py-3 text-left text-sm font-semibold text-[var(--sea-ink-soft)] transition-colors hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
+            className="flex items-center gap-2 rounded-xl px-4 py-3 text-left text-sm font-semibold text-ink-soft transition-colors hover:bg-link-hover hover:text-ink"
           >
             <LogOut className="h-4 w-4" />
             Sign out

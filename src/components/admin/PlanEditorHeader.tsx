@@ -9,7 +9,7 @@ interface PlanEditorHeaderProps {
 
 function getSaveButtonClass(hasUnsavedChanges: boolean) {
   const base = 'demo-button demo-button-sm flex items-center gap-1.5 transition-all'
-  const modified = 'bg-[var(--lagoon-deep)] text-slate-900 border-[var(--lagoon)] shadow-[0_0_12px_rgba(0,240,255,0.25)] hover:bg-[var(--lagoon)]'
+  const modified = 'bg-lagoon-deep text-slate-900 border-lagoon shadow-[0_0_12px_rgba(0,240,255,0.25)] hover:bg-lagoon'
   const saved = 'bg-emerald-950/40 text-emerald-300 border-emerald-800 hover:bg-emerald-900/50'
   return `${base} ${hasUnsavedChanges ? modified : saved}`
 }
@@ -22,17 +22,17 @@ export function PlanEditorHeader({
   onSavePlan,
 }: PlanEditorHeaderProps) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[var(--line)]">
+    <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-line">
       <div>
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-[10px] uppercase tracking-widest text-[var(--lagoon)] font-bold font-display">
+          <span className="text-[10px] uppercase tracking-widest text-lagoon font-bold font-display">
             Editing Mode
           </span>
           {hasUnsavedChanges && (
             <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" title="Unsaved changes" />
           )}
         </div>
-        <h1 className="m-0 font-display text-2xl font-black tracking-tight text-[var(--sea-ink)]">
+        <h1 className="m-0 font-display text-2xl font-black tracking-tight text-ink">
           {planName || 'Unnamed Plan'}
         </h1>
       </div>

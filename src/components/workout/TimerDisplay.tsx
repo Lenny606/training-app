@@ -23,11 +23,11 @@ function EmptyTimerDisplay() {
     <section className="demo-panel p-6 rounded-[2.5rem] rise-in shadow-[0_22px_50px_rgba(0,240,255,0.05)] relative overflow-hidden flex flex-col items-center justify-center gap-6">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,240,255,0.04),transparent_60%)]" />
       <div className="text-center py-10">
-        <Settings className="h-8 w-8 text-[var(--sea-ink-soft)] mx-auto mb-3 animate-spin" />
-        <h3 className="m-0 text-sm font-bold text-[var(--sea-ink)] mb-2">
+        <Settings className="h-8 w-8 text-ink-soft mx-auto mb-3 animate-spin" />
+        <h3 className="m-0 text-sm font-bold text-ink mb-2">
           No Activities Defined
         </h3>
-        <p className="text-xs text-[var(--sea-ink-soft)] max-w-xs mb-4">
+        <p className="text-xs text-ink-soft max-w-xs mb-4">
           This plan has no activities. Head to the administration screen to set some up.
         </p>
         <Link to="/admin" className="demo-button text-xs py-1.5 px-3">

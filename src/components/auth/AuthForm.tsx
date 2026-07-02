@@ -32,12 +32,12 @@ export function AuthForm({ title, submitLabel, onSubmit, footer, passwordHint }:
   return (
     <main className="page-wrap px-4 py-10 sm:py-16 max-w-sm mx-auto">
       <div className="demo-panel p-6 sm:p-8 flex flex-col gap-6 rise-in">
-        <h1 className="m-0 font-display text-xl font-black uppercase tracking-wider text-[var(--sea-ink)]">
+        <h1 className="m-0 font-display text-xl font-black uppercase tracking-wider text-ink">
           {title}
         </h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-          <label className="flex flex-col gap-1.5 text-sm font-semibold text-[var(--sea-ink-soft)]">
+          <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
             Email
             <input
               type="email"
@@ -49,7 +49,7 @@ export function AuthForm({ title, submitLabel, onSubmit, footer, passwordHint }:
             />
           </label>
 
-          <label className="flex flex-col gap-1.5 text-sm font-semibold text-[var(--sea-ink-soft)]">
+          <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
             Password
             <input
               type="password"
@@ -60,7 +60,7 @@ export function AuthForm({ title, submitLabel, onSubmit, footer, passwordHint }:
               className="demo-input text-sm"
             />
             {passwordHint && (
-              <span className="text-xs font-normal text-[var(--sea-ink-soft)] opacity-70">
+              <span className="text-xs font-normal text-ink-soft opacity-70">
                 {passwordHint}
               </span>
             )}
@@ -84,9 +84,9 @@ export function AuthForm({ title, submitLabel, onSubmit, footer, passwordHint }:
           </button>
         </form>
 
-        <p className="m-0 text-center text-xs text-[var(--sea-ink-soft)]">
+        <p className="m-0 text-center text-xs text-ink-soft">
           {footer.prompt}{' '}
-          <Link to={footer.to} className="font-semibold text-[var(--lagoon)] no-underline">
+          <Link to={footer.to} className="font-semibold text-lagoon no-underline">
             {footer.linkLabel}
           </Link>
         </p>

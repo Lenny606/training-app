@@ -20,8 +20,8 @@ export function WorkoutPlanSelector({
   return (
     <section className="demo-panel p-4 rounded-2xl rise-in flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-bold uppercase tracking-wider text-[var(--sea-ink-soft)] flex items-center gap-1.5">
-          <Dumbbell className="h-4 w-4 text-[var(--lagoon)]" />
+        <label className="text-xs font-bold uppercase tracking-wider text-ink-soft flex items-center gap-1.5">
+          <Dumbbell className="h-4 w-4 text-lagoon" />
           Training Plan
         </label>
         
@@ -29,8 +29,8 @@ export function WorkoutPlanSelector({
           onClick={onToggleSound}
           className={`p-1.5 rounded-lg border transition-all ${
             soundEnabled
-              ? 'border-[var(--line)] bg-[rgba(0,240,255,0.06)] text-[var(--lagoon)]'
-              : 'border-transparent bg-transparent text-[var(--sea-ink-soft)]'
+              ? 'border-line bg-[rgba(0,240,255,0.06)] text-lagoon'
+              : 'border-transparent bg-transparent text-ink-soft'
           }`}
           title={soundEnabled ? 'Mute Beeps' : 'Enable Beeps'}
         >
@@ -53,7 +53,7 @@ export function WorkoutPlanSelector({
 
         <Link
           to="/admin"
-          className="demo-button demo-button-secondary p-2.5 rounded-xl border border-[var(--line)] hover:bg-[rgba(0,240,255,0.06)] text-[var(--sea-ink)] flex items-center justify-center"
+          className="demo-button demo-button-secondary p-2.5 rounded-xl border border-line hover:bg-[rgba(0,240,255,0.06)] text-ink flex items-center justify-center"
           title="Configure Plans"
         >
           <Settings className="h-4 w-4" />

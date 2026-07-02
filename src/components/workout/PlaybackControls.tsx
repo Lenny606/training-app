@@ -24,7 +24,7 @@ export function PlaybackControls({
       <button
         onClick={onSkipBackward}
         disabled={!canSkipBackward}
-        className="p-3 rounded-2xl border border-[var(--line)] bg-[var(--chip-bg)] text-[var(--sea-ink-soft)] hover:text-white disabled:opacity-30"
+        className="p-3 rounded-2xl border border-line bg-chip text-ink-soft hover:text-white disabled:opacity-30"
         title="Previous Activity"
       >
         <SkipBack className="h-5 w-5" />
@@ -35,7 +35,7 @@ export function PlaybackControls({
         className={`p-5 rounded-full border flex items-center justify-center shadow-lg transition-all active:scale-95 ${
           isPlaying
             ? 'border-amber-500 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20'
-            : 'border-[var(--lagoon)] bg-[rgba(0,240,255,0.12)] text-[var(--lagoon)] hover:bg-[rgba(0,240,255,0.22)] shadow-[0_0_15px_rgba(0,240,255,0.25)]'
+            : 'border-lagoon bg-[rgba(0,240,255,0.12)] text-lagoon hover:bg-[rgba(0,240,255,0.22)] shadow-[0_0_15px_rgba(0,240,255,0.25)]'
         }`}
         title={isPlaying ? 'Pause Session' : 'Start Session'}
       >
@@ -53,7 +53,7 @@ export function PlaybackControls({
       <button
         onClick={onSkipForward}
         disabled={!canSkipForward}
-        className="p-3 rounded-2xl border border-[var(--line)] bg-[var(--chip-bg)] text-[var(--sea-ink-soft)] hover:text-white disabled:opacity-30"
+        className="p-3 rounded-2xl border border-line bg-chip text-ink-soft hover:text-white disabled:opacity-30"
         title="Next Activity"
       >
         <SkipForward className="h-5 w-5" />
