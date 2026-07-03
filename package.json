@@ -1,5 +1,5 @@
 {
-  "name": "training-app",
+  "name": "apex-app",
   "private": true,
   "type": "module",
   "packageManager": "npm@11.14.1",

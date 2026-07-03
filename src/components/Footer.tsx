@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="mt-20 border-t border-line px-4 pb-14 pt-10 text-ink-soft">
       <div className="page-wrap flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
         <p className="m-0 text-sm">
-          &copy; {year} Titan Training. All rights reserved.
+          &copy; {year} Apex. All rights reserved.
         </p>
         <p className="island-kicker m-0">Fuel Your Progress</p>
       </div>
