@@ -134,3 +134,99 @@ export const startWorkoutDef = toolDefinition({
     error: z.string().optional(),
   }),
 })
+
+// ---------------------------------------------------------------------------
+// Workout Logging & Progress tools
+// ---------------------------------------------------------------------------
+
+const exerciseLogShape = z.object({
+  activityId: z.string().optional().meta({
+    description: 'Optional: the activity id from the plan if known.',
+  }),
+  activityName: z.string(),
+  setsCompleted: z.number().int().nonnegative().optional(),
+  reps: z.string().optional().meta({
+    description: 'e.g. "8", "8-10", "AMRAP"',
+  }),
+  weight: z.string().optional().meta({
+    description: 'e.g. "80kg", "bodyweight", "135 lbs"',
+  }),
+})
+
+export const logWorkoutDef = toolDefinition({
+  name: 'log_workout',
+  description:
+    'Save a completed workout session to the user\'s history. Call this after the user confirms a workout is done. Provide the plan id, actual duration in seconds, and optionally per-exercise performance data (weight, reps, sets).',
+  inputSchema: z.object({
+    planId: z.string(),
+    durationSeconds: z.number().int().positive(),
+    completedAt: z.string().datetime().meta({
+      description: 'ISO 8601 datetime of when the workout finished. Use now() if not specified.',
+    }),
+    notes: z.string().optional(),
+    exercises: z.array(exerciseLogShape).optional(),
+  }),
+  outputSchema: z.object({
+    ok: z.boolean(),
+    logId: z.string().optional(),
+    error: z.string().optional(),
+  }),
+})
+
+const workoutSummaryShape = z.object({
+  id: z.string(),
+  planName: z.string(),
+  durationSeconds: z.number(),
+  completedAt: z.string(),
+  notes: z.string().nullable(),
+  exerciseCount: z.number(),
+})
+
+export const getWorkoutHistoryDef = toolDefinition({
+  name: 'get_workout_history',
+  description:
+    'Fetch the user\'s recent workout history: which plans they trained, duration, and when. Optionally returns a weekly summary. Use this to answer questions like "how many workouts did I do this week?" or "what did I train last Tuesday?"',
+  inputSchema: z.object({
+    limit: z.number().int().positive().max(50).optional().meta({
+      description: 'Max number of recent sessions to return (default 10).',
+    }),
+    includWeeklySummary: z.boolean().optional().meta({
+      description: 'If true, also return a week-by-week session count and total duration.',
+    }),
+  }),
+  outputSchema: z.object({
+    sessions: z.array(workoutSummaryShape),
+    weeklySummary: z.array(z.object({
+      weekStart: z.string(),
+      sessionCount: z.number(),
+      totalSeconds: z.number(),
+    })).optional(),
+    recentCount: z.number().meta({
+      description: 'Number of sessions in the last 7 days.',
+    }),
+  }),
+})
+
+export const getExerciseProgressDef = toolDefinition({
+  name: 'get_exercise_progress',
+  description:
+    'Get the weight/reps progression for a specific exercise over recent sessions. Use this for questions like "what\'s my bench press trend?" or "am I getting stronger on squats?"',
+  inputSchema: z.object({
+    activityName: z.string().meta({
+      description: 'Exact or approximate exercise name, e.g. "Bench Press", "Squat".',
+    }),
+    limit: z.number().int().positive().max(30).optional().meta({
+      description: 'Max number of past entries to return (default 15).',
+    }),
+  }),
+  outputSchema: z.object({
+    activityName: z.string(),
+    entries: z.array(z.object({
+      completedAt: z.string(),
+      setsCompleted: z.number().nullable(),
+      reps: z.string().nullable(),
+      weight: z.string().nullable(),
+    })),
+    hasData: z.boolean(),
+  }),
+})

@@ -89,6 +89,40 @@ export const chatMessages = sqliteTable('chat_messages', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 })
 
+// ---------------------------------------------------------------------------
+// Workout logs — history of completed workout sessions
+// ---------------------------------------------------------------------------
+
+export const workoutLogs = sqliteTable('workout_logs', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  planId: text('plan_id')
+    .notNull()
+    .references(() => plans.id, { onDelete: 'cascade' }),
+  /** Duration of the actual session in seconds */
+  durationSeconds: integer('duration_seconds').notNull(),
+  completedAt: integer('completed_at', { mode: 'timestamp' }).notNull(),
+  /** Optional free-text notes from the user / AI */
+  notes: text('notes'),
+})
+
+export const workoutActivityLogs = sqliteTable('workout_activity_logs', {
+  id: text('id').primaryKey(),
+  workoutLogId: text('workout_log_id')
+    .notNull()
+    .references(() => workoutLogs.id, { onDelete: 'cascade' }),
+  activityId: text('activity_id').references(() => activities.id, {
+    onDelete: 'set null',
+  }),
+  /** Activity name snapshot — preserved even if the activity is later deleted */
+  activityName: text('activity_name').notNull(),
+  setsCompleted: integer('sets_completed'),
+  reps: text('reps'),
+  weight: text('weight'),
+})
+
 export type PlanRow = typeof plans.$inferSelect
 export type ActivityRow = typeof activities.$inferSelect
 export type UserRow = typeof users.$inferSelect
@@ -96,3 +130,5 @@ export type RefreshTokenRow = typeof refreshTokens.$inferSelect
 export type MediaRow = typeof media.$inferSelect
 export type ChatSessionRow = typeof chatSessions.$inferSelect
 export type ChatMessageRow = typeof chatMessages.$inferSelect
+export type WorkoutLogRow = typeof workoutLogs.$inferSelect
+export type WorkoutActivityLogRow = typeof workoutActivityLogs.$inferSelect
