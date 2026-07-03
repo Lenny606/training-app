@@ -15,10 +15,14 @@ export function getJwtSecret(): Uint8Array {
   }
 
   if (process.env.NODE_ENV === 'production') {
-    throw new Error('JWT_SECRET environment variable is required (min 16 chars) in production.')
+    throw new Error(
+      'JWT_SECRET environment variable is required (min 16 chars) in production.',
+    )
   }
 
-  console.warn('[auth] JWT_SECRET is not set — using an INSECURE development fallback.')
+  console.warn(
+    '[auth] JWT_SECRET is not set — using an INSECURE development fallback.',
+  )
   cached = new TextEncoder().encode('dev-insecure-jwt-secret-change-me')
   return cached
 }

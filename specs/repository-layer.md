@@ -15,14 +15,14 @@ relační databázi (SQLite)** s repository vrstvou nad ní.
 
 ## 2. Klíčová rozhodnutí
 
-| Oblast | Volba | Důvod |
-| --- | --- | --- |
-| Databáze | **SQLite** | Jednosouborová, zero-config, ideální pro single-node app. |
-| Driver | **better-sqlite3** | Synchronní, stabilní, nativní Node. Migrace na libSQL/Turso možná později. |
-| ORM | **Drizzle ORM** | Lehké, SQL-first, špičkové TS inference bez codegenu; přirozeně sedí k TanStack Start. |
-| Migrace | **drizzle-kit** | Generování + aplikace migrací ze schématu. |
-| Validátor | **Zod + drizzle-zod** | Zod je nativní pro TanStack (server-fn validátory, `validateSearch`). `drizzle-zod` odvodí schémata přímo z tabulek → jeden zdroj pravdy. |
-| Přístup z klienta | **TanStack Start server functions** (`createServerFn`) | SQLite běží jen na serveru; klient nesmí mít přímý přístup k DB. |
+| Oblast            | Volba                                                  | Důvod                                                                                                                                     |
+| ----------------- | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Databáze          | **SQLite**                                             | Jednosouborová, zero-config, ideální pro single-node app.                                                                                 |
+| Driver            | **better-sqlite3**                                     | Synchronní, stabilní, nativní Node. Migrace na libSQL/Turso možná později.                                                                |
+| ORM               | **Drizzle ORM**                                        | Lehké, SQL-first, špičkové TS inference bez codegenu; přirozeně sedí k TanStack Start.                                                    |
+| Migrace           | **drizzle-kit**                                        | Generování + aplikace migrací ze schématu.                                                                                                |
+| Validátor         | **Zod + drizzle-zod**                                  | Zod je nativní pro TanStack (server-fn validátory, `validateSearch`). `drizzle-zod` odvodí schémata přímo z tabulek → jeden zdroj pravdy. |
+| Přístup z klienta | **TanStack Start server functions** (`createServerFn`) | SQLite běží jen na serveru; klient nesmí mít přímý přístup k DB.                                                                          |
 
 > Alternativy zvážené a zamítnuté: Prisma (těžší, codegen, vlastní engine),
 > ukládání aktivit jako JSON sloupec (volíme plně relační model — viz §4).

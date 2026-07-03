@@ -29,7 +29,9 @@ export function signAccessToken(user: PublicUser): Promise<string> {
 }
 
 /** Signs a long-lived refresh token; its `jti` must be recorded in the store. */
-export async function signRefreshToken(userId: string): Promise<IssuedRefreshToken> {
+export async function signRefreshToken(
+  userId: string,
+): Promise<IssuedRefreshToken> {
   const jti = createId('rt')
   const expiresAt = new Date((nowSeconds() + REFRESH_TTL_SECONDS) * 1000)
   const token = await new SignJWT({ typ: 'refresh' })
@@ -43,10 +45,13 @@ export async function signRefreshToken(userId: string): Promise<IssuedRefreshTok
 }
 
 /** Cryptographically verifies an access token, returning the `PublicUser` or null. */
-export async function verifyAccessToken(token: string): Promise<PublicUser | null> {
+export async function verifyAccessToken(
+  token: string,
+): Promise<PublicUser | null> {
   try {
     const { payload } = await jwtVerify(token, getJwtSecret())
-    if (typeof payload.sub !== 'string' || typeof payload.email !== 'string') return null
+    if (typeof payload.sub !== 'string' || typeof payload.email !== 'string')
+      return null
     if (payload.role !== 'user' && payload.role !== 'admin') return null
     return { id: payload.sub, email: payload.email, role: payload.role }
   } catch {
@@ -61,7 +66,8 @@ export async function verifyRefreshToken(
   try {
     const { payload } = await jwtVerify(token, getJwtSecret())
     if (payload.typ !== 'refresh') return null
-    if (typeof payload.sub !== 'string' || typeof payload.jti !== 'string') return null
+    if (typeof payload.sub !== 'string' || typeof payload.jti !== 'string')
+      return null
     return { sub: payload.sub, jti: payload.jti }
   } catch {
     return null

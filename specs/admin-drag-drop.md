@@ -35,13 +35,13 @@ dotykovou podporou (ne regrese přístupnosti).
 
 ## 3. Klíčová rozhodnutí
 
-| Oblast | Volba | Důvod |
-| --- | --- | --- |
-| Knihovna | **@dnd-kit** (`@dnd-kit/core` + `@dnd-kit/sortable`) | Moderní, React 19 ready, přístupné (klávesnice), dotyk, malý overhead. Lepší než nativní HTML5 DnD (špatný touch UX). |
-| Move sémantika | **`arrayMove(from, to)`** (z `@dnd-kit/sortable`) | DnD je přesun na libovolnou pozici, ne swap sousedů jako dnes. |
-| Aktivace dragu | **dedikovaný drag handle** (ikona `GripVertical`) | Řádek aktivity obsahuje inputy (sets/reps/weight) — drag nesmí kolidovat s editací. |
-| Senzory | `PointerSensor` + `KeyboardSensor` (+ touch) s **activation constraint** | Drobný pohyb/zpoždění, aby klik do inputu nespustil drag. |
-| Přístupnost | **zachovat klávesnicové řazení** | dnd-kit `KeyboardSensor` + `sortableKeyboardCoordinates`; šipky lze ponechat jako fallback (§7). |
+| Oblast         | Volba                                                                    | Důvod                                                                                                                 |
+| -------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| Knihovna       | **@dnd-kit** (`@dnd-kit/core` + `@dnd-kit/sortable`)                     | Moderní, React 19 ready, přístupné (klávesnice), dotyk, malý overhead. Lepší než nativní HTML5 DnD (špatný touch UX). |
+| Move sémantika | **`arrayMove(from, to)`** (z `@dnd-kit/sortable`)                        | DnD je přesun na libovolnou pozici, ne swap sousedů jako dnes.                                                        |
+| Aktivace dragu | **dedikovaný drag handle** (ikona `GripVertical`)                        | Řádek aktivity obsahuje inputy (sets/reps/weight) — drag nesmí kolidovat s editací.                                   |
+| Senzory        | `PointerSensor` + `KeyboardSensor` (+ touch) s **activation constraint** | Drobný pohyb/zpoždění, aby klik do inputu nespustil drag.                                                             |
+| Přístupnost    | **zachovat klávesnicové řazení**                                         | dnd-kit `KeyboardSensor` + `sortableKeyboardCoordinates`; šipky lze ponechat jako fallback (§7).                      |
 
 > `modern-web-guidance` skill spustit před implementací (klientský JS/UX).
 

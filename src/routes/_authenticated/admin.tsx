@@ -16,12 +16,25 @@ interface PlanEditorPanelProps {
   editingPlan: ReturnType<typeof useAdminState>['editingPlan']
   saveSuccess: boolean
   hasUnsavedChanges: boolean
-  handlers: Pick<ReturnType<typeof useAdminState>,
-    'handleMetaChange' | 'handleActivityChange' | 'moveActivity' | 'reorderActivity' |
-    'deleteActivity' | 'handleAddActivity' | 'handleDiscardChanges' | 'handleSavePlan'>
+  handlers: Pick<
+    ReturnType<typeof useAdminState>,
+    | 'handleMetaChange'
+    | 'handleActivityChange'
+    | 'moveActivity'
+    | 'reorderActivity'
+    | 'deleteActivity'
+    | 'handleAddActivity'
+    | 'handleDiscardChanges'
+    | 'handleSavePlan'
+  >
 }
 
-function PlanEditorPanel({ editingPlan, saveSuccess, hasUnsavedChanges, handlers }: PlanEditorPanelProps) {
+function PlanEditorPanel({
+  editingPlan,
+  saveSuccess,
+  hasUnsavedChanges,
+  handlers,
+}: PlanEditorPanelProps) {
   if (!editingPlan) return null
   return (
     <div className="demo-panel p-6 rise-in flex flex-col gap-6">
@@ -34,7 +47,9 @@ function PlanEditorPanel({ editingPlan, saveSuccess, hasUnsavedChanges, handlers
       {saveSuccess && (
         <div className="flex items-center gap-2 bg-success/10 border border-success/30 rounded-xl px-4 py-2.5 text-xs text-success">
           <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
-          <span>Workout program configuration successfully saved to active memory.</span>
+          <span>
+            Workout program configuration successfully saved to active memory.
+          </span>
         </div>
       )}
       <PlanMetaForm plan={editingPlan} onChange={handlers.handleMetaChange} />
@@ -50,7 +65,10 @@ function PlanEditorPanel({ editingPlan, saveSuccess, hasUnsavedChanges, handlers
           onReorderActivity={handlers.reorderActivity}
           onDeleteActivity={handlers.deleteActivity}
         />
-        <AddActivityForm key={editingPlan.id} onAddActivity={handlers.handleAddActivity} />
+        <AddActivityForm
+          key={editingPlan.id}
+          onAddActivity={handlers.handleAddActivity}
+        />
       </div>
     </div>
   )
@@ -58,10 +76,23 @@ function PlanEditorPanel({ editingPlan, saveSuccess, hasUnsavedChanges, handlers
 
 function Admin() {
   const {
-    plans, selectedPlanId, editingPlan, saveSuccess, hasUnsavedChanges,
-    handleSelectPlan, handleMetaChange, handleActivityChange, moveActivity,
-    reorderActivity, deleteActivity, handleAddActivity, handleCreateNewPlan,
-    handleSavePlan, handleDiscardChanges, handleDeletePlan, reorderPlans,
+    plans,
+    selectedPlanId,
+    editingPlan,
+    saveSuccess,
+    hasUnsavedChanges,
+    handleSelectPlan,
+    handleMetaChange,
+    handleActivityChange,
+    moveActivity,
+    reorderActivity,
+    deleteActivity,
+    handleAddActivity,
+    handleCreateNewPlan,
+    handleSavePlan,
+    handleDiscardChanges,
+    handleDeletePlan,
+    reorderPlans,
   } = useAdminState()
 
   return (
@@ -81,7 +112,16 @@ function Admin() {
               editingPlan={editingPlan}
               saveSuccess={saveSuccess}
               hasUnsavedChanges={hasUnsavedChanges}
-              handlers={{ handleMetaChange, handleActivityChange, moveActivity, reorderActivity, deleteActivity, handleAddActivity, handleDiscardChanges, handleSavePlan }}
+              handlers={{
+                handleMetaChange,
+                handleActivityChange,
+                moveActivity,
+                reorderActivity,
+                deleteActivity,
+                handleAddActivity,
+                handleDiscardChanges,
+                handleSavePlan,
+              }}
             />
           ) : (
             <EmptyPlanEditorState onCreateNewPlan={handleCreateNewPlan} />
@@ -91,4 +131,3 @@ function Admin() {
     </main>
   )
 }
-

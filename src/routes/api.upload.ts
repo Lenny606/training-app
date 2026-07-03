@@ -18,7 +18,9 @@ export const Route = createFileRoute('/api/upload')({
 
           const file = formData.get('file')
           if (!file || typeof file === 'string') {
-            return new Response('No file provided or invalid file format.', { status: 400 })
+            return new Response('No file provided or invalid file format.', {
+              status: 400,
+            })
           }
 
           const fs = await import('node:fs')
@@ -64,7 +66,10 @@ export const Route = createFileRoute('/api/upload')({
               finalMimeType = 'image/webp'
               finalFileSize = finalBuffer.length
             } catch (sharpError) {
-              console.warn('[upload] Sharp processing failed, falling back to original file:', sharpError)
+              console.warn(
+                '[upload] Sharp processing failed, falling back to original file:',
+                sharpError,
+              )
               finalFileName = `${createId('file')}${extension}`
             }
           } else {
@@ -102,7 +107,7 @@ export const Route = createFileRoute('/api/upload')({
               headers: {
                 'Content-Type': 'application/json',
               },
-            }
+            },
           )
         } catch (error) {
           console.error('[upload] Failed to upload file:', error)

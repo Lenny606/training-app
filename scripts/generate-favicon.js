@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import sharp from 'sharp';
+import fs from 'fs'
+import path from 'path'
+import sharp from 'sharp'
 
 const SVG_CONTENT = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
@@ -60,70 +60,70 @@ const SVG_CONTENT = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 51
              L 332 350 Z" 
           fill="#0f172a" />
   </g>
-</svg>`;
+</svg>`
 
 async function main() {
-  const publicDir = path.resolve('public');
-  
+  const publicDir = path.resolve('public')
+
   // Write SVG file
-  const svgPath = path.join(publicDir, 'favicon.svg');
-  fs.writeFileSync(svgPath, SVG_CONTENT, 'utf8');
-  console.log('✓ Created favicon.svg');
+  const svgPath = path.join(publicDir, 'favicon.svg')
+  fs.writeFileSync(svgPath, SVG_CONTENT, 'utf8')
+  console.log('✓ Created favicon.svg')
 
   // Generate PNGs
   const pngSizes = {
     'favicon-32.png': 32,
     'logo192.png': 192,
     'logo512.png': 512,
-  };
+  }
 
-  const buffers = {};
+  const buffers = {}
 
   for (const [filename, size] of Object.entries(pngSizes)) {
-    const destPath = path.join(publicDir, filename);
+    const destPath = path.join(publicDir, filename)
     const buf = await sharp(Buffer.from(SVG_CONTENT))
       .resize(size, size)
       .png()
-      .toBuffer();
-    
-    fs.writeFileSync(destPath, buf);
-    buffers[size] = buf;
-    console.log(`✓ Created ${filename} (${size}x${size})`);
+      .toBuffer()
+
+    fs.writeFileSync(destPath, buf)
+    buffers[size] = buf
+    console.log(`✓ Created ${filename} (${size}x${size})`)
   }
 
   // Create valid ICO file containing the 32x32 PNG
-  const png32 = buffers[32];
-  
+  const png32 = buffers[32]
+
   // Header: 6 bytes
-  const header = Buffer.alloc(6);
-  header.writeUInt16LE(0, 0); // Reserved
-  header.writeUInt16LE(1, 2); // Type (1 for icon)
-  header.writeUInt16LE(1, 4); // Number of images (1)
+  const header = Buffer.alloc(6)
+  header.writeUInt16LE(0, 0) // Reserved
+  header.writeUInt16LE(1, 2) // Type (1 for icon)
+  header.writeUInt16LE(1, 4) // Number of images (1)
 
   // Directory Entry: 16 bytes
-  const entry = Buffer.alloc(16);
-  entry.writeUInt8(32, 0); // Width
-  entry.writeUInt8(32, 1); // Height
-  entry.writeUInt8(0, 2);  // Palette count
-  entry.writeUInt8(0, 3);  // Reserved
-  entry.writeUInt16LE(1, 4); // Color planes
-  entry.writeUInt16LE(32, 6); // Bits per pixel
-  entry.writeUInt32LE(png32.length, 8); // Size of image data
-  entry.writeUInt32LE(22, 12); // Offset of image data (6 + 16 = 22)
+  const entry = Buffer.alloc(16)
+  entry.writeUInt8(32, 0) // Width
+  entry.writeUInt8(32, 1) // Height
+  entry.writeUInt8(0, 2) // Palette count
+  entry.writeUInt8(0, 3) // Reserved
+  entry.writeUInt16LE(1, 4) // Color planes
+  entry.writeUInt16LE(32, 6) // Bits per pixel
+  entry.writeUInt32LE(png32.length, 8) // Size of image data
+  entry.writeUInt32LE(22, 12) // Offset of image data (6 + 16 = 22)
 
-  const icoBuffer = Buffer.concat([header, entry, png32]);
-  const icoPath = path.join(publicDir, 'favicon.ico');
-  fs.writeFileSync(icoPath, icoBuffer);
-  console.log('✓ Created favicon.ico containing 32x32 PNG');
+  const icoBuffer = Buffer.concat([header, entry, png32])
+  const icoPath = path.join(publicDir, 'favicon.ico')
+  fs.writeFileSync(icoPath, icoBuffer)
+  console.log('✓ Created favicon.ico containing 32x32 PNG')
 
   // Clean up temporary favicon-32.png
-  const tempPng = path.join(publicDir, 'favicon-32.png');
+  const tempPng = path.join(publicDir, 'favicon-32.png')
   if (fs.existsSync(tempPng)) {
-    fs.unlinkSync(tempPng);
+    fs.unlinkSync(tempPng)
   }
 }
 
-main().catch(err => {
-  console.error('Error generating favicons:', err);
-  process.exit(1);
-});
+main().catch((err) => {
+  console.error('Error generating favicons:', err)
+  process.exit(1)
+})

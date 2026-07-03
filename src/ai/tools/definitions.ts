@@ -52,7 +52,9 @@ export const getPlanDef = toolDefinition({
   description:
     'Fetch one full training plan by id, including all activities. Returns plan: null if no such plan exists for this user.',
   inputSchema: z.object({
-    planId: z.string().meta({ description: 'Plan id, e.g. one returned by list_plans' }),
+    planId: z
+      .string()
+      .meta({ description: 'Plan id, e.g. one returned by list_plans' }),
   }),
   outputSchema: z.object({ plan: planShape.nullable() }),
 })
@@ -104,7 +106,9 @@ export const addActivityDef = toolDefinition({
       .int()
       .nonnegative()
       .optional()
-      .meta({ description: 'Zero-based insert index; omit to append at the end' }),
+      .meta({
+        description: 'Zero-based insert index; omit to append at the end',
+      }),
   }),
   outputSchema: planResult,
 })

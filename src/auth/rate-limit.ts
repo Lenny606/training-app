@@ -11,7 +11,11 @@ interface Bucket {
 const buckets = new Map<string, Bucket>()
 
 /** Returns true if the action is allowed, false if the limit is exceeded. */
-export function checkRateLimit(key: string, limit: number, windowMs: number): boolean {
+export function checkRateLimit(
+  key: string,
+  limit: number,
+  windowMs: number,
+): boolean {
   const now = Date.now()
   const bucket = buckets.get(key)
 

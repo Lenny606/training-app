@@ -1,20 +1,21 @@
-import {
-  DndContext,
-  closestCenter,
-} from '@dnd-kit/core'
+import { DndContext, closestCenter } from '@dnd-kit/core'
 import type { DragEndEvent } from '@dnd-kit/core'
-import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
+  restrictToParentElement,
+  restrictToVerticalAxis,
+} from '@dnd-kit/modifiers'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { ActivityItem } from './ActivityItem'
 import type { Activity, Media } from '../../domain/plans'
 import { useDndSensors } from '../../hooks/useDndSensors'
 
 interface ActivitiesListProps {
   activities: Activity[]
-  onActivityChange: (index: number, field: keyof Activity, value: string | Media[]) => void
+  onActivityChange: (
+    index: number,
+    field: keyof Activity,
+    value: string | Media[],
+  ) => void
   onMoveActivity: (index: number, direction: 'up' | 'down') => void
   onReorderActivity: (from: number, to: number) => void
   onDeleteActivity: (index: number) => void

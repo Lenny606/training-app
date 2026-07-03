@@ -39,7 +39,11 @@ export function PlaybackControls({
         }`}
         title={isPlaying ? 'Pause Session' : 'Start Session'}
       >
-        {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8 fill-current ml-0.5" />}
+        {isPlaying ? (
+          <Pause className="h-8 w-8" />
+        ) : (
+          <Play className="h-8 w-8 fill-current ml-0.5" />
+        )}
       </button>
 
       <button

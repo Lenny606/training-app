@@ -7,11 +7,13 @@ import type { PublicUser, Role } from '../domain/users'
 // route that renders it.
 
 /** Resolves the session user (nullable) from the access cookie into context. */
-export const authMiddleware = createMiddleware({ type: 'function' }).server(async ({ next }) => {
-  const { getSessionUser } = await import('./session')
-  const user = await getSessionUser()
-  return next({ context: { user } })
-})
+export const authMiddleware = createMiddleware({ type: 'function' }).server(
+  async ({ next }) => {
+    const { getSessionUser } = await import('./session')
+    const user = await getSessionUser()
+    return next({ context: { user } })
+  },
+)
 
 /** Requires a signed-in user; throws 401 otherwise. Narrows `context.user` to non-null. */
 export const requireAuth = createMiddleware({ type: 'function' })
@@ -31,7 +33,8 @@ export function requireRole(role: Role) {
     .middleware([requireAuth])
     .server(async ({ next, context }) => {
       if (context.user.role !== role) {
-        const { setResponseStatus } = await import('@tanstack/react-start/server')
+        const { setResponseStatus } =
+          await import('@tanstack/react-start/server')
         setResponseStatus(403)
         throw new Error('Insufficient permissions.')
       }

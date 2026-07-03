@@ -8,7 +8,8 @@ import { requireAuth } from '../auth/middleware'
 // handlers into a server bundle and tree-shakes these server-only imports
 // (better-sqlite3, migrations) out of the client build.
 async function getRepo() {
-  const { SqlitePlanRepository } = await import('../repositories/sqlite-plan-repository')
+  const { SqlitePlanRepository } =
+    await import('../repositories/sqlite-plan-repository')
   const { runMigrations } = await import('../db/migrate')
 
   runMigrations()

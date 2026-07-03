@@ -43,11 +43,18 @@ function ChatSession({ model }: { model: ModelId }) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const startedRef = useRef<Set<string>>(new Set())
 
-  const { messages, sendMessage, stop, isLoading, error, status, addToolApprovalResponse } =
-    useChat({
-      connection: fetchServerSentEvents('/api/chat'),
-      body: { model },
-    })
+  const {
+    messages,
+    sendMessage,
+    stop,
+    isLoading,
+    error,
+    status,
+    addToolApprovalResponse,
+  } = useChat({
+    connection: fetchServerSentEvents('/api/chat'),
+    body: { model },
+  })
 
   // When start_workout completes, deep-link to the timer with the plan preselected.
   useEffect(() => {
@@ -88,7 +95,11 @@ function ChatSession({ model }: { model: ModelId }) {
       >
         {messages.length === 0 && <EmptyState />}
         {messages.map((message) => (
-          <MessageRow key={message.id} message={message} onApprove={addToolApprovalResponse} />
+          <MessageRow
+            key={message.id}
+            message={message}
+            onApprove={addToolApprovalResponse}
+          />
         ))}
         {isLoading && messages[messages.length - 1]?.role !== 'assistant' && (
           <div className="text-xs text-ink-soft">Thinking…</div>
@@ -150,8 +161,8 @@ function EmptyState() {
       <Bot className="mx-auto mb-2 h-6 w-6 text-lagoon" />
       <p className="font-semibold text-ink">Your training assistant</p>
       <p className="mt-1">
-        Try “list my plans”, “summarize my push day”, “add a 90s plank to my HIIT plan”, or “start
-        my deadlift session”.
+        Try “list my plans”, “summarize my push day”, “add a 90s plank to my
+        HIIT plan”, or “start my deadlift session”.
       </p>
     </div>
   )
@@ -174,7 +185,9 @@ function MessageRow({
           <Bot className="h-3.5 w-3.5 text-lagoon" />
         )}
       </div>
-      <div className={`flex max-w-[85%] flex-col gap-2 ${isUser ? 'items-end' : 'items-start'}`}>
+      <div
+        className={`flex max-w-[85%] flex-col gap-2 ${isUser ? 'items-end' : 'items-start'}`}
+      >
         {message.parts.map((part, i) => (
           <MessagePart key={i} part={part} onApprove={onApprove} />
         ))}
@@ -201,7 +214,9 @@ function MessagePart({
   if (part.type === 'thinking' && part.content) {
     return (
       <details className="w-full text-xs text-ink-soft">
-        <summary className="cursor-pointer select-none">Thought process</summary>
+        <summary className="cursor-pointer select-none">
+          Thought process
+        </summary>
         <pre className="mt-1 whitespace-pre-wrap font-sans">{part.content}</pre>
       </details>
     )
@@ -223,14 +238,18 @@ function MessagePart({
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => onApprove({ id: part.approval!.id, approved: true })}
+                onClick={() =>
+                  onApprove({ id: part.approval!.id, approved: true })
+                }
                 className="demo-button demo-button-sm inline-flex items-center gap-1"
               >
                 <Check className="h-3 w-3" /> Approve
               </button>
               <button
                 type="button"
-                onClick={() => onApprove({ id: part.approval!.id, approved: false })}
+                onClick={() =>
+                  onApprove({ id: part.approval!.id, approved: false })
+                }
                 className="demo-button demo-button-sm inline-flex items-center gap-1"
               >
                 <X className="h-3 w-3" /> Deny

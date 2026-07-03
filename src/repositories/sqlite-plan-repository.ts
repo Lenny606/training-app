@@ -1,5 +1,10 @@
 import { and, asc, eq, inArray } from 'drizzle-orm'
-import type { Activity, NewTrainingPlan, TrainingPlan, Media } from '../domain/plans'
+import type {
+  Activity,
+  NewTrainingPlan,
+  TrainingPlan,
+  Media,
+} from '../domain/plans'
 import type { DbClient } from '../db/client'
 import { getDb } from '../db/client'
 import { activities, plans, media } from '../db/schema'
@@ -153,13 +158,20 @@ export class SqlitePlanRepository implements PlanRepository {
     }
   }
 
-  async create(newPlan: NewTrainingPlan, ownerId: string): Promise<TrainingPlan> {
+  async create(
+    newPlan: NewTrainingPlan,
+    ownerId: string,
+  ): Promise<TrainingPlan> {
     this.validate(newPlan)
 
     const planId = createId('plan')
     const now = new Date()
     // Append new plans to the end of the owner's ordering.
-    const position = this.db.select().from(plans).where(eq(plans.ownerId, ownerId)).all().length
+    const position = this.db
+      .select()
+      .from(plans)
+      .where(eq(plans.ownerId, ownerId))
+      .all().length
     const created: TrainingPlan = {
       ...newPlan,
       id: planId,
@@ -221,7 +233,10 @@ export class SqlitePlanRepository implements PlanRepository {
 
     if (patch.activities) {
       // Collect existing media IDs associated with this plan
-      const existingMediaMap = new Map<string, { id: string; fileName: string }>()
+      const existingMediaMap = new Map<
+        string,
+        { id: string; fileName: string }
+      >()
       for (const act of existing.activities) {
         if (act.media) {
           for (const m of act.media) {
@@ -268,7 +283,12 @@ export class SqlitePlanRepository implements PlanRepository {
 
         if (actIdsToDelete.length > 0) {
           tx.delete(activities)
-            .where(and(eq(activities.planId, id), inArray(activities.id, actIdsToDelete)))
+            .where(
+              and(
+                eq(activities.planId, id),
+                inArray(activities.id, actIdsToDelete),
+              ),
+            )
             .run()
         }
 
@@ -278,7 +298,12 @@ export class SqlitePlanRepository implements PlanRepository {
         )
         if (mediaIdsToDelete.length > 0) {
           tx.delete(media)
-            .where(and(inArray(media.id, mediaIdsToDelete), eq(media.userId, ownerId)))
+            .where(
+              and(
+                inArray(media.id, mediaIdsToDelete),
+                eq(media.userId, ownerId),
+              ),
+            )
             .run()
         }
 
@@ -295,7 +320,9 @@ export class SqlitePlanRepository implements PlanRepository {
                 reps: activity.reps ?? null,
                 weight: activity.weight ?? null,
               })
-              .where(and(eq(activities.planId, id), eq(activities.id, activity.id)))
+              .where(
+                and(eq(activities.planId, id), eq(activities.id, activity.id)),
+              )
               .run()
           } else {
             tx.insert(activities)
@@ -318,7 +345,9 @@ export class SqlitePlanRepository implements PlanRepository {
             const mediaIds = activity.media.map((m) => m.id)
             tx.update(media)
               .set({ activityId: activity.id })
-              .where(and(inArray(media.id, mediaIds), eq(media.userId, ownerId)))
+              .where(
+                and(inArray(media.id, mediaIds), eq(media.userId, ownerId)),
+              )
               .run()
           }
         })
@@ -365,7 +394,10 @@ export class SqlitePlanRepository implements PlanRepository {
         }
       }
 
-      this.db.delete(plans).where(and(eq(plans.id, id), eq(plans.ownerId, ownerId))).run()
+      this.db
+        .delete(plans)
+        .where(and(eq(plans.id, id), eq(plans.ownerId, ownerId)))
+        .run()
 
       if (fileNames.length > 0) {
         const uploadDir = getUploadDir()
@@ -424,4 +456,3 @@ export class SqlitePlanRepository implements PlanRepository {
     })
   }
 }
-

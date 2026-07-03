@@ -1,5 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate, useRouter, useRouterState } from '@tanstack/react-router'
+import {
+  Link,
+  useNavigate,
+  useRouter,
+  useRouterState,
+} from '@tanstack/react-router'
 import { Menu, X, LogOut } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
 import { logout } from '../server/auth'
@@ -18,7 +23,8 @@ export default function Header() {
   const navigate = useNavigate()
 
   const user = useRouterState({
-    select: (s) => (s.matches[0]?.context as RouterContext | undefined)?.user ?? null,
+    select: (s) =>
+      (s.matches[0]?.context as RouterContext | undefined)?.user ?? null,
   })
 
   // Close menu on route change
@@ -56,7 +62,12 @@ export default function Header() {
         {user && (
           <div className="hidden sm:flex items-center gap-x-6 text-sm font-semibold ml-4">
             {NAV_LINKS.map(({ to, label }) => (
-              <Link key={to} to={to} className="nav-link" activeProps={{ className: 'nav-link is-active' }}>
+              <Link
+                key={to}
+                to={to}
+                className="nav-link"
+                activeProps={{ className: 'nav-link is-active' }}
+              >
                 {label}
               </Link>
             ))}
@@ -79,7 +90,6 @@ export default function Header() {
                 {user.email}
               </span>
 
-
               {/* Hamburger — only on mobile */}
               <button
                 className="sm:!hidden demo-button demo-button-icon min-h-11 min-w-11 border-line bg-chip text-ink-soft hover:text-ink"
@@ -87,7 +97,11 @@ export default function Header() {
                 aria-label={menuOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={menuOpen}
               >
-                {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+                {menuOpen ? (
+                  <X className="h-4 w-4" />
+                ) : (
+                  <Menu className="h-4 w-4" />
+                )}
               </button>
             </>
           ) : (

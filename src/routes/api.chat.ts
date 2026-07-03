@@ -23,7 +23,9 @@ export const Route = createFileRoute('/api/chat')({
 
         const { checkRateLimit } = await import('../auth/rate-limit')
         if (!checkRateLimit(`chat:${user.id}`, RATE_LIMIT, RATE_WINDOW_MS)) {
-          return new Response('Too many requests. Please slow down.', { status: 429 })
+          return new Response('Too many requests. Please slow down.', {
+            status: 429,
+          })
         }
 
         const body = await request.json().catch(() => null)
@@ -31,12 +33,14 @@ export const Route = createFileRoute('/api/chat')({
           return new Response('Invalid request body.', { status: 400 })
         }
 
-        const { chat, toServerSentEventsResponse, maxIterations } = await import('@tanstack/ai')
+        const { chat, toServerSentEventsResponse, maxIterations } =
+          await import('@tanstack/ai')
         const { createAdapter } = await import('../ai/client')
         const { resolveModelId } = await import('../ai/models')
         const { SYSTEM_PROMPT } = await import('../ai/system-prompt')
         const { buildTools } = await import('../ai/tools')
-        const { SqlitePlanRepository } = await import('../repositories/sqlite-plan-repository')
+        const { SqlitePlanRepository } =
+          await import('../repositories/sqlite-plan-repository')
         const { runMigrations } = await import('../db/migrate')
 
         runMigrations()
@@ -55,7 +59,9 @@ export const Route = createFileRoute('/api/chat')({
             {
               name: 'usage-log',
               onUsage(_ctx, usage) {
-                console.log(`[ai] user=${user.id} model=${modelId} tokens=${usage.totalTokens}`)
+                console.log(
+                  `[ai] user=${user.id} model=${modelId} tokens=${usage.totalTokens}`,
+                )
               },
             },
           ],

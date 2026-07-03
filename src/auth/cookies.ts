@@ -1,4 +1,8 @@
-import { deleteCookie, getCookie, setCookie } from '@tanstack/react-start/server'
+import {
+  deleteCookie,
+  getCookie,
+  setCookie,
+} from '@tanstack/react-start/server'
 import { ACCESS_TTL_SECONDS, REFRESH_TTL_SECONDS } from './tokens'
 
 const isProd = process.env.NODE_ENV === 'production'
@@ -16,14 +20,26 @@ const baseOptions = {
   path: '/',
 } as const
 
-export function setAuthCookies(accessToken: string, refreshToken: string): void {
-  setCookie(ACCESS_COOKIE, accessToken, { ...baseOptions, maxAge: ACCESS_TTL_SECONDS })
-  setCookie(REFRESH_COOKIE, refreshToken, { ...baseOptions, maxAge: REFRESH_TTL_SECONDS })
+export function setAuthCookies(
+  accessToken: string,
+  refreshToken: string,
+): void {
+  setCookie(ACCESS_COOKIE, accessToken, {
+    ...baseOptions,
+    maxAge: ACCESS_TTL_SECONDS,
+  })
+  setCookie(REFRESH_COOKIE, refreshToken, {
+    ...baseOptions,
+    maxAge: REFRESH_TTL_SECONDS,
+  })
 }
 
 /** Refreshes just the access cookie (used on silent/explicit token refresh). */
 export function setAccessCookie(accessToken: string): void {
-  setCookie(ACCESS_COOKIE, accessToken, { ...baseOptions, maxAge: ACCESS_TTL_SECONDS })
+  setCookie(ACCESS_COOKIE, accessToken, {
+    ...baseOptions,
+    maxAge: ACCESS_TTL_SECONDS,
+  })
 }
 
 export function clearAuthCookies(): void {

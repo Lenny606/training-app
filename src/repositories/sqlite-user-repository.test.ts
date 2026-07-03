@@ -14,7 +14,10 @@ describe('SqliteUserRepository', () => {
   })
 
   it('creates a user with default role and generated id', async () => {
-    const user = await repository.create({ email: 'a@example.com', passwordHash: 'h' })
+    const user = await repository.create({
+      email: 'a@example.com',
+      passwordHash: 'h',
+    })
     expect(user.id).toMatch(/^user-/)
     expect(user.role).toBe('user')
     expect(user.email).toBe('a@example.com')
@@ -34,15 +37,23 @@ describe('SqliteUserRepository', () => {
   })
 
   it('getById returns the user or null', async () => {
-    const created = await repository.create({ email: 'b@example.com', passwordHash: 'h' })
+    const created = await repository.create({
+      email: 'b@example.com',
+      passwordHash: 'h',
+    })
     expect((await repository.getById(created.id))?.email).toBe('b@example.com')
     expect(await repository.getById('nope')).toBeNull()
   })
 
   it('updateRole promotes a user and throws for a missing id', async () => {
-    const created = await repository.create({ email: 'c@example.com', passwordHash: 'h' })
+    const created = await repository.create({
+      email: 'c@example.com',
+      passwordHash: 'h',
+    })
     const updated = await repository.updateRole(created.id, 'admin')
     expect(updated.role).toBe('admin')
-    await expect(repository.updateRole('nope', 'admin')).rejects.toThrow(UserNotFoundError)
+    await expect(repository.updateRole('nope', 'admin')).rejects.toThrow(
+      UserNotFoundError,
+    )
   })
 })

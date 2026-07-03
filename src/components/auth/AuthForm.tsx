@@ -11,7 +11,13 @@ interface AuthFormProps {
   passwordHint?: string
 }
 
-export function AuthForm({ title, submitLabel, onSubmit, footer, passwordHint }: AuthFormProps) {
+export function AuthForm({
+  title,
+  submitLabel,
+  onSubmit,
+  footer,
+  passwordHint,
+}: AuthFormProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -24,7 +30,11 @@ export function AuthForm({ title, submitLabel, onSubmit, footer, passwordHint }:
     try {
       await onSubmit(email, password)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Something went wrong. Please try again.',
+      )
       setSubmitting(false)
     }
   }
@@ -36,7 +46,11 @@ export function AuthForm({ title, submitLabel, onSubmit, footer, passwordHint }:
           {title}
         </h1>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-4"
+          noValidate
+        >
           <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
             Email
             <input
@@ -53,7 +67,11 @@ export function AuthForm({ title, submitLabel, onSubmit, footer, passwordHint }:
             Password
             <input
               type="password"
-              autoComplete={submitLabel === 'Create account' ? 'new-password' : 'current-password'}
+              autoComplete={
+                submitLabel === 'Create account'
+                  ? 'new-password'
+                  : 'current-password'
+              }
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -86,7 +104,10 @@ export function AuthForm({ title, submitLabel, onSubmit, footer, passwordHint }:
 
         <p className="m-0 text-center text-xs text-ink-soft">
           {footer.prompt}{' '}
-          <Link to={footer.to} className="font-semibold text-lagoon no-underline">
+          <Link
+            to={footer.to}
+            className="font-semibold text-lagoon no-underline"
+          >
             {footer.linkLabel}
           </Link>
         </p>

@@ -8,7 +8,10 @@ export function hashPassword(password: string): Promise<string> {
 }
 
 /** Verifies a plaintext password against an argon2id hash. Never throws on mismatch. */
-export async function verifyPassword(hashed: string, password: string): Promise<boolean> {
+export async function verifyPassword(
+  hashed: string,
+  password: string,
+): Promise<boolean> {
   try {
     return await verify(hashed, password)
   } catch {

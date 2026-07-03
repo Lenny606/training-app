@@ -34,7 +34,8 @@ function EmptyTimerDisplay() {
           No Activities Defined
         </h3>
         <p className="text-xs text-ink-soft max-w-xs mb-4">
-          This plan has no activities. Head to the administration screen to set some up.
+          This plan has no activities. Head to the administration screen to set
+          some up.
         </p>
         <Link to="/admin" className="demo-button text-xs py-1.5 px-3">
           Go to Plan Builder
@@ -44,11 +45,17 @@ function EmptyTimerDisplay() {
   )
 }
 
-function getTimerMetrics(secondsRemaining: number, currentActivity: Activity | undefined) {
+function getTimerMetrics(
+  secondsRemaining: number,
+  currentActivity: Activity | undefined,
+) {
   const radius = 100
   const circumference = 2 * Math.PI * radius
   const totalDuration = currentActivity?.duration || 1
-  const progressRatio = Math.max(0, Math.min(1, secondsRemaining / totalDuration))
+  const progressRatio = Math.max(
+    0,
+    Math.min(1, secondsRemaining / totalDuration),
+  )
   const strokeDashoffset = circumference - progressRatio * circumference
   return { radius, circumference, strokeDashoffset }
 }
@@ -56,11 +63,13 @@ function getTimerMetrics(secondsRemaining: number, currentActivity: Activity | u
 function getNavigationStates(
   currentActivityIndex: number,
   activitiesCount: number,
-  isCompleted: boolean
+  isCompleted: boolean,
 ) {
   return {
     canSkipBackward: currentActivityIndex > 0,
-    canSkipForward: !(currentActivityIndex === activitiesCount - 1 && isCompleted),
+    canSkipForward: !(
+      currentActivityIndex === activitiesCount - 1 && isCompleted
+    ),
   }
 }
 
@@ -80,11 +89,14 @@ export function TimerDisplay({
     return <EmptyTimerDisplay />
   }
 
-  const { radius, circumference, strokeDashoffset } = getTimerMetrics(secondsRemaining, currentActivity)
+  const { radius, circumference, strokeDashoffset } = getTimerMetrics(
+    secondsRemaining,
+    currentActivity,
+  )
   const { canSkipBackward, canSkipForward } = getNavigationStates(
     currentActivityIndex,
     selectedPlan.activities.length,
-    isCompleted
+    isCompleted,
   )
 
   return (

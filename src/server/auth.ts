@@ -18,8 +18,10 @@ interface AuthDeps {
 async function getAuthDeps(): Promise<AuthDeps> {
   const { getDb } = await import('../db/client')
   const { runMigrations } = await import('../db/migrate')
-  const { SqliteUserRepository } = await import('../repositories/sqlite-user-repository')
-  const { SqliteRefreshTokenStore } = await import('../repositories/sqlite-refresh-token-store')
+  const { SqliteUserRepository } =
+    await import('../repositories/sqlite-user-repository')
+  const { SqliteRefreshTokenStore } =
+    await import('../repositories/sqlite-refresh-token-store')
 
   const db = getDb()
   runMigrations(db) // idempotent
@@ -50,7 +52,8 @@ async function assertSameOrigin(): Promise<void> {
   } catch {
     throw await authError('Bad origin.', 403)
   }
-  if (originHost !== host) throw await authError('Cross-origin request rejected.', 403)
+  if (originHost !== host)
+    throw await authError('Cross-origin request rejected.', 403)
 }
 
 async function clientIp(): Promise<string> {
@@ -59,7 +62,10 @@ async function clientIp(): Promise<string> {
 }
 
 /** Signs tokens, records the refresh jti, and sets both auth cookies. */
-async function issueSession(user: PublicUser, refreshStore: AuthDeps['refreshStore']): Promise<void> {
+async function issueSession(
+  user: PublicUser,
+  refreshStore: AuthDeps['refreshStore'],
+): Promise<void> {
   const { signAccessToken, signRefreshToken } = await import('../auth/tokens')
   const { setAuthCookies } = await import('../auth/cookies')
   const access = await signAccessToken(user)
@@ -109,7 +115,14 @@ export const register = createServerFn({ method: 'POST' })
     // Atomic: create the user and clone the default plans they'll start with.
     db.transaction((tx) => {
       tx.insert(usersTable)
-        .values({ id: userId, email, passwordHash, role: 'user', createdAt: now, updatedAt: now })
+        .values({
+          id: userId,
+          email,
+          passwordHash,
+          role: 'user',
+          createdAt: now,
+          updatedAt: now,
+        })
         .run()
       seedDefaultPlansForOwner(userId, tx)
     })
@@ -148,7 +161,8 @@ export const login = createServerFn({ method: 'POST' })
   })
 
 export const logout = createServerFn({ method: 'POST' }).handler(async () => {
-  const { readRefreshCookie, clearAuthCookies } = await import('../auth/cookies')
+  const { readRefreshCookie, clearAuthCookies } =
+    await import('../auth/cookies')
   const { verifyRefreshToken } = await import('../auth/tokens')
 
   const token = readRefreshCookie()
@@ -163,50 +177,55 @@ export const logout = createServerFn({ method: 'POST' }).handler(async () => {
   return { ok: true }
 })
 
-export const refresh = createServerFn({ method: 'POST' }).handler(async (): Promise<PublicUser> => {
-  await assertSameOrigin()
+export const refresh = createServerFn({ method: 'POST' }).handler(
+  async (): Promise<PublicUser> => {
+    await assertSameOrigin()
 
-  const { checkRateLimit } = await import('../auth/rate-limit')
-  if (!checkRateLimit(`refresh:${await clientIp()}`, 30, 60_000)) {
-    throw await authError('Too many attempts. Please try again later.', 429)
-  }
+    const { checkRateLimit } = await import('../auth/rate-limit')
+    if (!checkRateLimit(`refresh:${await clientIp()}`, 30, 60_000)) {
+      throw await authError('Too many attempts. Please try again later.', 429)
+    }
 
-  const { readRefreshCookie, clearAuthCookies } = await import('../auth/cookies')
-  const { verifyRefreshToken } = await import('../auth/tokens')
-  const { toPublicUser } = await import('../domain/users')
+    const { readRefreshCookie, clearAuthCookies } =
+      await import('../auth/cookies')
+    const { verifyRefreshToken } = await import('../auth/tokens')
+    const { toPublicUser } = await import('../domain/users')
 
-  const token = readRefreshCookie()
-  if (!token) throw await authError('Not authenticated.', 401)
+    const token = readRefreshCookie()
+    if (!token) throw await authError('Not authenticated.', 401)
 
-  const parsed = await verifyRefreshToken(token)
-  if (!parsed) {
-    clearAuthCookies()
-    throw await authError('Invalid session.', 401)
-  }
+    const parsed = await verifyRefreshToken(token)
+    if (!parsed) {
+      clearAuthCookies()
+      throw await authError('Invalid session.', 401)
+    }
 
-  const { users, refreshStore } = await getAuthDeps()
+    const { users, refreshStore } = await getAuthDeps()
 
-  if (!(await refreshStore.isActive(parsed.jti))) {
-    // Token reuse or revoked — revoke the whole family defensively.
-    await refreshStore.revokeAllForUser(parsed.sub)
-    clearAuthCookies()
-    throw await authError('Session expired. Please sign in again.', 401)
-  }
+    if (!(await refreshStore.isActive(parsed.jti))) {
+      // Token reuse or revoked — revoke the whole family defensively.
+      await refreshStore.revokeAllForUser(parsed.sub)
+      clearAuthCookies()
+      throw await authError('Session expired. Please sign in again.', 401)
+    }
 
-  const found = await users.getById(parsed.sub)
-  if (!found) {
-    clearAuthCookies()
-    throw await authError('Session expired. Please sign in again.', 401)
-  }
+    const found = await users.getById(parsed.sub)
+    if (!found) {
+      clearAuthCookies()
+      throw await authError('Session expired. Please sign in again.', 401)
+    }
 
-  // Rotate: revoke the used token, issue a fresh access + refresh pair.
-  await refreshStore.revoke(parsed.jti)
-  const user = toPublicUser(found)
-  await issueSession(user, refreshStore)
-  return user
-})
+    // Rotate: revoke the used token, issue a fresh access + refresh pair.
+    await refreshStore.revoke(parsed.jti)
+    const user = toPublicUser(found)
+    await issueSession(user, refreshStore)
+    return user
+  },
+)
 
-export const me = createServerFn({ method: 'GET' }).handler(async (): Promise<PublicUser | null> => {
-  const { getSessionUser } = await import('../auth/session')
-  return (await getSessionUser()) ?? null
-})
+export const me = createServerFn({ method: 'GET' }).handler(
+  async (): Promise<PublicUser | null> => {
+    const { getSessionUser } = await import('../auth/session')
+    return (await getSessionUser()) ?? null
+  },
+)

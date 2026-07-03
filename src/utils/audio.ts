@@ -1,7 +1,9 @@
 // Audio Context helper
 function getAudioContextClass(): typeof AudioContext | null {
   if (typeof window === 'undefined') return null
-  const w = window as typeof window & { webkitAudioContext?: typeof AudioContext }
+  const w = window as typeof window & {
+    webkitAudioContext?: typeof AudioContext
+  }
   return w.AudioContext || w.webkitAudioContext || null
 }
 
@@ -43,11 +45,14 @@ export function playWorkoutCompleteBeep() {
       osc.frequency.setValueAtTime(freq, audioCtx.currentTime + timeDelay)
       gain.gain.setValueAtTime(0.1, audioCtx.currentTime + timeDelay)
       osc.start(audioCtx.currentTime + timeDelay)
-      gain.gain.exponentialRampToValueAtTime(0.005, audioCtx.currentTime + timeDelay + 0.15)
+      gain.gain.exponentialRampToValueAtTime(
+        0.005,
+        audioCtx.currentTime + timeDelay + 0.15,
+      )
       osc.stop(audioCtx.currentTime + timeDelay + 0.18)
     }
     playBeepAt(0.0, 987.77) // B5
-    playBeepAt(0.2, 1046.50) // C6
+    playBeepAt(0.2, 1046.5) // C6
     playBeepAt(0.4, 1318.51) // E6
   } catch (e) {
     console.warn('Audio play complete failed:', e)

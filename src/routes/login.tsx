@@ -1,10 +1,16 @@
-import { createFileRoute, redirect, useNavigate, useRouter } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  redirect,
+  useNavigate,
+  useRouter,
+} from '@tanstack/react-router'
 import { AuthForm } from '../components/auth/AuthForm'
 import { login } from '../server/auth'
 
 export const Route = createFileRoute('/login')({
   validateSearch: (search: Record<string, unknown>): { redirect?: string } => {
-    const redirect = typeof search.redirect === 'string' ? search.redirect : undefined
+    const redirect =
+      typeof search.redirect === 'string' ? search.redirect : undefined
     return redirect ? { redirect } : {}
   },
   beforeLoad: ({ context }) => {
@@ -31,7 +37,11 @@ function LoginPage() {
       title="Sign in"
       submitLabel="Sign in"
       onSubmit={handleSubmit}
-      footer={{ prompt: 'No account yet?', linkLabel: 'Create one', to: '/register' }}
+      footer={{
+        prompt: 'No account yet?',
+        linkLabel: 'Create one',
+        to: '/register',
+      }}
     />
   )
 }

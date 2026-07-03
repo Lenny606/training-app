@@ -15,7 +15,12 @@ describe('SqliteRefreshTokenStore', () => {
   beforeEach(async () => {
     db = createDb(':memory:')
     runMigrations(db)
-    userId = (await new SqliteUserRepository(db).create({ email: 'u@e.com', passwordHash: 'h' })).id
+    userId = (
+      await new SqliteUserRepository(db).create({
+        email: 'u@e.com',
+        passwordHash: 'h',
+      })
+    ).id
     store = new SqliteRefreshTokenStore(db)
   })
 

@@ -39,14 +39,14 @@ LLM volá **tools** napojené na existující server functions / repozitáře.
 
 ## 2. Klíčová rozhodnutí
 
-| Oblast | Volba | Důvod |
-| --- | --- | --- |
-| Model provider | **Claude** (Anthropic) | Pokyn projektu: pro AI aplikace default nejnovější Claude. |
-| Default model | **`claude-opus-4-8`** | Nejschopnější; pro levnější cesty zvážit `claude-haiku-4-5`. |
-| Běh | **server-only** (server route / server fn) | API klíč nikdy do klienta; tools potřebují DB a auth context. |
-| Přenos | **streaming** (SSE / ReadableStream) | Plynulé tokeny + průběžné tool-call eventy. |
-| Tools | **server-side execute**, vstup validovaný **Zod** | Tools sahají na repozitáře pod `requireAuth`; nikdy ne přímo z klienta. |
-| Secret | `ANTHROPIC_API_KEY` z env, fail-fast | Mimo git, jen na serveru. |
+| Oblast         | Volba                                             | Důvod                                                                   |
+| -------------- | ------------------------------------------------- | ----------------------------------------------------------------------- |
+| Model provider | **Claude** (Anthropic)                            | Pokyn projektu: pro AI aplikace default nejnovější Claude.              |
+| Default model  | **`claude-opus-4-8`**                             | Nejschopnější; pro levnější cesty zvážit `claude-haiku-4-5`.            |
+| Běh            | **server-only** (server route / server fn)        | API klíč nikdy do klienta; tools potřebují DB a auth context.           |
+| Přenos         | **streaming** (SSE / ReadableStream)              | Plynulé tokeny + průběžné tool-call eventy.                             |
+| Tools          | **server-side execute**, vstup validovaný **Zod** | Tools sahají na repozitáře pod `requireAuth`; nikdy ne přímo z klienta. |
+| Secret         | `ANTHROPIC_API_KEY` z env, fail-fast              | Mimo git, jen na serveru.                                               |
 
 ## 3. Architektura
 
@@ -77,16 +77,16 @@ Každý tool = `{ name, description, inputSchema (Zod), execute(input, ctx) }`.
 `execute` volá existující repozitáře/server functions, vrací serializovatelný
 výsledek. Popisy píšeme **pro model** (jasné, kdy tool použít).
 
-| Tool | Vstup (Zod) | Akce / mapping |
-| --- | --- | --- |
-| `list_plans` | `{}` | `planRepository.list()` pro `ctx.user` → názvy, id, daysPerWeek, počet aktivit. |
-| `get_plan` | `{ planId }` | `planRepository.getById` → plán vč. aktivit; `null` ošetřit hláškou. |
-| `create_plan` | `{ name, description?, daysPerWeek, activities[] }` | `planRepository.create` (owner = `ctx.user`). Vrátí vytvořený plán. |
-| `update_plan` | `{ planId, patch }` | `planRepository.update`; NotFound → srozumitelná chyba pro model. |
-| `delete_plan` | `{ planId }` | `planRepository.remove`. **Destruktivní** → vyžádat potvrzení (§6). |
-| `add_activity` | `{ planId, activity }` | Vloží aktivitu na konec/pozici. |
-| `start_workout` | `{ planId }` | Vrátí strukturu plánu připravenou ke spuštění timeru; spuštění řeší klient. |
-| `summarize_plan` | `{ planId }` | Spočítá celkový čas, počet cviků/restů, dní v týdnu → krátký souhrn. |
+| Tool             | Vstup (Zod)                                         | Akce / mapping                                                                  |
+| ---------------- | --------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `list_plans`     | `{}`                                                | `planRepository.list()` pro `ctx.user` → názvy, id, daysPerWeek, počet aktivit. |
+| `get_plan`       | `{ planId }`                                        | `planRepository.getById` → plán vč. aktivit; `null` ošetřit hláškou.            |
+| `create_plan`    | `{ name, description?, daysPerWeek, activities[] }` | `planRepository.create` (owner = `ctx.user`). Vrátí vytvořený plán.             |
+| `update_plan`    | `{ planId, patch }`                                 | `planRepository.update`; NotFound → srozumitelná chyba pro model.               |
+| `delete_plan`    | `{ planId }`                                        | `planRepository.remove`. **Destruktivní** → vyžádat potvrzení (§6).             |
+| `add_activity`   | `{ planId, activity }`                              | Vloží aktivitu na konec/pozici.                                                 |
+| `start_workout`  | `{ planId }`                                        | Vrátí strukturu plánu připravenou ke spuštění timeru; spuštění řeší klient.     |
+| `summarize_plan` | `{ planId }`                                        | Spočítá celkový čas, počet cviků/restů, dní v týdnu → krátký souhrn.            |
 
 Pravidla:
 

@@ -28,15 +28,15 @@ pro ověřování requestů a route guardy pro chráněné stránky.
 
 ## 2. Klíčová rozhodnutí
 
-| Oblast | Volba | Důvod |
-| --- | --- | --- |
-| Tokeny | **JWT, HS256** | Požadavek; symetrický klíč stačí pro single-node. |
-| JWT knihovna | **jose** | Moderní, typovaná, běží v Node i edge runtime. |
-| Hash hesla | **argon2id** (`@node-rs/argon2`) | Současný best practice; prebuilt binárky bez kompilace. Fallback `bcryptjs`. |
-| Úložiště tokenů | **HttpOnly cookie** | Není dostupné z JS → odolné vůči XSS krádeži. localStorage zamítnut. |
-| Token model | **Access (krátký) + Refresh (dlouhý), s rotací** | Krátká životnost access tokenu omezí dopad úniku; refresh revokovatelný v DB. |
-| Refresh revokace | **DB tabulka `refresh_tokens`** | JWT je stateless; revokaci (logout, krádež) řešíme allow-listem v DB. |
-| Přístup z klienta | **server functions** (`createServerFn`) | Auth běží jen na serveru; klient nikdy nevidí secret ani hash. |
+| Oblast            | Volba                                            | Důvod                                                                         |
+| ----------------- | ------------------------------------------------ | ----------------------------------------------------------------------------- |
+| Tokeny            | **JWT, HS256**                                   | Požadavek; symetrický klíč stačí pro single-node.                             |
+| JWT knihovna      | **jose**                                         | Moderní, typovaná, běží v Node i edge runtime.                                |
+| Hash hesla        | **argon2id** (`@node-rs/argon2`)                 | Současný best practice; prebuilt binárky bez kompilace. Fallback `bcryptjs`.  |
+| Úložiště tokenů   | **HttpOnly cookie**                              | Není dostupné z JS → odolné vůči XSS krádeži. localStorage zamítnut.          |
+| Token model       | **Access (krátký) + Refresh (dlouhý), s rotací** | Krátká životnost access tokenu omezí dopad úniku; refresh revokovatelný v DB. |
+| Refresh revokace  | **DB tabulka `refresh_tokens`**                  | JWT je stateless; revokaci (logout, krádež) řešíme allow-listem v DB.         |
+| Přístup z klienta | **server functions** (`createServerFn`)          | Auth běží jen na serveru; klient nikdy nevidí secret ani hash.                |
 
 > Pozn.: čistě stateless JWT (bez DB) je možné, ale bez možnosti revokace.
 > Volíme hybrid: access token stateless, refresh token verifikovaný proti DB.
@@ -50,7 +50,9 @@ export const users = sqliteTable('users', {
   id: text('id').primaryKey(),
   email: text('email').notNull().unique(),
   passwordHash: text('password_hash').notNull(),
-  role: text('role', { enum: ['user', 'admin'] }).notNull().default('user'),
+  role: text('role', { enum: ['user', 'admin'] })
+    .notNull()
+    .default('user'),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
 })
@@ -88,13 +90,13 @@ každém refreshi se starý `jti` revokuje a vydá nový (rotating refresh token
 src/server/auth.ts
 ```
 
-| Funkce | Metoda | Chování |
-| --- | --- | --- |
-| `register` | POST | Validace (Zod), e-mail musí být unikátní, hash hesla (argon2id), insert usera, vydání tokenů, set cookies. Vrací `PublicUser`. |
-| `login` | POST | Najít usera dle e-mailu, ověřit heslo. Vydat tokeny, set cookies. **Enumeration defense**: stejná chybová hláška i čas pro „neexistuje" i „špatné heslo". |
-| `logout` | POST | Revokovat refresh `jti`, smazat cookies. |
-| `refresh` | POST | Ověřit refresh JWT + `jti` v DB (neexpirovaný, nerevokovaný), rotovat, vydat nový access token. |
-| `me` | GET | Vrátí `PublicUser` z `context.user`, nebo `null`. |
+| Funkce     | Metoda | Chování                                                                                                                                                   |
+| ---------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `register` | POST   | Validace (Zod), e-mail musí být unikátní, hash hesla (argon2id), insert usera, vydání tokenů, set cookies. Vrací `PublicUser`.                            |
+| `login`    | POST   | Najít usera dle e-mailu, ověřit heslo. Vydat tokeny, set cookies. **Enumeration defense**: stejná chybová hláška i čas pro „neexistuje" i „špatné heslo". |
+| `logout`   | POST   | Revokovat refresh `jti`, smazat cookies.                                                                                                                  |
+| `refresh`  | POST   | Ověřit refresh JWT + `jti` v DB (neexpirovaný, nerevokovaný), rotovat, vydat nový access token.                                                           |
+| `me`       | GET    | Vrátí `PublicUser` z `context.user`, nebo `null`.                                                                                                         |
 
 Validátory: Zod schémata (`registerSchema`, `loginSchema`) na `.validator(...)`.
 Rate limiting na `login`/`register` (alespoň jednoduchý in-memory limiter; viz §10).

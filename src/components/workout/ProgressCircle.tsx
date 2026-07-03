@@ -20,7 +20,10 @@ function getProgressCircleTheme(type: 'exercise' | 'rest' | undefined) {
   }
 }
 
-function getProgressCircleStatus(isCompleted: boolean, type: 'exercise' | 'rest' | undefined) {
+function getProgressCircleStatus(
+  isCompleted: boolean,
+  type: 'exercise' | 'rest' | undefined,
+) {
   if (isCompleted) return 'DONE'
   return type === 'rest' ? 'REST INTERVAL' : 'SET WORK'
 }
@@ -59,7 +62,7 @@ export function ProgressCircle({
           strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
           style={{
-            filter: `drop-shadow(0 0 6px ${shadowColor})`
+            filter: `drop-shadow(0 0 6px ${shadowColor})`,
           }}
         />
       </svg>
@@ -68,11 +71,11 @@ export function ProgressCircle({
         <span className="text-[10px] tracking-[0.25em] font-black uppercase text-ink-soft mb-0.5">
           {statusText}
         </span>
-        
+
         <span className="font-display text-5xl font-black tracking-tighter text-ink leading-none select-all">
           {timeText}
         </span>
-        
+
         <span className="text-[10px] text-ink-soft font-mono mt-1 px-2.5 py-0.5 border border-line bg-chip/40 rounded-full">
           Step {currentActivityIndex + 1} of {totalActivities}
         </span>

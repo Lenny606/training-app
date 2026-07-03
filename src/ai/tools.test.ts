@@ -73,11 +73,15 @@ describe('AI plan tools', () => {
       const { found, summary } = await run('summarize_plan', { planId: id })
       const source = DEFAULT_PLANS[0]
       expect(found).toBe(true)
-      expect(summary.totalSeconds).toBe(source.activities.reduce((s, a) => s + a.duration, 0))
+      expect(summary.totalSeconds).toBe(
+        source.activities.reduce((s, a) => s + a.duration, 0),
+      )
       expect(summary.exerciseCount).toBe(
         source.activities.filter((a) => a.type === 'exercise').length,
       )
-      expect(summary.restCount).toBe(source.activities.filter((a) => a.type === 'rest').length)
+      expect(summary.restCount).toBe(
+        source.activities.filter((a) => a.type === 'rest').length,
+      )
     })
 
     it('reports not found', async () => {
@@ -112,12 +116,18 @@ describe('AI plan tools', () => {
   describe('update_plan', () => {
     it('patches scalar fields', async () => {
       const id = await firstPlanId()
-      const { plan } = await run('update_plan', { planId: id, patch: { name: 'Renamed' } })
+      const { plan } = await run('update_plan', {
+        planId: id,
+        patch: { name: 'Renamed' },
+      })
       expect(plan.name).toBe('Renamed')
     })
 
     it('errors on a missing plan', async () => {
-      const result = await run('update_plan', { planId: 'nope', patch: { name: 'X' } })
+      const result = await run('update_plan', {
+        planId: 'nope',
+        patch: { name: 'X' },
+      })
       expect(result.plan).toBeUndefined()
       expect(result.error).toContain('nope')
     })
@@ -126,7 +136,8 @@ describe('AI plan tools', () => {
   describe('add_activity', () => {
     it('appends an activity by default', async () => {
       const id = await firstPlanId()
-      const before = (await run('get_plan', { planId: id })).plan.activities.length
+      const before = (await run('get_plan', { planId: id })).plan.activities
+        .length
       const { plan } = await run('add_activity', {
         planId: id,
         activity: { name: 'Plank', duration: 90, type: 'exercise' },
@@ -196,7 +207,9 @@ describe('AI plan tools', () => {
       const victimPlanId = await firstPlanId()
 
       expect((await runAs('list_plans')).plans).toHaveLength(0)
-      expect((await runAs('get_plan', { planId: victimPlanId })).plan).toBeNull()
+      expect(
+        (await runAs('get_plan', { planId: victimPlanId })).plan,
+      ).toBeNull()
 
       // A scoped delete is a no-op against a non-owned plan; the owner keeps it.
       await runAs('delete_plan', { planId: victimPlanId })

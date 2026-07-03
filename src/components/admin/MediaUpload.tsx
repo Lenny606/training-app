@@ -26,7 +26,9 @@ export function MediaUpload({ media = [], onChange }: MediaUploadProps) {
       const isImage = file.type.startsWith('image/')
       const isVideo = file.type.startsWith('video/')
       if (!isImage && !isVideo) {
-        setError(`File "${file.name}" is not supported. Please upload an image or a video.`)
+        setError(
+          `File "${file.name}" is not supported. Please upload an image or a video.`,
+        )
         continue
       }
 
@@ -54,7 +56,11 @@ export function MediaUpload({ media = [], onChange }: MediaUploadProps) {
         newMediaItems.push(uploadedMedia)
       } catch (err) {
         console.error('Upload error:', err)
-        setError(err instanceof Error ? err.message : 'Failed to upload one or more files.')
+        setError(
+          err instanceof Error
+            ? err.message
+            : 'Failed to upload one or more files.',
+        )
       }
     }
 
@@ -121,7 +127,8 @@ export function MediaUpload({ media = [], onChange }: MediaUploadProps) {
             <>
               <Upload className="h-6 w-6 text-lagoon-deep hover:scale-110 transition-transform" />
               <div className="text-xs font-semibold text-ink">
-                Drag & drop media or <span className="text-lagoon-deep underline">browse</span>
+                Drag & drop media or{' '}
+                <span className="text-lagoon-deep underline">browse</span>
               </div>
               <div className="text-[10px] text-ink-soft">
                 Supports Images & Videos up to 50MB

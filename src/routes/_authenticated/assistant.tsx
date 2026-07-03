@@ -11,7 +11,8 @@ function AssistantPage() {
       <div>
         <h1 className="font-display text-xl font-bold text-ink">Assistant</h1>
         <p className="mt-1 text-sm text-ink-soft">
-          Manage your plans and start workouts in plain language. It only ever sees your own plans.
+          Manage your plans and start workouts in plain language. It only ever
+          sees your own plans.
         </p>
       </div>
       <Chat />

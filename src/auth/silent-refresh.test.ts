@@ -35,7 +35,9 @@ describe('resolveSilentRefresh', () => {
 
     expect(result).not.toBeNull()
     expect(result?.user.id).toBe(userId)
-    expect(await verifyAccessToken(result!.accessToken)).toMatchObject({ id: userId })
+    expect(await verifyAccessToken(result!.accessToken)).toMatchObject({
+      id: userId,
+    })
   })
 
   it('returns null for a revoked refresh token (logout ends the session)', async () => {

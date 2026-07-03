@@ -36,8 +36,8 @@ export default tseslint.config(
     },
   },
   {
-    // ESM Node scripts (e.g. scripts/migrate.mjs).
-    files: ['**/*.mjs'],
+    // ESM Node scripts (e.g. scripts/migrate.mjs, scripts/generate-favicon.js).
+    files: ['**/*.mjs', 'scripts/**/*.js'],
     languageOptions: {
       globals: { ...globals.node },
     },

@@ -16,15 +16,16 @@ describe('createId', () => {
   })
 
   it('should fallback gracefully when crypto.randomUUID is not available', () => {
-    const originalRandomUUID = typeof crypto !== 'undefined' ? crypto.randomUUID : undefined;
-    
+    const originalRandomUUID =
+      typeof crypto !== 'undefined' ? crypto.randomUUID : undefined
+
     if (typeof crypto !== 'undefined') {
       // Temporarily delete or override randomUUID to test fallback
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      crypto.randomUUID = undefined;
+      crypto.randomUUID = undefined
     }
-    
+
     try {
       const id = createId('test')
       expect(id.startsWith('test-')).toBe(true)
@@ -34,7 +35,7 @@ describe('createId', () => {
         // Restore
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        crypto.randomUUID = originalRandomUUID;
+        crypto.randomUUID = originalRandomUUID
       }
     }
   })

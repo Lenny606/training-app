@@ -7,14 +7,14 @@ Legenda stavu: 🔲 not started · 🚧 in progress · ✅ done · ⛔ blocked
 
 ## Přehled
 
-| Spec | Stav | Závisí na | Poznámka |
-| --- | --- | --- | --- |
-| [repository-layer](./repository-layer.md) | ✅ | — | SQLite + Drizzle, server functions, klient přepojen; localStorage pro plány odstraněn. |
-| [auth-layer](./auth-layer.md) | ✅ | repository-layer | JWT (jose HS256) access+refresh v HttpOnly cookies, argon2id, User model, requireAuth/requireRole, `_authenticated` guard, login/register/logout UI. Plány scoped na `ownerId`, klon default plánů při registraci. |
-| [ai-client](./ai-client.md) | ✅ | repository-layer, auth-layer | TanStack AI (`@tanstack/ai`), tools scoped na usera, streaming SSE, tool approval, provider portability (Claude + GPT). |
-| [deploy](./deploy.md) | ✅ | repository-layer, auth-layer | Kód hotový: GH Actions + SCP + PM2 + Nitro node-server + prod migrace. Zbývá jen jednorázová příprava VPS (mimo repo). |
-| [admin-drag-drop](./admin-drag-drop.md) | ✅ | repository-layer | @dnd-kit DnD pro aktivity i plány; `plans.position` (migrace 0002) + `reorder()`; šipky ponechány jako a11y fallback. |
-| [mobile-style-audit](./mobile-style-audit.md) | ✅ | — | Audit 3 rout × 360/390/414/768: 0 overflow. Prim. tap targety (hamburger, theme toggle) na 44px; admin ikony <44 odděleny do follow-up. |
+| Spec                                          | Stav | Závisí na                    | Poznámka                                                                                                                                                                                                           |
+| --------------------------------------------- | ---- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [repository-layer](./repository-layer.md)     | ✅   | —                            | SQLite + Drizzle, server functions, klient přepojen; localStorage pro plány odstraněn.                                                                                                                             |
+| [auth-layer](./auth-layer.md)                 | ✅   | repository-layer             | JWT (jose HS256) access+refresh v HttpOnly cookies, argon2id, User model, requireAuth/requireRole, `_authenticated` guard, login/register/logout UI. Plány scoped na `ownerId`, klon default plánů při registraci. |
+| [ai-client](./ai-client.md)                   | ✅   | repository-layer, auth-layer | TanStack AI (`@tanstack/ai`), tools scoped na usera, streaming SSE, tool approval, provider portability (Claude + GPT).                                                                                            |
+| [deploy](./deploy.md)                         | ✅   | repository-layer, auth-layer | Kód hotový: GH Actions + SCP + PM2 + Nitro node-server + prod migrace. Zbývá jen jednorázová příprava VPS (mimo repo).                                                                                             |
+| [admin-drag-drop](./admin-drag-drop.md)       | ✅   | repository-layer             | @dnd-kit DnD pro aktivity i plány; `plans.position` (migrace 0002) + `reorder()`; šipky ponechány jako a11y fallback.                                                                                              |
+| [mobile-style-audit](./mobile-style-audit.md) | ✅   | —                            | Audit 3 rout × 360/390/414/768: 0 overflow. Prim. tap targety (hamburger, theme toggle) na 44px; admin ikony <44 odděleny do follow-up.                                                                            |
 
 ## Pořadí prací (doporučené)
 
@@ -28,6 +28,7 @@ Legenda stavu: 🔲 not started · 🚧 in progress · ✅ done · ⛔ blocked
 ## Milníky
 
 ### repository-layer ✅
+
 - [x] Repository pattern (interface + impl)
 - [x] SQLite + Drizzle schema (`src/db/schema.ts`)
 - [x] DB klient (better-sqlite3 + drizzle, server-only) + seed
@@ -39,6 +40,7 @@ Legenda stavu: 🔲 not started · 🚧 in progress · ✅ done · ⛔ blocked
 - [x] Úklid: odstraněn localStorage repo + `utils/plans.ts` + klíč `titan_training_plans`
 
 ### auth-layer ✅
+
 - [x] User model + DB tabulka (`users`, `refresh_tokens`) + migrace `0001`
 - [x] `UserRepository` + `RefreshTokenStore` (sqlite impl + testy, 23 → 37 testů total)
 - [x] JWT issue/verify (jose HS256, access 15 min + refresh 30 d s rotací a revokací)
@@ -52,12 +54,14 @@ Legenda stavu: 🔲 not started · 🚧 in progress · ✅ done · ⛔ blocked
 - [x] Verifikace: tsc ✅, test 37/37 ✅, build ✅, E2E (register→klon→guard→logout) ✅
 
 **Odchylky od spec (k potvrzení):**
+
 - `admin.tsx` gated `requireAuth` (ne `requireRole('admin')`) — plány jsou per-user, každý edituje svoje; admin role zatím nevyužita (reserved). Spec §7 chtěl admin-only.
 - Global middleware v `src/start.ts` vynecháno — `requireAuth`/`requireRole` skládány per server-fn (guidance: data boundary patří na fn, ne globálně; vyhne se double-run). Spec §6.1 chtěl global.
 - ~~Tichý auto-refresh → iterace 2~~ ✅ **hotovo**: `getSessionUser()` po expiraci access tokenu tiše razí nový z platného refresh cookie (`resolveSilentRefresh`, `src/auth/silent-refresh.ts`), kontroluje `isActive` (respektuje logout/revoke). **Bez rotace** refresh tokenu — silent refresh běží na každém chráněném requestu, rotace by při souběžných requestech spustila reuse-detektor a shodila živou session; rotace zůstává na explicitním `refresh` endpointu. Testy: `silent-refresh.test.ts` (5).
 - `JWT_SECRET`: fail-fast v prod, insecure dev fallback (viz `.env.example`).
 
 ### ai-client ✅
+
 - [x] TanStack AI SDK setup — `@tanstack/ai` + `-react` + `-anthropic` + `-openai`
 - [x] Provider adaptéry (portability): `src/ai/client.ts` registr, default `claude-opus-4.8`, haiku + GPT-5.2
 - [x] System prompt (`src/ai/system-prompt.ts`, server-only) + fail-fast `ANTHROPIC_API_KEY`
@@ -71,12 +75,14 @@ Legenda stavu: 🔲 not started · 🚧 in progress · ✅ done · ⛔ blocked
 - [x] Verifikace: tsc ✅, test 53/53 ✅, lint 0 errors ✅, build ✅, žádný leak server-only do klient bundle
 
 **Odchylky od spec (potvrdit):**
+
 - SDK: „TanStack AI SDK" = reálný balík `@tanstack/ai` (0.38.x, AG-UI). Vercel AI SDK fallback nebyl potřeba.
 - Model id je `claude-opus-4.8` (tečka — tak to má typová unie adaptéru), ne `claude-opus-4-8`.
 - Endpoint je **server route** `routes/api.chat.ts` (ne `server/chat.ts` server-fn) — `useChat` potřebuje HTTP SSE endpoint.
 - Perzistence historie konverzací do DB: mimo rozsah (§8), zatím klientský stav.
 
 ### deploy ✅ (kód)
+
 - [x] GitHub Actions workflow (`.github/workflows/deploy.yml`) — build + lint/test/tsc gate + SCP + SSH
 - [x] SCP přenos buildu na VPS (`appleboy/scp-action`, heslo)
 - [x] PM2 process management (`ecosystem.config.cjs`, `pm2 reload` → fallback `start`)
@@ -85,6 +91,7 @@ Legenda stavu: 🔲 not started · 🚧 in progress · ✅ done · ⛔ blocked
 - [ ] (mimo repo) jednorázová příprava VPS: Node/PM2/nginx+TLS, `.env` (600), `pm2 startup`, GitHub Secrets
 
 ### admin-drag-drop ✅
+
 - [x] Knihovna: `@dnd-kit/core` + `/sortable` + `/modifiers` + `/utilities`
 - [x] DnD řazení **aktivit** (`ActivitiesList` DndContext/SortableContext, `ActivityItem` useSortable + GripVertical handle) → `reorderActivity` (`arrayMove`), uloží se přes existující Save
 - [x] Model pořadí plánů: `plans.position` (schema + migrace `0002_eminent_swarm`), `list()` řadí `position, createdAt`, `create()` append na konec, seed přiřazuje pozice
@@ -95,11 +102,13 @@ Legenda stavu: 🔲 not started · 🚧 in progress · ✅ done · ⛔ blocked
 - [x] Verifikace: tsc ✅, test 57/57 ✅, lint 0 errors ✅, build ✅
 
 **Odchylky od spec (potvrdit):**
+
 - `plans.position` je **jen DB/persistenční** sloupec, ne pole doménového `TrainingPlan` (§9 zmiňoval `TrainingPlan.position`) — klient se spoléhá na pořadí pole z `list()`; drží se tím position mimo AI planShape/validaci/DEFAULT_PLANS.
 - `DragOverlay` vynechán — feedback řešen `opacity` + built-in transform posunem (splňuje „viditelný feedback"); handle izoluje listeners, takže drag nekoliduje s editací inputů i bez overlaye.
 - Otevřené otázky §12: šipky **ponechány** (redundantní, ale bez a11y regrese); position = souvislé přečíslování (malý seznam); pořadí plánů se ukládá hned po dropu.
 
 ### mobile-style-audit ✅
+
 - [x] Header — responzivní nav (hamburger + scroll lock)
 - [x] `ProgressCircle` — responzivní šířka (nepřetéká na 360 px)
 - [x] `PlaybackControls` — gap na úzké šířce

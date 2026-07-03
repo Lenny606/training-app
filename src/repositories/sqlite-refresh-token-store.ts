@@ -11,7 +11,13 @@ export class SqliteRefreshTokenStore implements RefreshTokenStore {
   async issue(jti: string, userId: string, expiresAt: Date): Promise<void> {
     this.db
       .insert(refreshTokens)
-      .values({ id: jti, userId, expiresAt, revokedAt: null, createdAt: new Date() })
+      .values({
+        id: jti,
+        userId,
+        expiresAt,
+        revokedAt: null,
+        createdAt: new Date(),
+      })
       .run()
   }
 
@@ -42,7 +48,9 @@ export class SqliteRefreshTokenStore implements RefreshTokenStore {
     this.db
       .update(refreshTokens)
       .set({ revokedAt: new Date() })
-      .where(and(eq(refreshTokens.userId, userId), isNull(refreshTokens.revokedAt)))
+      .where(
+        and(eq(refreshTokens.userId, userId), isNull(refreshTokens.revokedAt)),
+      )
       .run()
   }
 }

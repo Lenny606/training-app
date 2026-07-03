@@ -1,7 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
 import { listPlans } from '../../server/plans'
-import { useWorkoutSession, getPersistedPlanId } from '../../hooks/useWorkoutSession'
+import {
+  useWorkoutSession,
+  getPersistedPlanId,
+} from '../../hooks/useWorkoutSession'
 import { WorkoutPlanSelector } from '../../components/workout/WorkoutPlanSelector'
 import { TimerDisplay } from '../../components/workout/TimerDisplay'
 import { NextActivityCard } from '../../components/workout/NextActivityCard'
@@ -19,7 +22,9 @@ export default function App() {
   const plans = Route.useLoaderData()
   const { plan: planParam } = Route.useSearch()
   const initialPlanId =
-    planParam && plans.some((p) => p.id === planParam) ? planParam : (plans[0]?.id ?? '')
+    planParam && plans.some((p) => p.id === planParam)
+      ? planParam
+      : (plans[0]?.id ?? '')
   const [selectedPlanId, setSelectedPlanId] = useState<string>(initialPlanId)
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true)
 
@@ -31,7 +36,11 @@ export default function App() {
   useEffect(() => {
     if (planParam) return
     const persistedId = getPersistedPlanId()
-    if (persistedId && persistedId !== selectedPlanId && plans.some((p) => p.id === persistedId)) {
+    if (
+      persistedId &&
+      persistedId !== selectedPlanId &&
+      plans.some((p) => p.id === persistedId)
+    ) {
       setSelectedPlanId(persistedId)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -85,7 +94,10 @@ export default function App() {
       />
 
       {selectedPlan && selectedPlan.activities.length > 0 && (
-        <NextActivityCard nextActivity={nextActivity} isCompleted={isCompleted} />
+        <NextActivityCard
+          nextActivity={nextActivity}
+          isCompleted={isCompleted}
+        />
       )}
 
       <WorkoutPlanSelector

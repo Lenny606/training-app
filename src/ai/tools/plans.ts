@@ -1,6 +1,9 @@
 import type { NewActivity } from '../../domain/plans'
 import type { PlanRepository } from '../../repositories/plan-repository'
-import { PlanNotFoundError, PlanValidationError } from '../../repositories/plan-repository'
+import {
+  PlanNotFoundError,
+  PlanValidationError,
+} from '../../repositories/plan-repository'
 import {
   addActivityDef,
   createPlanDef,
@@ -13,7 +16,8 @@ import {
 
 /** Turn repository errors into a readable string for the model (never leak stacks). */
 function errText(e: unknown): string {
-  if (e instanceof PlanNotFoundError || e instanceof PlanValidationError) return e.message
+  if (e instanceof PlanNotFoundError || e instanceof PlanValidationError)
+    return e.message
   if (e instanceof Error) return e.message
   return 'Unexpected error'
 }
@@ -49,7 +53,8 @@ export function planTools(userId: string, repo: PlanRepository) {
       summary: {
         name: plan.name,
         totalSeconds: plan.activities.reduce((s, a) => s + a.duration, 0),
-        exerciseCount: plan.activities.filter((a) => a.type === 'exercise').length,
+        exerciseCount: plan.activities.filter((a) => a.type === 'exercise')
+          .length,
         restCount: plan.activities.filter((a) => a.type === 'rest').length,
         daysPerWeek: plan.daysPerWeek,
       },
@@ -60,7 +65,12 @@ export function planTools(userId: string, repo: PlanRepository) {
     try {
       // `description` is optional in the tool input (schema default); the domain
       // model requires a string.
-      return { plan: await repo.create({ ...input, description: input.description ?? '' }, userId) }
+      return {
+        plan: await repo.create(
+          { ...input, description: input.description ?? '' },
+          userId,
+        ),
+      }
     } catch (e) {
       return { error: errText(e) }
     }
@@ -74,18 +84,23 @@ export function planTools(userId: string, repo: PlanRepository) {
     }
   })
 
-  const addActivity = addActivityDef.server(async ({ planId, activity, position }) => {
-    try {
-      const existing = await repo.getById(planId, userId)
-      if (!existing) return { error: new PlanNotFoundError(planId).message }
-      const activities: NewActivity[] = [...existing.activities]
-      const idx = position === undefined ? activities.length : Math.min(position, activities.length)
-      activities.splice(idx, 0, activity)
-      return { plan: await repo.update(planId, { activities }, userId) }
-    } catch (e) {
-      return { error: errText(e) }
-    }
-  })
+  const addActivity = addActivityDef.server(
+    async ({ planId, activity, position }) => {
+      try {
+        const existing = await repo.getById(planId, userId)
+        if (!existing) return { error: new PlanNotFoundError(planId).message }
+        const activities: NewActivity[] = [...existing.activities]
+        const idx =
+          position === undefined
+            ? activities.length
+            : Math.min(position, activities.length)
+        activities.splice(idx, 0, activity)
+        return { plan: await repo.update(planId, { activities }, userId) }
+      } catch (e) {
+        return { error: errText(e) }
+      }
+    },
+  )
 
   // Destructive: `needsApproval` on the definition pauses execution until the
   // client approves. The repository is idempotent and owner-scoped either way.
@@ -94,5 +109,13 @@ export function planTools(userId: string, repo: PlanRepository) {
     return { deleted: true, id: planId }
   })
 
-  return [listPlans, getPlan, summarizePlan, createPlan, updatePlan, addActivity, deletePlan]
+  return [
+    listPlans,
+    getPlan,
+    summarizePlan,
+    createPlan,
+    updatePlan,
+    addActivity,
+    deletePlan,
+  ]
 }

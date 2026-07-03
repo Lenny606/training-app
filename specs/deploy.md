@@ -40,15 +40,15 @@ PM2 spouští `node dist/server/server.js`. Server poslouchá na `PORT`
 
 ## 3. Klíčová rozhodnutí
 
-| Oblast | Volba | Důvod |
-| --- | --- | --- |
-| Build | **na CI runneru** (`npm ci && npm run build`) | Čisté, reprodukovatelné prostředí; server nemusí mít dev toolchain. |
-| Přenos | **SCP přes jméno/heslo** (`appleboy/scp-action`) | Požadavek. Secrets v GitHub Secrets. |
-| Prod závislosti | **instalovat na VPS** (`npm ci --omit=dev`) | `better-sqlite3` je nativní modul — musí se sestavit pro arch serveru, **nekopírovat `node_modules` z CI**. |
-| Verze npm | **pinned `11.14.1`** (local == CI == VPS) | ubuntu-latest/VPS default = npm 10 s Node 22, řeší strom jinak než lokální npm 11 → `npm ci` padal na `Missing: lru-cache@… from lock file`. Pin: `packageManager` v `package.json` + `env.NPM_VERSION` ve workflow (CI `npm i -g npm@$NPM_VERSION`, VPS `npx npm@$NPM_VERSION ci`). |
-| Process manager | **PM2** + `ecosystem.config.cjs` | Požadavek; `pm2 reload` = zero-downtime restart. |
-| Migrace | **na VPS před reloadem** (`npm run db:migrate`) | Schéma musí být aktuální dřív, než poběží nový kód. |
-| Trigger | **push na `main`** (příp. tag/manual) | Jednoduché CI; lze zúžit na release tagy. |
+| Oblast          | Volba                                            | Důvod                                                                                                                                                                                                                                                                                |
+| --------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Build           | **na CI runneru** (`npm ci && npm run build`)    | Čisté, reprodukovatelné prostředí; server nemusí mít dev toolchain.                                                                                                                                                                                                                  |
+| Přenos          | **SCP přes jméno/heslo** (`appleboy/scp-action`) | Požadavek. Secrets v GitHub Secrets.                                                                                                                                                                                                                                                 |
+| Prod závislosti | **instalovat na VPS** (`npm ci --omit=dev`)      | `better-sqlite3` je nativní modul — musí se sestavit pro arch serveru, **nekopírovat `node_modules` z CI**.                                                                                                                                                                          |
+| Verze npm       | **pinned `11.14.1`** (local == CI == VPS)        | ubuntu-latest/VPS default = npm 10 s Node 22, řeší strom jinak než lokální npm 11 → `npm ci` padal na `Missing: lru-cache@… from lock file`. Pin: `packageManager` v `package.json` + `env.NPM_VERSION` ve workflow (CI `npm i -g npm@$NPM_VERSION`, VPS `npx npm@$NPM_VERSION ci`). |
+| Process manager | **PM2** + `ecosystem.config.cjs`                 | Požadavek; `pm2 reload` = zero-downtime restart.                                                                                                                                                                                                                                     |
+| Migrace         | **na VPS před reloadem** (`npm run db:migrate`)  | Schéma musí být aktuální dřív, než poběží nový kód.                                                                                                                                                                                                                                  |
+| Trigger         | **push na `main`** (příp. tag/manual)            | Jednoduché CI; lze zúžit na release tagy.                                                                                                                                                                                                                                            |
 
 > Bezpečnostní poznámka: heslová SSH/SCP autentizace je slabší než SSH klíče.
 > Plníme požadavek, ale doporučuji: silné heslo, omezení zdrojových IP na VPS
@@ -56,14 +56,14 @@ PM2 spouští `node dist/server/server.js`. Server poslouchá na `PORT`
 
 ## 4. Secrets (GitHub repo → Settings → Secrets)
 
-| Secret | Význam |
-| --- | --- |
-| `HOST` | IP / hostname serveru. |
-| `PORT` | SSH port (default 22). |
-| `USERNAME` | Uživatel na VPS. |
-| `PASSWORD` | Heslo uživatele (SCP + SSH). |
-| `DEPLOY_PATH` | Cílový adresář na VPS, např. `/var/www/training-app`. |
-| `OPENAI_API_KEY` | AI provider klíč (default provider). Upsertuje se do serverového `.env`. |
+| Secret              | Význam                                                                      |
+| ------------------- | --------------------------------------------------------------------------- |
+| `HOST`              | IP / hostname serveru.                                                      |
+| `PORT`              | SSH port (default 22).                                                      |
+| `USERNAME`          | Uživatel na VPS.                                                            |
+| `PASSWORD`          | Heslo uživatele (SCP + SSH).                                                |
+| `DEPLOY_PATH`       | Cílový adresář na VPS, např. `/var/www/training-app`.                       |
+| `OPENAI_API_KEY`    | AI provider klíč (default provider). Upsertuje se do serverového `.env`.    |
 | `ANTHROPIC_API_KEY` | AI provider klíč (volitelný, jen když se používá Claude). Upsert do `.env`. |
 
 **AI provider klíče** (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`) jdou z GitHub
@@ -127,7 +127,7 @@ on:
 
 concurrency:
   group: deploy-production
-  cancel-in-progress: false   # nepřerušovat běžící deploy
+  cancel-in-progress: false # nepřerušovat běžící deploy
 
 jobs:
   deploy:
@@ -138,7 +138,7 @@ jobs:
         with: { node-version: 22, cache: npm }
       - run: npm ci
       - run: npm run lint
-      - run: npm run test          # test/lint gate — fail = no deploy
+      - run: npm run test # test/lint gate — fail = no deploy
       - run: npx tsc --noEmit
       - run: npm run build
 

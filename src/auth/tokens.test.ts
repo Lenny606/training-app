@@ -12,13 +12,21 @@ beforeAll(() => {
 
 describe('access tokens', () => {
   it('round-trips the PublicUser projection', async () => {
-    const token = await signAccessToken({ id: 'user-1', email: 'a@e.com', role: 'admin' })
+    const token = await signAccessToken({
+      id: 'user-1',
+      email: 'a@e.com',
+      role: 'admin',
+    })
     const user = await verifyAccessToken(token)
     expect(user).toEqual({ id: 'user-1', email: 'a@e.com', role: 'admin' })
   })
 
   it('rejects a tampered token', async () => {
-    const token = await signAccessToken({ id: 'user-1', email: 'a@e.com', role: 'user' })
+    const token = await signAccessToken({
+      id: 'user-1',
+      email: 'a@e.com',
+      role: 'user',
+    })
     expect(await verifyAccessToken(token + 'x')).toBeNull()
   })
 
@@ -40,7 +48,11 @@ describe('refresh tokens', () => {
   })
 
   it('rejects an access token used as a refresh token', async () => {
-    const token = await signAccessToken({ id: 'user-2', email: 'a@e.com', role: 'user' })
+    const token = await signAccessToken({
+      id: 'user-2',
+      email: 'a@e.com',
+      role: 'user',
+    })
     expect(await verifyRefreshToken(token)).toBeNull()
   })
 })

@@ -11,11 +11,23 @@ const ENV_KEY: Record<Provider, string> = {
   openai: 'OPENAI_API_KEY',
 }
 
-const FACTORIES: Record<ModelId, { provider: Provider; create: () => AnyTextAdapter }> = {
-  'gpt-4o-mini': { provider: 'openai', create: () => openaiText('gpt-4o-mini') },
+const FACTORIES: Record<
+  ModelId,
+  { provider: Provider; create: () => AnyTextAdapter }
+> = {
+  'gpt-4o-mini': {
+    provider: 'openai',
+    create: () => openaiText('gpt-4o-mini'),
+  },
   'gpt-5.2': { provider: 'openai', create: () => openaiText('gpt-5.2') },
-  'claude-opus-4.8': { provider: 'anthropic', create: () => anthropicText('claude-opus-4.8') },
-  'claude-haiku-4-5': { provider: 'anthropic', create: () => anthropicText('claude-haiku-4-5') },
+  'claude-opus-4.8': {
+    provider: 'anthropic',
+    create: () => anthropicText('claude-opus-4.8'),
+  },
+  'claude-haiku-4-5': {
+    provider: 'anthropic',
+    create: () => anthropicText('claude-haiku-4-5'),
+  },
 }
 
 /**
@@ -30,7 +42,9 @@ export function createAdapter(id: ModelId): AnyTextAdapter {
     if (process.env.NODE_ENV === 'production') {
       throw new Error(`${envKey} is required to use model "${id}".`)
     }
-    console.warn(`[ai] ${envKey} is not set — requests to "${id}" will fail until it is configured.`)
+    console.warn(
+      `[ai] ${envKey} is not set — requests to "${id}" will fail until it is configured.`,
+    )
   }
   return spec.create()
 }

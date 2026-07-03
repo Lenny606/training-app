@@ -108,7 +108,11 @@ describe('SqlitePlanRepository', () => {
   describe('update', () => {
     it('merges scalar patch fields, preserving the rest', async () => {
       const id = await firstPlanId()
-      const updated = await repository.update(id, { name: 'Updated Push', daysPerWeek: 5 }, ownerId)
+      const updated = await repository.update(
+        id,
+        { name: 'Updated Push', daysPerWeek: 5 },
+        ownerId,
+      )
 
       expect(updated.name).toBe('Updated Push')
       expect(updated.daysPerWeek).toBe(5)
@@ -134,21 +138,24 @@ describe('SqlitePlanRepository', () => {
       expect(updated.activities).toHaveLength(2)
 
       const persisted = await repository.getById(id, ownerId)
-      expect(persisted?.activities.map((a) => a.name)).toEqual(['Squat', 'Pause'])
+      expect(persisted?.activities.map((a) => a.name)).toEqual([
+        'Squat',
+        'Pause',
+      ])
       expect(persisted?.activities[0].id).toBe('a-new')
     })
 
     it('throws PlanNotFoundError for a missing plan', async () => {
-      await expect(repository.update('nope', { name: 'X' }, ownerId)).rejects.toThrow(
-        PlanNotFoundError,
-      )
+      await expect(
+        repository.update('nope', { name: 'X' }, ownerId),
+      ).rejects.toThrow(PlanNotFoundError)
     })
 
     it('validates merged input', async () => {
       const id = await firstPlanId()
-      await expect(repository.update(id, { name: '' }, ownerId)).rejects.toThrow(
-        PlanValidationError,
-      )
+      await expect(
+        repository.update(id, { name: '' }, ownerId),
+      ).rejects.toThrow(PlanValidationError)
     })
   })
 
@@ -226,7 +233,7 @@ describe('SqlitePlanRepository', () => {
     it('links newly uploaded media to activity on plan update, returns it, and cleans up when removed', async () => {
       const db = (repository as unknown as { db: DbClient }).db
       const { media: mediaTable } = await import('../db/schema')
-      
+
       const planId = await firstPlanId()
       const planBefore = await repository.getById(planId, ownerId)
       expect(planBefore).not.toBeNull()
@@ -257,7 +264,11 @@ describe('SqlitePlanRepository', () => {
       fs.writeFileSync(path.join(uploadDir, 'file-test-1.png'), 'dummy')
 
       // Verify it exists in DB
-      const inserted = db.select().from(mediaTable).where(eq(mediaTable.id, mediaId)).get()
+      const inserted = db
+        .select()
+        .from(mediaTable)
+        .where(eq(mediaTable.id, mediaId))
+        .get()
       expect(inserted).toBeDefined()
       expect(inserted?.activityId).toBeNull()
 
@@ -278,10 +289,7 @@ describe('SqlitePlanRepository', () => {
       const updatedPlan = await repository.update(
         planId,
         {
-          activities: [
-            updatedActivity,
-            ...planBefore!.activities.slice(1),
-          ],
+          activities: [updatedActivity, ...planBefore!.activities.slice(1)],
         },
         ownerId,
       )
@@ -291,7 +299,11 @@ describe('SqlitePlanRepository', () => {
       expect(updatedPlan.activities[0].media![0].id).toBe(mediaId)
 
       // Verify it is linked in the database
-      const linked = db.select().from(mediaTable).where(eq(mediaTable.id, mediaId)).get()
+      const linked = db
+        .select()
+        .from(mediaTable)
+        .where(eq(mediaTable.id, mediaId))
+        .get()
       expect(linked?.activityId).toBe(activity.id)
 
       // Verify getById loads it
@@ -308,10 +320,7 @@ describe('SqlitePlanRepository', () => {
       const planAfterRemoval = await repository.update(
         planId,
         {
-          activities: [
-            noMediaActivity,
-            ...planBefore!.activities.slice(1),
-          ],
+          activities: [noMediaActivity, ...planBefore!.activities.slice(1)],
         },
         ownerId,
       )
@@ -319,9 +328,12 @@ describe('SqlitePlanRepository', () => {
       expect(planAfterRemoval.activities[0].media).toBeUndefined()
 
       // Verify the media record was deleted from the database
-      const deletedRecord = db.select().from(mediaTable).where(eq(mediaTable.id, mediaId)).get()
+      const deletedRecord = db
+        .select()
+        .from(mediaTable)
+        .where(eq(mediaTable.id, mediaId))
+        .get()
       expect(deletedRecord).toBeUndefined()
     })
   })
 })
-

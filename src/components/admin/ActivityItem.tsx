@@ -17,8 +17,16 @@ interface NumericFieldProps {
 // Locally-controlled numeric input: keystrokes stay local so intermediate or
 // invalid values don't fight the parent, and an invalid value snaps to the
 // fallback on blur.
-function NumericField({ value, fallback, unit, placeholder, onCommit }: NumericFieldProps) {
-  const [local, setLocal] = useState(value !== undefined ? value.toString() : '')
+function NumericField({
+  value,
+  fallback,
+  unit,
+  placeholder,
+  onCommit,
+}: NumericFieldProps) {
+  const [local, setLocal] = useState(
+    value !== undefined ? value.toString() : '',
+  )
 
   useEffect(() => {
     setLocal(value !== undefined ? value.toString() : '')
@@ -58,10 +66,18 @@ function NumericField({ value, fallback, unit, placeholder, onCommit }: NumericF
 interface ExerciseFieldsProps {
   activity: Activity
   index: number
-  onActivityChange: (index: number, field: keyof Activity, value: string | Media[]) => void
+  onActivityChange: (
+    index: number,
+    field: keyof Activity,
+    value: string | Media[],
+  ) => void
 }
 
-function ExerciseFields({ activity, index, onActivityChange }: ExerciseFieldsProps) {
+function ExerciseFields({
+  activity,
+  index,
+  onActivityChange,
+}: ExerciseFieldsProps) {
   return (
     <>
       <div className="col-span-4 sm:col-span-2">
@@ -153,9 +169,7 @@ function ActivityItemBadge({ type, index }: ActivityItemBadgeProps) {
   }`
   return (
     <div className="flex items-center gap-2 sm:w-28 flex-shrink-0">
-      <span className={badgeClass}>
-        {type}
-      </span>
+      <span className={badgeClass}>{type}</span>
       <span className="text-xs text-ink-soft font-mono font-bold">
         #{index + 1}
       </span>
@@ -166,10 +180,18 @@ function ActivityItemBadge({ type, index }: ActivityItemBadgeProps) {
 interface ActivityInputsProps {
   activity: Activity
   index: number
-  onActivityChange: (index: number, field: keyof Activity, value: string | Media[]) => void
+  onActivityChange: (
+    index: number,
+    field: keyof Activity,
+    value: string | Media[],
+  ) => void
 }
 
-function ActivityInputs({ activity, index, onActivityChange }: ActivityInputsProps) {
+function ActivityInputs({
+  activity,
+  index,
+  onActivityChange,
+}: ActivityInputsProps) {
   const isRest = activity.type === 'rest'
 
   return (
@@ -214,7 +236,11 @@ interface ActivityItemProps {
   index: number
   isFirst: boolean
   isLast: boolean
-  onActivityChange: (index: number, field: keyof Activity, value: string | Media[]) => void
+  onActivityChange: (
+    index: number,
+    field: keyof Activity,
+    value: string | Media[],
+  ) => void
   onMoveActivity: (index: number, direction: 'up' | 'down') => void
   onDeleteActivity: (index: number) => void
 }
@@ -229,8 +255,15 @@ export function ActivityItem({
   onDeleteActivity,
 }: ActivityItemProps) {
   const reducedMotion = usePrefersReducedMotion()
-  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } =
-    useSortable({ id: activity.id })
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: activity.id })
 
   const isRest = activity.type === 'rest'
   const style: React.CSSProperties = {
@@ -240,9 +273,7 @@ export function ActivityItem({
     zIndex: isDragging ? 1 : undefined,
   }
   const containerClass = `demo-list-item flex flex-col gap-3 p-3 border transition-all ${
-    isRest
-      ? 'border-line/50'
-      : 'border-line bg-lagoon/[0.03]'
+    isRest ? 'border-line/50' : 'border-line bg-lagoon/[0.03]'
   }`
 
   return (

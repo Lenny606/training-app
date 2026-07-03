@@ -10,7 +10,11 @@ export function useWakeLock(enabled: boolean) {
   const sentinelRef = useRef<WakeLockSentinel | null>(null)
 
   useEffect(() => {
-    if (!enabled || typeof navigator === 'undefined' || !('wakeLock' in navigator)) {
+    if (
+      !enabled ||
+      typeof navigator === 'undefined' ||
+      !('wakeLock' in navigator)
+    ) {
       return
     }
 

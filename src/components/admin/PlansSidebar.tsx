@@ -1,9 +1,9 @@
-import {
-  DndContext,
-  closestCenter,
-} from '@dnd-kit/core'
+import { DndContext, closestCenter } from '@dnd-kit/core'
 import type { DragEndEvent } from '@dnd-kit/core'
-import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifiers'
+import {
+  restrictToParentElement,
+  restrictToVerticalAxis,
+} from '@dnd-kit/modifiers'
 import {
   SortableContext,
   useSortable,
@@ -31,11 +31,25 @@ interface SidebarItemProps {
   onDelete: (id: string) => void
 }
 
-function SidebarItem({ plan, isSelected, onSelect, onDelete }: SidebarItemProps) {
+function SidebarItem({
+  plan,
+  isSelected,
+  onSelect,
+  onDelete,
+}: SidebarItemProps) {
   const reducedMotion = usePrefersReducedMotion()
-  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } =
-    useSortable({ id: plan.id })
-  const exerciseCount = plan.activities.filter((a) => a.type === 'exercise').length
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: plan.id })
+  const exerciseCount = plan.activities.filter(
+    (a) => a.type === 'exercise',
+  ).length
 
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
@@ -49,12 +63,17 @@ function SidebarItem({ plan, isSelected, onSelect, onDelete }: SidebarItemProps)
       ref={setNodeRef}
       style={style}
       onClick={() => onSelect(plan.id)}
-      className={`demo-list-item cursor-pointer flex flex-col gap-1 transition-all ${
+      className={`demo-list-item relative overflow-hidden cursor-pointer flex flex-col gap-1 transition-all ${
         isSelected
-          ? 'border-lagoon-deep bg-lagoon/5 shadow-[0_0_12px_color-mix(in_oklab,var(--lagoon)_10%,transparent)]'
+          ? 'border-lagoon-deep/80 bg-lagoon/[0.06] shadow-[0_0_14px_color-mix(in_oklab,var(--lagoon)_12%,transparent)]'
           : 'hover:border-lagoon/30 hover:bg-link-hover'
       }`}
     >
+      <div
+        className={`absolute left-0 top-0 bottom-0 w-[4px] bg-gradient-to-b from-lagoon to-lagoon-deep transition-all duration-300 origin-center ${
+          isSelected ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'
+        }`}
+      />
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 min-w-0">
           <button
@@ -164,7 +183,10 @@ export function PlansSidebar({
           {plans.length === 0 && (
             <div className="text-center py-8 border border-dashed border-line rounded-xl">
               <p className="text-xs text-ink-soft mb-3">No plans found</p>
-              <button onClick={onCreateNewPlan} className="demo-button demo-button-sm">
+              <button
+                onClick={onCreateNewPlan}
+                className="demo-button demo-button-sm"
+              >
                 Create your first plan
               </button>
             </div>

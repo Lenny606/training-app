@@ -46,4 +46,3 @@ export const newPlanInput = z.object({
 })
 
 export type NewPlanInput = z.infer<typeof newPlanInput>
-

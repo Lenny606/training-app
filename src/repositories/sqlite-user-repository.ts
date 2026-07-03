@@ -39,7 +39,11 @@ export class SqliteUserRepository implements UserRepository {
 
   async create(newUser: NewUser): Promise<User> {
     const email = newUser.email.toLowerCase()
-    const existing = this.db.select().from(users).where(eq(users.email, email)).get()
+    const existing = this.db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .get()
     if (existing) throw new EmailTakenError(email)
 
     const now = new Date()

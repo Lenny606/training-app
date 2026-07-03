@@ -1,5 +1,11 @@
 import { useState } from 'react'
-import { Image as ImageIcon, Film, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import {
+  Image as ImageIcon,
+  Film,
+  X,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react'
 import type { Activity, Media } from '../../domain/plans'
 
 interface CurrentActivityInfoProps {
@@ -11,11 +17,11 @@ interface CurrentActivityInfoProps {
 // fallow-ignore-next-line complexity
 function ActivityMetadata({ activity }: { activity: Activity }) {
   if (activity.type !== 'exercise') return null
-  
+
   const items = [
     activity.sets ? `${activity.sets} Sets` : '',
     activity.reps ? `${activity.reps} Reps` : '',
-    activity.weight || ''
+    activity.weight || '',
   ].filter(Boolean)
 
   if (items.length === 0) return null

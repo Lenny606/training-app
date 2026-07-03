@@ -29,7 +29,9 @@ export function PlanMetaForm({ plan, onChange }: PlanMetaFormProps) {
           min="1"
           max="7"
           value={plan.daysPerWeek}
-          onChange={(e) => onChange('daysPerWeek', Math.max(1, parseInt(e.target.value) || 1))}
+          onChange={(e) =>
+            onChange('daysPerWeek', Math.max(1, parseInt(e.target.value) || 1))
+          }
           className="demo-input text-sm"
         />
       </div>

@@ -49,12 +49,28 @@ interface ReconciledState {
  * should be — fast-forwarding through any activities that elapsed while the page
  * was closed, and completing the workout if it ran past the end.
  */
-function reconcile(p: PersistedSession, plan: TrainingPlan, now: number): ReconciledState {
+function reconcile(
+  p: PersistedSession,
+  plan: TrainingPlan,
+  now: number,
+): ReconciledState {
   if (p.isCompleted) {
-    return { activityIndex: p.activityIndex, secondsRemaining: 0, isPlaying: false, isCompleted: true, endsAt: null }
+    return {
+      activityIndex: p.activityIndex,
+      secondsRemaining: 0,
+      isPlaying: false,
+      isCompleted: true,
+      endsAt: null,
+    }
   }
   if (!p.isPlaying || p.endsAt == null) {
-    return { activityIndex: p.activityIndex, secondsRemaining: p.remaining, isPlaying: false, isCompleted: false, endsAt: null }
+    return {
+      activityIndex: p.activityIndex,
+      secondsRemaining: p.remaining,
+      isPlaying: false,
+      isCompleted: false,
+      endsAt: null,
+    }
   }
 
   let activityIndex = p.activityIndex
@@ -62,7 +78,13 @@ function reconcile(p: PersistedSession, plan: TrainingPlan, now: number): Reconc
   while (endsAt <= now) {
     const nextIdx = activityIndex + 1
     if (nextIdx >= plan.activities.length) {
-      return { activityIndex, secondsRemaining: 0, isPlaying: false, isCompleted: true, endsAt: null }
+      return {
+        activityIndex,
+        secondsRemaining: 0,
+        isPlaying: false,
+        isCompleted: true,
+        endsAt: null,
+      }
     }
     activityIndex = nextIdx
     endsAt += plan.activities[nextIdx].duration * 1000
@@ -76,7 +98,10 @@ function reconcile(p: PersistedSession, plan: TrainingPlan, now: number): Reconc
   }
 }
 
-export function useWorkoutSession({ selectedPlan, soundEnabled }: UseWorkoutSessionOptions) {
+export function useWorkoutSession({
+  selectedPlan,
+  soundEnabled,
+}: UseWorkoutSessionOptions) {
   const [currentActivityIndex, setCurrentActivityIndex] = useState<number>(0)
   const [secondsRemaining, setSecondsRemaining] = useState<number>(
     () => selectedPlan?.activities?.[0]?.duration || 0,
@@ -102,7 +127,9 @@ export function useWorkoutSession({ selectedPlan, soundEnabled }: UseWorkoutSess
 
   // Reset the session only on an actual plan change — not on the initial mount,
   // and not when we're switching to the plan we're about to restore.
-  const prevPlanIdRef = useRef<string>(loadPersisted()?.planId ?? selectedPlanId)
+  const prevPlanIdRef = useRef<string>(
+    loadPersisted()?.planId ?? selectedPlanId,
+  )
   useEffect(() => {
     if (prevPlanIdRef.current === selectedPlanId) return
     prevPlanIdRef.current = selectedPlanId
@@ -130,7 +157,11 @@ export function useWorkoutSession({ selectedPlan, soundEnabled }: UseWorkoutSess
     setIsPlaying(r.isPlaying)
   }, [selectedPlanId, selectedPlan])
 
-  const jumpToActivity = (index: number, plan: typeof selectedPlan, beep = true) => {
+  const jumpToActivity = (
+    index: number,
+    plan: typeof selectedPlan,
+    beep = true,
+  ) => {
     if (!plan) return
     setCurrentActivityIndex(index)
     setSecondsRemaining(plan.activities[index].duration)
@@ -243,7 +274,14 @@ export function useWorkoutSession({ selectedPlan, soundEnabled }: UseWorkoutSess
     } catch {
       // storage full / unavailable — ignore
     }
-  }, [selectedPlanId, selectedPlan, currentActivityIndex, isPlaying, isCompleted, secondsRemaining])
+  }, [
+    selectedPlanId,
+    selectedPlan,
+    currentActivityIndex,
+    isPlaying,
+    isCompleted,
+    secondsRemaining,
+  ])
 
   return {
     currentActivityIndex,

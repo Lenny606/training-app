@@ -1,4 +1,9 @@
-import { createFileRoute, redirect, useNavigate, useRouter } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  redirect,
+  useNavigate,
+  useRouter,
+} from '@tanstack/react-router'
 import { AuthForm } from '../components/auth/AuthForm'
 import { register } from '../server/auth'
 
@@ -25,7 +30,11 @@ function RegisterPage() {
       submitLabel="Create account"
       onSubmit={handleSubmit}
       passwordHint="At least 8 characters."
-      footer={{ prompt: 'Already have an account?', linkLabel: 'Sign in', to: '/login' }}
+      footer={{
+        prompt: 'Already have an account?',
+        linkLabel: 'Sign in',
+        to: '/login',
+      }}
     />
   )
 }

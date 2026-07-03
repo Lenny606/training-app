@@ -10,7 +10,10 @@ import path from 'node:path'
 const testUploadDir = path.resolve(process.cwd(), 'data/test-uploads')
 
 // Mock user session
-let mockUser: { id: string; email: string } | null = { id: 'user-1', email: 'test@example.com' }
+let mockUser: { id: string; email: string } | null = {
+  id: 'user-1',
+  email: 'test@example.com',
+}
 
 vi.mock('../auth/session', () => ({
   getSessionUser: vi.fn(() => Promise.resolve(mockUser)),
@@ -39,14 +42,17 @@ describe('POST /api/upload', () => {
 
     // Insert user into DB to satisfy foreign key constraint
     const { users: usersTable } = await import('../db/schema')
-    await db.insert(usersTable).values({
-      id: 'user-1',
-      email: 'test@example.com',
-      passwordHash: 'dummy-hash',
-      role: 'user',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }).run()
+    await db
+      .insert(usersTable)
+      .values({
+        id: 'user-1',
+        email: 'test@example.com',
+        passwordHash: 'dummy-hash',
+        role: 'user',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .run()
 
     // Reset session user
     mockUser = { id: 'user-1', email: 'test@example.com' }
@@ -73,14 +79,17 @@ describe('POST /api/upload', () => {
   // 1x1 transparent PNG file
   const pngBuffer = Buffer.from(
     'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
-    'base64'
+    'base64',
   )
 
   it('rejects unauthenticated requests with 401', async () => {
     mockUser = null
 
     const formData = new FormData()
-    formData.append('file', new File([pngBuffer], 'test.png', { type: 'image/png' }))
+    formData.append(
+      'file',
+      new File([pngBuffer], 'test.png', { type: 'image/png' }),
+    )
 
     const request = new Request('http://localhost/api/upload', {
       method: 'POST',
@@ -102,12 +111,17 @@ describe('POST /api/upload', () => {
 
     const response = await postHandler({ request })
     expect(response.status).toBe(400)
-    expect(await response.text()).toBe('No file provided or invalid file format.')
+    expect(await response.text()).toBe(
+      'No file provided or invalid file format.',
+    )
   })
 
   it('successfully compresses a PNG image and converts it to WebP', async () => {
     const formData = new FormData()
-    formData.append('file', new File([pngBuffer], 'test-image.png', { type: 'image/png' }))
+    formData.append(
+      'file',
+      new File([pngBuffer], 'test-image.png', { type: 'image/png' }),
+    )
 
     const request = new Request('http://localhost/api/upload', {
       method: 'POST',
@@ -127,7 +141,11 @@ describe('POST /api/upload', () => {
     expect(fs.existsSync(savedFilePath)).toBe(true)
 
     // Verify database record
-    const dbRecord = db.select().from(media).where(eq(media.id, data.id)).all()[0]
+    const dbRecord = db
+      .select()
+      .from(media)
+      .where(eq(media.id, data.id))
+      .all()[0]
     expect(dbRecord).toBeDefined()
     expect(dbRecord.id).toBe(data.id)
     expect(dbRecord.fileName).toBe(data.fileName)
@@ -139,7 +157,10 @@ describe('POST /api/upload', () => {
     const svgBuffer = Buffer.from(svgContent)
 
     const formData = new FormData()
-    formData.append('file', new File([svgBuffer], 'logo.svg', { type: 'image/svg+xml' }))
+    formData.append(
+      'file',
+      new File([svgBuffer], 'logo.svg', { type: 'image/svg+xml' }),
+    )
 
     const request = new Request('http://localhost/api/upload', {
       method: 'POST',
@@ -165,7 +186,10 @@ describe('POST /api/upload', () => {
     const videoBuffer = Buffer.from('fake-mp4-video-bytes')
 
     const formData = new FormData()
-    formData.append('file', new File([videoBuffer], 'exercise.mp4', { type: 'video/mp4' }))
+    formData.append(
+      'file',
+      new File([videoBuffer], 'exercise.mp4', { type: 'video/mp4' }),
+    )
 
     const request = new Request('http://localhost/api/upload', {
       method: 'POST',
@@ -192,7 +216,10 @@ describe('POST /api/upload', () => {
     const invalidImageBuffer = Buffer.from('invalid-garbage-bytes')
 
     const formData = new FormData()
-    formData.append('file', new File([invalidImageBuffer], 'bad-image.png', { type: 'image/png' }))
+    formData.append(
+      'file',
+      new File([invalidImageBuffer], 'bad-image.png', { type: 'image/png' }),
+    )
 
     const request = new Request('http://localhost/api/upload', {
       method: 'POST',
@@ -200,7 +227,9 @@ describe('POST /api/upload', () => {
     })
 
     // Capture console warnings to avoid polluting output
-    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnSpy = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     const response = await postHandler({ request })
     expect(response.status).toBe(200)

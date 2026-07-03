@@ -27,9 +27,14 @@ function parseSetsField(value: string): number | undefined {
   return parsed
 }
 
-function parseActivityField(field: keyof Activity, value: string | Media[]): Activity[keyof Activity] {
-  if (field === 'duration' && typeof value === 'string') return parseDurationField(value)
-  if (field === 'sets' && typeof value === 'string') return parseSetsField(value)
+function parseActivityField(
+  field: keyof Activity,
+  value: string | Media[],
+): Activity[keyof Activity] {
+  if (field === 'duration' && typeof value === 'string')
+    return parseDurationField(value)
+  if (field === 'sets' && typeof value === 'string')
+    return parseSetsField(value)
   return value
 }
 
@@ -68,7 +73,11 @@ interface UsePlanEditorProps {
 }
 
 // fallow-ignore-next-line complexity
-function resolveSelectedPlan(loaded: TrainingPlan[], selectId?: string, currentId?: string) {
+function resolveSelectedPlan(
+  loaded: TrainingPlan[],
+  selectId?: string,
+  currentId?: string,
+) {
   const targetId = selectId ?? currentId ?? loaded[0]?.id ?? ''
   const match = loaded.find((p) => p.id === targetId)
   return match ?? loaded[0] ?? null
@@ -87,7 +96,11 @@ function usePlansList() {
     try {
       const loaded = await listPlans()
       setPlans(loaded)
-      const selected = resolveSelectedPlan(loaded, selectId, selectedPlanIdRef.current)
+      const selected = resolveSelectedPlan(
+        loaded,
+        selectId,
+        selectedPlanIdRef.current,
+      )
       setSelectedPlanId(selected?.id ?? '')
       return selected
     } catch (error) {
@@ -136,7 +149,11 @@ function useActivityEditor(
   setEditingPlan: React.Dispatch<React.SetStateAction<TrainingPlan | null>>,
   markDirty: () => void,
 ) {
-  const handleActivityChange = (index: number, field: keyof Activity, value: string | Media[]) => {
+  const handleActivityChange = (
+    index: number,
+    field: keyof Activity,
+    value: string | Media[],
+  ) => {
     if (!editingPlan) return
     const updatedActivities = [...editingPlan.activities]
     const activity = updatedActivities[index]
@@ -189,7 +206,13 @@ function useActivityEditor(
     markDirty()
   }
 
-  return { handleActivityChange, reorderActivity, moveActivity, deleteActivity, handleAddActivity }
+  return {
+    handleActivityChange,
+    reorderActivity,
+    moveActivity,
+    deleteActivity,
+    handleAddActivity,
+  }
 }
 
 function usePlanEditor({
@@ -208,7 +231,9 @@ function usePlanEditor({
   // a reload (fresh refs from the server) or a new selection should.
   const selectedPlan = plans.find((p) => p.id === selectedPlanId) ?? null
   useEffect(() => {
-    setEditingPlan(selectedPlan ? JSON.parse(JSON.stringify(selectedPlan)) : null)
+    setEditingPlan(
+      selectedPlan ? JSON.parse(JSON.stringify(selectedPlan)) : null,
+    )
     setHasUnsavedChanges(false)
   }, [selectedPlanId, selectedPlan])
 
@@ -216,7 +241,10 @@ function usePlanEditor({
     setHasUnsavedChanges(true),
   )
 
-  const handleMetaChange = (field: keyof TrainingPlan, value: string | number) => {
+  const handleMetaChange = (
+    field: keyof TrainingPlan,
+    value: string | number,
+  ) => {
     if (!editingPlan) return
     setEditingPlan({ ...editingPlan, [field]: value })
     setHasUnsavedChanges(true)
@@ -256,7 +284,9 @@ function usePlanEditor({
 
   // fallow-ignore-next-line complexity
   const handleDeletePlan = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this entire training plan?')) {
+    if (
+      !confirm('Are you sure you want to delete this entire training plan?')
+    ) {
       return
     }
     try {

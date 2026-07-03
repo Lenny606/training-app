@@ -14,7 +14,10 @@ type Writer = DbClient | Parameters<Parameters<DbClient['transaction']>[0]>[0]
  * cloned for every user without primary-key collisions. Intended to run inside
  * the registration transaction (pass its `tx` as `db`).
  */
-export function seedDefaultPlansForOwner(ownerId: string, db: Writer = getDb()): void {
+export function seedDefaultPlansForOwner(
+  ownerId: string,
+  db: Writer = getDb(),
+): void {
   const now = new Date()
 
   DEFAULT_PLANS.forEach((plan, position) => {

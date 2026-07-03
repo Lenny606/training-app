@@ -17,7 +17,6 @@ export interface Activity {
   media?: Media[]
 }
 
-
 export interface TrainingPlan {
   id: string
   name: string
@@ -96,7 +95,8 @@ export const DEFAULT_PLANS: TrainingPlan[] = [
   {
     id: 'deadlift-531',
     name: '5/3/1 Strength Program - Deadlift',
-    description: 'Heavy strength development session targeting lower body power.',
+    description:
+      'Heavy strength development session targeting lower body power.',
     daysPerWeek: 4,
     activities: [
       {
@@ -134,7 +134,8 @@ export const DEFAULT_PLANS: TrainingPlan[] = [
   {
     id: 'hiit-endurance',
     name: 'HIIT & Endurance Cardio',
-    description: 'High-intensity interval training session for cardiovascular conditioning.',
+    description:
+      'High-intensity interval training session for cardiovascular conditioning.',
     daysPerWeek: 2,
     activities: [
       {

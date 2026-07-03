@@ -43,7 +43,7 @@ krok (mimo tuto spec, nebo navazující PR).
 3. Pro každou routu projít **checklist** (§4) a zapsat nálezy do tabulky (§6).
 4. Overflow detekovat i programově v konzoli:
    ```js
-   [...document.querySelectorAll('*')]
+   ;[...document.querySelectorAll('*')]
      .filter((el) => el.scrollWidth > document.documentElement.clientWidth)
      .map((el) => ({ el, w: el.scrollWidth }))
    ```
@@ -62,23 +62,23 @@ krok (mimo tuto spec, nebo navazující PR).
 
 ## 5. Místa s vyšším rizikem (z rychlého scanu kódu)
 
-| Místo | Riziko | Co ověřit |
-| --- | --- | --- |
-| `Header.tsx` nav | `flex-wrap` + `sm:flex-nowrap`, odkazy `order-3 w-full` | Že se nav na 360 px láme čistě, ne do scrollu. |
-| `admin.tsx` layout | `flex-col lg:flex-row` (dva sloupce až od `lg`) | Že na mobilu jde vše do jednoho sloupce a editor plánu se vejde. |
-| Editor aktivit v adminu | řádky se sets/reps/weight inputy | Že se inputy nelámou do overflow na úzké šířce. |
-| Timer v `index.tsx` | velká čísla / ovládací tlačítka | Že velký časomíra text a tlačítka nepřetékají. |
-| `styles.css:298` `nowrap` | text, co se nesmí zalomit | Že na mobilu nezpůsobuje horizontální scroll. |
-| `styles.css:381` `overflow-x: auto` | zamýšlený scroll kontejner | Že je to záměr (tabulka?), ne náhodný únik. |
-| `page-wrap` `width: min(1080px, 100% - 2rem)` | gutter 1rem | Že 2rem gutter sedí i na 360 px. |
+| Místo                                         | Riziko                                                  | Co ověřit                                                        |
+| --------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------------------------- |
+| `Header.tsx` nav                              | `flex-wrap` + `sm:flex-nowrap`, odkazy `order-3 w-full` | Že se nav na 360 px láme čistě, ne do scrollu.                   |
+| `admin.tsx` layout                            | `flex-col lg:flex-row` (dva sloupce až od `lg`)         | Že na mobilu jde vše do jednoho sloupce a editor plánu se vejde. |
+| Editor aktivit v adminu                       | řádky se sets/reps/weight inputy                        | Že se inputy nelámou do overflow na úzké šířce.                  |
+| Timer v `index.tsx`                           | velká čísla / ovládací tlačítka                         | Že velký časomíra text a tlačítka nepřetékají.                   |
+| `styles.css:298` `nowrap`                     | text, co se nesmí zalomit                               | Že na mobilu nezpůsobuje horizontální scroll.                    |
+| `styles.css:381` `overflow-x: auto`           | zamýšlený scroll kontejner                              | Že je to záměr (tabulka?), ne náhodný únik.                      |
+| `page-wrap` `width: min(1080px, 100% - 2rem)` | gutter 1rem                                             | Že 2rem gutter sedí i na 360 px.                                 |
 
 ## 6. Formát výstupu (nález)
 
 Tabulka v reportu / issue:
 
-| Routa | Breakpoint | Problém | Závažnost | Návrh opravy |
-| --- | --- | --- | --- | --- |
-| /admin | 360 px | inputy aktivit přetékají vpravo | high | `flex-wrap` + `min-w-0` na řádek |
+| Routa  | Breakpoint | Problém                         | Závažnost | Návrh opravy                     |
+| ------ | ---------- | ------------------------------- | --------- | -------------------------------- |
+| /admin | 360 px     | inputy aktivit přetékají vpravo | high      | `flex-wrap` + `min-w-0` na řádek |
 
 Závažnost: **high** (overflow / nepoužitelné) · **med** (kostrbaté) ·
 **low** (kosmetika).
@@ -93,14 +93,14 @@ kombinacích → root `overflow-x: hidden` reálný únik nemaskuje. ✅
 
 Tap targety < 44 px:
 
-| Routa | BP | Prvek | Velikost | Závažnost | Stav |
-| --- | --- | --- | --- | --- | --- |
-| všechny | vše | hamburger „Open menu" | 29×29 | high | **opraveno** → `min-h-11 min-w-11` (44×44) |
-| všechny | vše | theme toggle „Auto" | 58×34 | med | **opraveno** → `min-h-11` |
-| /admin | vše | ikonová tlačítka (posun/smazat) | 27×27 | med | follow-up PR |
-| /admin | vše | „New" / „Saved" (`demo-button-sm`) | ~80×27 | med | follow-up PR |
-| /admin | vše | inputy aktivit | výška 40 | low | follow-up PR |
-| všechny | vše | logo, desktop nav odkazy | 30 / 20 výška | low | ponecháno (text/brand) |
+| Routa   | BP  | Prvek                              | Velikost      | Závažnost | Stav                                       |
+| ------- | --- | ---------------------------------- | ------------- | --------- | ------------------------------------------ |
+| všechny | vše | hamburger „Open menu"              | 29×29         | high      | **opraveno** → `min-h-11 min-w-11` (44×44) |
+| všechny | vše | theme toggle „Auto"                | 58×34         | med       | **opraveno** → `min-h-11`                  |
+| /admin  | vše | ikonová tlačítka (posun/smazat)    | 27×27         | med       | follow-up PR                               |
+| /admin  | vše | „New" / „Saved" (`demo-button-sm`) | ~80×27        | med       | follow-up PR                               |
+| /admin  | vše | inputy aktivit                     | výška 40      | low       | follow-up PR                               |
+| všechny | vše | logo, desktop nav odkazy           | 30 / 20 výška | low       | ponecháno (text/brand)                     |
 
 ## 7. Plán
 

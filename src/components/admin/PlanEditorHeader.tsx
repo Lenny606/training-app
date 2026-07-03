@@ -8,9 +8,12 @@ interface PlanEditorHeaderProps {
 }
 
 function getSaveButtonClass(hasUnsavedChanges: boolean) {
-  const base = 'demo-button demo-button-sm flex items-center gap-1.5 transition-all'
-  const modified = 'bg-lagoon-deep text-lagoon-ink border-lagoon shadow-[0_0_12px_color-mix(in_oklab,var(--lagoon)_25%,transparent)] hover:bg-lagoon'
-  const saved = 'bg-success/10 text-success border-success/30 hover:bg-success/15'
+  const base =
+    'demo-button demo-button-sm flex items-center gap-1.5 transition-all'
+  const modified =
+    'bg-lagoon-deep text-lagoon-ink border-lagoon shadow-[0_0_12px_color-mix(in_oklab,var(--lagoon)_25%,transparent)] hover:bg-lagoon'
+  const saved =
+    'bg-success/10 text-success border-success/30 hover:bg-success/15'
   return `${base} ${hasUnsavedChanges ? modified : saved}`
 }
 
@@ -29,7 +32,10 @@ export function PlanEditorHeader({
             Editing Mode
           </span>
           {hasUnsavedChanges && (
-            <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" title="Unsaved changes" />
+            <span
+              className="h-2 w-2 rounded-full bg-amber-500 animate-pulse"
+              title="Unsaved changes"
+            />
           )}
         </div>
         <h1 className="m-0 font-display text-2xl font-black tracking-tight text-ink">
@@ -59,4 +65,3 @@ export function PlanEditorHeader({
     </div>
   )
 }
-

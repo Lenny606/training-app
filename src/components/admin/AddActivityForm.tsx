@@ -88,7 +88,9 @@ function getDefaultName(type: 'exercise' | 'rest') {
   return type === 'rest' ? 'Rest' : 'Exercise'
 }
 
-function useAddActivityForm(onAddActivity: (activity: Omit<Activity, 'id'>) => void) {
+function useAddActivityForm(
+  onAddActivity: (activity: Omit<Activity, 'id'>) => void,
+) {
   const [type, setType] = useState<'exercise' | 'rest'>('exercise')
   const [name, setName] = useState('')
   const [duration, setDuration] = useState<string | number>(120)
@@ -116,8 +118,9 @@ function useAddActivityForm(onAddActivity: (activity: Omit<Activity, 'id'>) => v
     e.preventDefault()
     const activityName = name.trim() || getDefaultName(type)
     const parsedDuration = parseInt(duration.toString())
-    const finalDuration = isNaN(parsedDuration) || parsedDuration <= 0 ? 120 : parsedDuration
-    
+    const finalDuration =
+      isNaN(parsedDuration) || parsedDuration <= 0 ? 120 : parsedDuration
+
     const payload: Omit<Activity, 'id'> = {
       name: activityName,
       type,
@@ -179,7 +182,9 @@ function CoreFields({
         </label>
         <select
           value={type}
-          onChange={(e) => handleTypeChange(e.target.value as 'exercise' | 'rest')}
+          onChange={(e) =>
+            handleTypeChange(e.target.value as 'exercise' | 'rest')
+          }
           className="demo-select py-1.5 text-xs"
         >
           <option value="exercise">Exercise</option>
@@ -195,7 +200,9 @@ function CoreFields({
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder={type === 'exercise' ? 'e.g. Dumbbell Bicep Curl' : 'Rest period'}
+          placeholder={
+            type === 'exercise' ? 'e.g. Dumbbell Bicep Curl' : 'Rest period'
+          }
           className="demo-input py-1.5 text-xs font-medium"
         />
       </div>

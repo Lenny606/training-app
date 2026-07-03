@@ -24,7 +24,7 @@ export function WorkoutPlanSelector({
           <Dumbbell className="h-4 w-4 text-lagoon" />
           Training Plan
         </label>
-        
+
         <button
           onClick={onToggleSound}
           className={`p-1.5 rounded-lg border transition-all ${
@@ -34,7 +34,11 @@ export function WorkoutPlanSelector({
           }`}
           title={soundEnabled ? 'Mute Beeps' : 'Enable Beeps'}
         >
-          {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+          {soundEnabled ? (
+            <Volume2 className="h-4 w-4" />
+          ) : (
+            <VolumeX className="h-4 w-4" />
+          )}
         </button>
       </div>
 
