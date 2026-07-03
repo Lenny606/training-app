@@ -82,7 +82,7 @@ export default function Header() {
 
               {/* Hamburger — only on mobile */}
               <button
-                className="sm:hidden demo-button demo-button-icon min-h-11 min-w-11 border-line bg-chip text-ink-soft hover:text-ink"
+                className="sm:!hidden demo-button demo-button-icon min-h-11 min-w-11 border-line bg-chip text-ink-soft hover:text-ink"
                 onClick={() => setMenuOpen((o) => !o)}
                 aria-label={menuOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={menuOpen}
