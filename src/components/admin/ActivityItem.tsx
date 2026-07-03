@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { ArrowUp, ArrowDown, GripVertical, Trash2 } from 'lucide-react'
-import type { Activity } from '../../domain/plans'
+import type { Activity, Media } from '../../domain/plans'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
+import { MediaUpload } from './MediaUpload'
 
 interface NumericFieldProps {
   value: number | undefined
@@ -57,7 +58,7 @@ function NumericField({ value, fallback, unit, placeholder, onCommit }: NumericF
 interface ExerciseFieldsProps {
   activity: Activity
   index: number
-  onActivityChange: (index: number, field: keyof Activity, value: string) => void
+  onActivityChange: (index: number, field: keyof Activity, value: string | Media[]) => void
 }
 
 function ExerciseFields({ activity, index, onActivityChange }: ExerciseFieldsProps) {
@@ -165,7 +166,7 @@ function ActivityItemBadge({ type, index }: ActivityItemBadgeProps) {
 interface ActivityInputsProps {
   activity: Activity
   index: number
-  onActivityChange: (index: number, field: keyof Activity, value: string) => void
+  onActivityChange: (index: number, field: keyof Activity, value: string | Media[]) => void
 }
 
 function ActivityInputs({ activity, index, onActivityChange }: ActivityInputsProps) {
@@ -213,7 +214,7 @@ interface ActivityItemProps {
   index: number
   isFirst: boolean
   isLast: boolean
-  onActivityChange: (index: number, field: keyof Activity, value: string) => void
+  onActivityChange: (index: number, field: keyof Activity, value: string | Media[]) => void
   onMoveActivity: (index: number, direction: 'up' | 'down') => void
   onDeleteActivity: (index: number) => void
 }
@@ -238,7 +239,7 @@ export function ActivityItem({
     opacity: isDragging ? 0.4 : undefined,
     zIndex: isDragging ? 1 : undefined,
   }
-  const containerClass = `demo-list-item flex flex-col gap-3 sm:flex-row sm:items-center p-3 border transition-all ${
+  const containerClass = `demo-list-item flex flex-col gap-3 p-3 border transition-all ${
     isRest
       ? 'border-line/50'
       : 'border-line bg-lagoon/[0.03]'
@@ -246,29 +247,43 @@ export function ActivityItem({
 
   return (
     <div ref={setNodeRef} style={style} className={containerClass}>
-      <button
-        ref={setActivatorNodeRef}
-        {...attributes}
-        {...listeners}
-        className="demo-button demo-button-icon flex-shrink-0 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 touch-none cursor-grab active:cursor-grabbing border-line bg-chip text-ink-soft hover:text-ink"
-        title="Drag to reorder"
-        aria-label={`Reorder activity ${index + 1}: ${activity.name}`}
-      >
-        <GripVertical className="h-4 w-4" />
-      </button>
-      <ActivityItemBadge type={activity.type} index={index} />
-      <ActivityInputs
-        activity={activity}
-        index={index}
-        onActivityChange={onActivityChange}
-      />
-      <ActivityActions
-        index={index}
-        isFirst={isFirst}
-        isLast={isLast}
-        onMoveActivity={onMoveActivity}
-        onDeleteActivity={onDeleteActivity}
-      />
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center w-full">
+        <button
+          ref={setActivatorNodeRef}
+          {...attributes}
+          {...listeners}
+          className="demo-button demo-button-icon flex-shrink-0 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 touch-none cursor-grab active:cursor-grabbing border-line bg-chip text-ink-soft hover:text-ink"
+          title="Drag to reorder"
+          aria-label={`Reorder activity ${index + 1}: ${activity.name}`}
+        >
+          <GripVertical className="h-4 w-4" />
+        </button>
+        <ActivityItemBadge type={activity.type} index={index} />
+        <ActivityInputs
+          activity={activity}
+          index={index}
+          onActivityChange={onActivityChange}
+        />
+        <ActivityActions
+          index={index}
+          isFirst={isFirst}
+          isLast={isLast}
+          onMoveActivity={onMoveActivity}
+          onDeleteActivity={onDeleteActivity}
+        />
+      </div>
+
+      {!isRest && (
+        <div className="w-full border-t border-line/35 pt-2.5 sm:pl-10">
+          <span className="text-[10px] font-semibold text-ink-soft uppercase tracking-wider block mb-1">
+            Activity Media (Images / Videos)
+          </span>
+          <MediaUpload
+            media={activity.media}
+            onChange={(m) => onActivityChange(index, 'media', m)}
+          />
+        </div>
+      )}
     </div>
   )
 }

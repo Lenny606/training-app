@@ -19,6 +19,14 @@ export const planInsert = createInsertSchema(plans, {
  * nested activities, mirroring `NewTrainingPlan`. IDs/positions are assigned by
  * the repository, so they are omitted here.
  */
+export const mediaInput = z.object({
+  id: z.string(),
+  fileName: z.string(),
+  originalName: z.string(),
+  mimeType: z.string(),
+  fileSize: z.number(),
+})
+
 export const activityInput = z.object({
   id: z.string().optional(),
   name: z.string().min(1),
@@ -27,6 +35,7 @@ export const activityInput = z.object({
   sets: z.number().int().positive().optional(),
   reps: z.string().optional(),
   weight: z.string().optional(),
+  media: z.array(mediaInput).optional(),
 })
 
 export const newPlanInput = z.object({
@@ -37,3 +46,4 @@ export const newPlanInput = z.object({
 })
 
 export type NewPlanInput = z.infer<typeof newPlanInput>
+

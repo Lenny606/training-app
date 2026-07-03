@@ -1,24 +1,20 @@
 import {
   DndContext,
-  KeyboardSensor,
-  PointerSensor,
   closestCenter,
-  useSensor,
-  useSensors,
 } from '@dnd-kit/core'
 import type { DragEndEvent } from '@dnd-kit/core'
 import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import {
   SortableContext,
-  sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { ActivityItem } from './ActivityItem'
-import type { Activity } from '../../domain/plans'
+import type { Activity, Media } from '../../domain/plans'
+import { useDndSensors } from '../../hooks/useDndSensors'
 
 interface ActivitiesListProps {
   activities: Activity[]
-  onActivityChange: (index: number, field: keyof Activity, value: string) => void
+  onActivityChange: (index: number, field: keyof Activity, value: string | Media[]) => void
   onMoveActivity: (index: number, direction: 'up' | 'down') => void
   onReorderActivity: (from: number, to: number) => void
   onDeleteActivity: (index: number) => void
@@ -33,10 +29,7 @@ export function ActivitiesList({
 }: ActivitiesListProps) {
   // A small activation distance keeps a tap/click on the row's inputs from
   // being read as a drag; the KeyboardSensor drives the accessible drag flow.
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
-  )
+  const sensors = useDndSensors()
 
   function handleDragEnd({ active, over }: DragEndEvent) {
     if (!over || active.id === over.id) return

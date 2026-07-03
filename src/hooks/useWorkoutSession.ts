@@ -111,7 +111,7 @@ export function useWorkoutSession({ selectedPlan, soundEnabled }: UseWorkoutSess
     setIsCompleted(false)
     endsAtRef.current = null
     setSecondsRemaining(selectedPlan?.activities?.[0]?.duration || 0)
-  }, [selectedPlanId])
+  }, [selectedPlanId, selectedPlan])
 
   // Restore a persisted session after mount (post-hydration → SSR-safe). Runs
   // once, when the selected plan matches the persisted one. Defined after the
@@ -128,7 +128,7 @@ export function useWorkoutSession({ selectedPlan, soundEnabled }: UseWorkoutSess
     setIsCompleted(r.isCompleted)
     endsAtRef.current = r.endsAt
     setIsPlaying(r.isPlaying)
-  }, [selectedPlanId])
+  }, [selectedPlanId, selectedPlan])
 
   const jumpToActivity = (index: number, plan: typeof selectedPlan, beep = true) => {
     if (!plan) return
@@ -150,6 +150,9 @@ export function useWorkoutSession({ selectedPlan, soundEnabled }: UseWorkoutSess
       if (soundEnabledRef.current) playWorkoutCompleteBeep()
     }
   }
+
+  const handleNextActivityRef = useRef(handleNextActivity)
+  handleNextActivityRef.current = handleNextActivity
 
   const handleSkipForward = () => {
     if (!selectedPlan) return
@@ -213,7 +216,7 @@ export function useWorkoutSession({ selectedPlan, soundEnabled }: UseWorkoutSess
         endsAtRef.current = null // guard against a double-advance before re-render
         setSecondsRemaining(0)
         if (soundEnabledRef.current) playTimerBeep(true)
-        handleNextActivity()
+        handleNextActivityRef.current()
       } else {
         setSecondsRemaining(remaining)
       }
@@ -240,7 +243,7 @@ export function useWorkoutSession({ selectedPlan, soundEnabled }: UseWorkoutSess
     } catch {
       // storage full / unavailable — ignore
     }
-  }, [selectedPlanId, currentActivityIndex, isPlaying, isCompleted, secondsRemaining])
+  }, [selectedPlanId, selectedPlan, currentActivityIndex, isPlaying, isCompleted, secondsRemaining])
 
   return {
     currentActivityIndex,

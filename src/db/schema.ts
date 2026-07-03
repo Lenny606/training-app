@@ -48,7 +48,23 @@ export const activities = sqliteTable('activities', {
   weight: text('weight'),
 })
 
+export const media = sqliteTable('media', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  activityId: text('activity_id')
+    .references(() => activities.id, { onDelete: 'cascade' }),
+  fileName: text('file_name').notNull(),
+  originalName: text('original_name').notNull(),
+  mimeType: text('mime_type').notNull(),
+  fileSize: integer('file_size').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+})
+
 export type PlanRow = typeof plans.$inferSelect
 export type ActivityRow = typeof activities.$inferSelect
 export type UserRow = typeof users.$inferSelect
 export type RefreshTokenRow = typeof refreshTokens.$inferSelect
+export type MediaRow = typeof media.$inferSelect
+

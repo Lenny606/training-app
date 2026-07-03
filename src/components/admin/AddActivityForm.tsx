@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
-import type { Activity } from '../../domain/plans'
+import type { Activity, Media } from '../../domain/plans'
+import { MediaUpload } from './MediaUpload'
 
 interface AddActivityFormProps {
   onAddActivity: (activity: Omit<Activity, 'id'>) => void
@@ -94,10 +95,12 @@ function useAddActivityForm(onAddActivity: (activity: Omit<Activity, 'id'>) => v
   const [sets, setSets] = useState<string | number>(3)
   const [reps, setReps] = useState('')
   const [weight, setWeight] = useState('')
+  const [mediaList, setMediaList] = useState<Media[]>([])
 
   const handleTypeChange = (newType: 'exercise' | 'rest') => {
     setType(newType)
     setDuration(120)
+    setMediaList([])
   }
 
   const resetForm = () => {
@@ -106,6 +109,7 @@ function useAddActivityForm(onAddActivity: (activity: Omit<Activity, 'id'>) => v
     setSets(3)
     setReps('')
     setWeight('')
+    setMediaList([])
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -118,6 +122,7 @@ function useAddActivityForm(onAddActivity: (activity: Omit<Activity, 'id'>) => v
       name: activityName,
       type,
       duration: finalDuration,
+      media: mediaList.length > 0 ? mediaList : undefined,
     }
 
     if (type === 'exercise') {
@@ -137,11 +142,13 @@ function useAddActivityForm(onAddActivity: (activity: Omit<Activity, 'id'>) => v
     sets,
     reps,
     weight,
+    mediaList,
     setName,
     setDuration,
     setSets,
     setReps,
     setWeight,
+    setMediaList,
     handleTypeChange,
     handleSubmit,
   }
@@ -225,11 +232,13 @@ export function AddActivityForm({ onAddActivity }: AddActivityFormProps) {
     sets,
     reps,
     weight,
+    mediaList,
     setName,
     setDuration,
     setSets,
     setReps,
     setWeight,
+    setMediaList,
     handleTypeChange,
     handleSubmit,
   } = useAddActivityForm(onAddActivity)
@@ -267,6 +276,15 @@ export function AddActivityForm({ onAddActivity }: AddActivityFormProps) {
           <div className="sm:col-span-4" />
         )}
       </div>
+
+      {type === 'exercise' && (
+        <div className="border-t border-line/35 pt-3">
+          <label className="block text-[10px] font-semibold text-ink-soft uppercase tracking-wider mb-1">
+            Activity Media (Images / Videos)
+          </label>
+          <MediaUpload media={mediaList} onChange={setMediaList} />
+        </div>
+      )}
 
       <div className="flex justify-end mt-1">
         <button

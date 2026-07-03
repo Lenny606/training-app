@@ -14,6 +14,8 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as UploadsFilenameRouteImport } from './routes/uploads.$filename'
+import { Route as ApiUploadRouteImport } from './routes/api.upload'
 import { Route as ApiChatRouteImport } from './routes/api.chat'
 import { Route as AuthenticatedAssistantRouteImport } from './routes/_authenticated/assistant'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -42,6 +44,16 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const UploadsFilenameRoute = UploadsFilenameRouteImport.update({
+  id: '/uploads/$filename',
+  path: '/uploads/$filename',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUploadRoute = ApiUploadRouteImport.update({
+  id: '/api/upload',
+  path: '/api/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -66,6 +78,8 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/assistant': typeof AuthenticatedAssistantRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/upload': typeof ApiUploadRoute
+  '/uploads/$filename': typeof UploadsFilenameRoute
 }
 export interface FileRoutesByTo {
   '/about': typeof AboutRoute
@@ -74,6 +88,8 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/assistant': typeof AuthenticatedAssistantRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/upload': typeof ApiUploadRoute
+  '/uploads/$filename': typeof UploadsFilenameRoute
   '/': typeof AuthenticatedIndexRoute
 }
 export interface FileRoutesById {
@@ -85,6 +101,8 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/assistant': typeof AuthenticatedAssistantRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/upload': typeof ApiUploadRoute
+  '/uploads/$filename': typeof UploadsFilenameRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
 }
 export interface FileRouteTypes {
@@ -97,6 +115,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/assistant'
     | '/api/chat'
+    | '/api/upload'
+    | '/uploads/$filename'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/about'
@@ -105,6 +125,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/assistant'
     | '/api/chat'
+    | '/api/upload'
+    | '/uploads/$filename'
     | '/'
   id:
     | '__root__'
@@ -115,6 +137,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/assistant'
     | '/api/chat'
+    | '/api/upload'
+    | '/uploads/$filename'
     | '/_authenticated/'
   fileRoutesById: FileRoutesById
 }
@@ -124,6 +148,8 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiUploadRoute: typeof ApiUploadRoute
+  UploadsFilenameRoute: typeof UploadsFilenameRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -162,6 +188,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/uploads/$filename': {
+      id: '/uploads/$filename'
+      path: '/uploads/$filename'
+      fullPath: '/uploads/$filename'
+      preLoaderRoute: typeof UploadsFilenameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/upload': {
+      id: '/api/upload'
+      path: '/api/upload'
+      fullPath: '/api/upload'
+      preLoaderRoute: typeof ApiUploadRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/chat': {
       id: '/api/chat'
@@ -209,6 +249,8 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiUploadRoute: ApiUploadRoute,
+  UploadsFilenameRoute: UploadsFilenameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

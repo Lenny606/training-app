@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { arrayMove } from '@dnd-kit/sortable'
-import type { TrainingPlan, Activity } from '../domain/plans'
+import type { TrainingPlan, Activity, Media } from '../domain/plans'
 import {
   createPlan,
   deletePlan,
@@ -27,9 +27,9 @@ function parseSetsField(value: string): number | undefined {
   return parsed
 }
 
-function parseActivityField(field: keyof Activity, value: string) {
-  if (field === 'duration') return parseDurationField(value)
-  if (field === 'sets') return parseSetsField(value)
+function parseActivityField(field: keyof Activity, value: string | Media[]): Activity[keyof Activity] {
+  if (field === 'duration' && typeof value === 'string') return parseDurationField(value)
+  if (field === 'sets' && typeof value === 'string') return parseSetsField(value)
   return value
 }
 
@@ -78,22 +78,27 @@ function usePlansList() {
   const [plans, setPlans] = useState<TrainingPlan[]>([])
   const [selectedPlanId, setSelectedPlanId] = useState<string>('')
 
-  const loadPlans = async (selectId?: string) => {
+  const selectedPlanIdRef = useRef(selectedPlanId)
+  useEffect(() => {
+    selectedPlanIdRef.current = selectedPlanId
+  }, [selectedPlanId])
+
+  const loadPlans = useCallback(async (selectId?: string) => {
     try {
       const loaded = await listPlans()
       setPlans(loaded)
-      const selected = resolveSelectedPlan(loaded, selectId, selectedPlanId)
+      const selected = resolveSelectedPlan(loaded, selectId, selectedPlanIdRef.current)
       setSelectedPlanId(selected?.id ?? '')
       return selected
     } catch (error) {
       console.error('Failed to load training plans:', error)
       return null
     }
-  }
+  }, [])
 
   useEffect(() => {
     loadPlans()
-  }, [])
+  }, [loadPlans])
 
   const handleSelectPlan = (id: string) => {
     setSelectedPlanId(id)
@@ -131,7 +136,7 @@ function useActivityEditor(
   setEditingPlan: React.Dispatch<React.SetStateAction<TrainingPlan | null>>,
   markDirty: () => void,
 ) {
-  const handleActivityChange = (index: number, field: keyof Activity, value: string) => {
+  const handleActivityChange = (index: number, field: keyof Activity, value: string | Media[]) => {
     if (!editingPlan) return
     const updatedActivities = [...editingPlan.activities]
     const activity = updatedActivities[index]
@@ -140,7 +145,7 @@ function useActivityEditor(
     updatedActivities[index] = {
       ...activity,
       [field]: parseActivityField(field, value),
-    }
+    } as Activity
 
     setEditingPlan({ ...editingPlan, activities: updatedActivities })
     markDirty()

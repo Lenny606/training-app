@@ -1,16 +1,11 @@
 import {
   DndContext,
-  KeyboardSensor,
-  PointerSensor,
   closestCenter,
-  useSensor,
-  useSensors,
 } from '@dnd-kit/core'
 import type { DragEndEvent } from '@dnd-kit/core'
 import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import {
   SortableContext,
-  sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
@@ -18,6 +13,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { Plus, Trash2, Calendar, GripVertical, Layers } from 'lucide-react'
 import type { TrainingPlan } from '../../domain/plans'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
+import { useDndSensors } from '../../hooks/useDndSensors'
 
 interface PlansSidebarProps {
   plans: TrainingPlan[]
@@ -111,10 +107,7 @@ export function PlansSidebar({
   onDeletePlan,
   onReorderPlans,
 }: PlansSidebarProps) {
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
-  )
+  const sensors = useDndSensors()
 
   function handleDragEnd({ active, over }: DragEndEvent) {
     if (!over || active.id === over.id) return

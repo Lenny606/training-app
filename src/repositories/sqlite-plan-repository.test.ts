@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+import { eq } from 'drizzle-orm'
 import { createDb } from '../db/client'
 import type { DbClient } from '../db/client'
 import { runMigrations } from '../db/migrate'
@@ -220,4 +221,107 @@ describe('SqlitePlanRepository', () => {
       expect(await repository.getById(victimPlanId, ownerId)).not.toBeNull()
     })
   })
+
+  describe('media support', () => {
+    it('links newly uploaded media to activity on plan update, returns it, and cleans up when removed', async () => {
+      const db = (repository as unknown as { db: DbClient }).db
+      const { media: mediaTable } = await import('../db/schema')
+      
+      const planId = await firstPlanId()
+      const planBefore = await repository.getById(planId, ownerId)
+      expect(planBefore).not.toBeNull()
+      const activity = planBefore!.activities[0]
+      expect(activity).toBeDefined()
+
+      // 1. Simulate file upload by inserting a media row with activityId = null
+      const mediaId = 'media-test-1'
+      db.insert(mediaTable)
+        .values({
+          id: mediaId,
+          userId: ownerId,
+          activityId: null,
+          fileName: 'file-test-1.png',
+          originalName: 'test.png',
+          mimeType: 'image/png',
+          fileSize: 1024,
+          createdAt: new Date(),
+        })
+        .run()
+
+      // Create a dummy file on disk so the repository's unlinkSync won't fail with ENOENT
+      const fs = await import('node:fs')
+      const path = await import('node:path')
+      const { getUploadDir } = await import('../utils/upload')
+      const uploadDir = getUploadDir()
+      fs.mkdirSync(uploadDir, { recursive: true })
+      fs.writeFileSync(path.join(uploadDir, 'file-test-1.png'), 'dummy')
+
+      // Verify it exists in DB
+      const inserted = db.select().from(mediaTable).where(eq(mediaTable.id, mediaId)).get()
+      expect(inserted).toBeDefined()
+      expect(inserted?.activityId).toBeNull()
+
+      // 2. Link the media to the activity via update
+      const updatedActivity = {
+        ...activity,
+        media: [
+          {
+            id: mediaId,
+            fileName: 'file-test-1.png',
+            originalName: 'test.png',
+            mimeType: 'image/png',
+            fileSize: 1024,
+          },
+        ],
+      }
+
+      const updatedPlan = await repository.update(
+        planId,
+        {
+          activities: [
+            updatedActivity,
+            ...planBefore!.activities.slice(1),
+          ],
+        },
+        ownerId,
+      )
+
+      // Verify that update returns the media
+      expect(updatedPlan.activities[0].media).toHaveLength(1)
+      expect(updatedPlan.activities[0].media![0].id).toBe(mediaId)
+
+      // Verify it is linked in the database
+      const linked = db.select().from(mediaTable).where(eq(mediaTable.id, mediaId)).get()
+      expect(linked?.activityId).toBe(activity.id)
+
+      // Verify getById loads it
+      const loadedPlan = await repository.getById(planId, ownerId)
+      expect(loadedPlan?.activities[0].media).toHaveLength(1)
+      expect(loadedPlan?.activities[0].media![0].id).toBe(mediaId)
+
+      // 3. Remove the media via update and check that the DB record is deleted
+      const noMediaActivity = {
+        ...activity,
+        media: [],
+      }
+
+      const planAfterRemoval = await repository.update(
+        planId,
+        {
+          activities: [
+            noMediaActivity,
+            ...planBefore!.activities.slice(1),
+          ],
+        },
+        ownerId,
+      )
+
+      expect(planAfterRemoval.activities[0].media).toBeUndefined()
+
+      // Verify the media record was deleted from the database
+      const deletedRecord = db.select().from(mediaTable).where(eq(mediaTable.id, mediaId)).get()
+      expect(deletedRecord).toBeUndefined()
+    })
+  })
 })
+

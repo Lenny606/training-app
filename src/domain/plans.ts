@@ -1,3 +1,11 @@
+export interface Media {
+  id: string
+  fileName: string
+  originalName: string
+  mimeType: string
+  fileSize: number
+}
+
 export interface Activity {
   id: string
   name: string
@@ -6,7 +14,9 @@ export interface Activity {
   reps?: string // e.g. "8-10" or "10"
   weight?: string // e.g. "80 kg" or "15 kg"
   type: 'exercise' | 'rest'
+  media?: Media[]
 }
+
 
 export interface TrainingPlan {
   id: string
