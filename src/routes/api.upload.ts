@@ -33,13 +33,46 @@ export const Route = createFileRoute('/api/upload')({
 
           const mediaId = createId('media')
           const extension = path.extname(file.name)
-          const uniqueFileName = `${createId('file')}${extension}`
-          const filePath = path.join(uploadDir, uniqueFileName)
 
           // Read stream/arrayBuffer and save to disk
           const arrayBuffer = await file.arrayBuffer()
           const buffer = Buffer.from(arrayBuffer)
-          fs.writeFileSync(filePath, buffer)
+
+          let finalBuffer: Buffer<ArrayBufferLike> = buffer
+          let finalFileName = ''
+          let finalMimeType = file.type
+          let finalFileSize = file.size
+
+          const isImage = file.type.startsWith('image/')
+          const isSvg = file.type === 'image/svg+xml'
+          const isGif = file.type === 'image/gif'
+
+          if (isImage && !isSvg && !isGif) {
+            try {
+              const sharp = (await import('sharp')).default
+              finalBuffer = await sharp(buffer)
+                .resize({
+                  width: 1200,
+                  height: 1200,
+                  fit: 'inside',
+                  withoutEnlargement: true,
+                })
+                .webp({ quality: 80 })
+                .toBuffer()
+
+              finalFileName = `${createId('file')}.webp`
+              finalMimeType = 'image/webp'
+              finalFileSize = finalBuffer.length
+            } catch (sharpError) {
+              console.warn('[upload] Sharp processing failed, falling back to original file:', sharpError)
+              finalFileName = `${createId('file')}${extension}`
+            }
+          } else {
+            finalFileName = `${createId('file')}${extension}`
+          }
+
+          const filePath = path.join(uploadDir, finalFileName)
+          fs.writeFileSync(filePath, finalBuffer)
 
           const db = getDb()
           await db
@@ -48,10 +81,10 @@ export const Route = createFileRoute('/api/upload')({
               id: mediaId,
               userId: user.id,
               activityId: null, // linked during plan save
-              fileName: uniqueFileName,
+              fileName: finalFileName,
               originalName: file.name,
-              mimeType: file.type,
-              fileSize: file.size,
+              mimeType: finalMimeType,
+              fileSize: finalFileSize,
               createdAt: new Date(),
             })
             .run()
@@ -59,10 +92,10 @@ export const Route = createFileRoute('/api/upload')({
           return new Response(
             JSON.stringify({
               id: mediaId,
-              fileName: uniqueFileName,
+              fileName: finalFileName,
               originalName: file.name,
-              mimeType: file.type,
-              fileSize: file.size,
+              mimeType: finalMimeType,
+              fileSize: finalFileSize,
             }),
             {
               status: 200,
