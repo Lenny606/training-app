@@ -1,14 +1,42 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { useChat, fetchServerSentEvents } from '@tanstack/ai-react'
 import type { UIMessage } from '@tanstack/ai-react'
-import { Send, Square, Bot, User, Wrench, Check, X } from 'lucide-react'
+import { Send, Square, Bot, User, Wrench, Check, X, RotateCcw } from 'lucide-react'
 import { MODELS, DEFAULT_MODEL, type ModelId } from '../ai/models'
 
+// ---------------------------------------------------------------------------
+// Session ID helpers — one stable ID per model, persisted in localStorage.
+// Resetting clears the current ID so a fresh session is started next turn.
+// ---------------------------------------------------------------------------
+
+function getStoredSessionId(model: ModelId): string {
+  const key = `chat_session_${model}`
+  let id = localStorage.getItem(key)
+  if (!id) {
+    id = crypto.randomUUID()
+    localStorage.setItem(key, id)
+  }
+  return id
+}
+
+function clearStoredSessionId(model: ModelId): string {
+  const key = `chat_session_${model}`
+  const newId = crypto.randomUUID()
+  localStorage.setItem(key, newId)
+  return newId
+}
+
+// ---------------------------------------------------------------------------
+// Root component — handles model selection and mounts per-model sessions
+// ---------------------------------------------------------------------------
+
 export default function Chat() {
-  // The connection body (model) is baked into the chat client at creation, so
-  // switching provider starts a fresh conversation — `key` remounts the session.
   const [model, setModel] = useState<ModelId>(DEFAULT_MODEL)
+
+  const handleModelChange = (next: ModelId) => {
+    setModel(next)
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -17,7 +45,7 @@ export default function Chat() {
           Model
           <select
             value={model}
-            onChange={(e) => setModel(e.target.value as ModelId)}
+            onChange={(e) => handleModelChange(e.target.value as ModelId)}
             className="ml-2 rounded-lg border border-line bg-chip px-2 py-1 text-xs font-semibold text-ink"
           >
             {MODELS.map((m) => (
@@ -32,19 +60,29 @@ export default function Chat() {
         </span>
       </div>
 
+      {/* key=model so ChatSession remounts when model changes */}
       <ChatSession key={model} model={model} />
     </div>
   )
 }
 
+// ---------------------------------------------------------------------------
+// ChatSession — the main conversation component for a given model
+// ---------------------------------------------------------------------------
+
 function ChatSession({ model }: { model: ModelId }) {
   const [input, setInput] = useState('')
+  const [sessionId, setSessionId] = useState<string>(() =>
+    getStoredSessionId(model),
+  )
+  const [isHydrating, setIsHydrating] = useState(true)
   const navigate = useNavigate()
   const scrollRef = useRef<HTMLDivElement>(null)
   const startedRef = useRef<Set<string>>(new Set())
 
   const {
     messages,
+    setMessages,
     sendMessage,
     stop,
     isLoading,
@@ -53,10 +91,38 @@ function ChatSession({ model }: { model: ModelId }) {
     addToolApprovalResponse,
   } = useChat({
     connection: fetchServerSentEvents('/api/chat'),
-    body: { model },
+    body: { model, sessionId },
   })
 
-  // When start_workout completes, deep-link to the timer with the plan preselected.
+  // -------------------------------------------------------------------------
+  // Hydrate: on first mount load stored messages from the server
+  // -------------------------------------------------------------------------
+  useEffect(() => {
+    let cancelled = false
+    setIsHydrating(true)
+
+    fetch(`/api/chat?sessionId=${sessionId}`)
+      .then((r) => r.json())
+      .then((data: { messages: UIMessage[] }) => {
+        if (!cancelled && data.messages.length > 0) {
+          setMessages(data.messages)
+        }
+      })
+      .catch(() => {
+        // Non-critical — continue with empty history if fetch fails
+      })
+      .finally(() => {
+        if (!cancelled) setIsHydrating(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [sessionId, setMessages])
+
+  // -------------------------------------------------------------------------
+  // Deep-link: navigate to timer when start_workout completes
+  // -------------------------------------------------------------------------
   useEffect(() => {
     for (const message of messages) {
       for (const part of message.parts) {
@@ -74,7 +140,7 @@ function ChatSession({ model }: { model: ModelId }) {
     }
   }, [messages, navigate])
 
-  // Keep the transcript pinned to the latest message while streaming.
+  // Auto-scroll to bottom while streaming
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight })
   }, [messages])
@@ -86,6 +152,13 @@ function ChatSession({ model }: { model: ModelId }) {
     setInput('')
   }
 
+  const handleReset = useCallback(() => {
+    const next = clearStoredSessionId(model)
+    setSessionId(next)
+    setMessages([])
+    setInput('')
+  }, [model, setMessages])
+
   return (
     <div className="flex flex-col rounded-2xl border border-line bg-chip">
       <div
@@ -93,7 +166,12 @@ function ChatSession({ model }: { model: ModelId }) {
         className="flex min-h-[50vh] flex-col gap-4 overflow-y-auto p-4"
         aria-live="polite"
       >
-        {messages.length === 0 && <EmptyState />}
+        {isHydrating && (
+          <div className="m-auto text-xs text-ink-soft animate-pulse">
+            Loading conversation…
+          </div>
+        )}
+        {!isHydrating && messages.length === 0 && <EmptyState />}
         {messages.map((message) => (
           <MessageRow
             key={message.id}
@@ -123,9 +201,19 @@ function ChatSession({ model }: { model: ModelId }) {
             }
           }}
           rows={1}
-          placeholder="Ask about your plans, or say “start my push day”…"
+          placeholder={'Ask about your plans, or say \u201cstart my push day\u201d\u2026'}
           className="min-h-11 flex-1 resize-none rounded-xl border border-line bg-header px-3 py-2.5 text-sm text-ink outline-none focus:border-lagoon"
         />
+        <button
+          type="button"
+          onClick={handleReset}
+          disabled={isLoading}
+          title="Start new conversation"
+          className="demo-button demo-button-icon min-h-11 min-w-11 text-ink-soft disabled:opacity-40"
+          aria-label="New conversation"
+        >
+          <RotateCcw className="h-4 w-4" />
+        </button>
         {isLoading ? (
           <button
             type="button"
@@ -161,8 +249,8 @@ function EmptyState() {
       <Bot className="mx-auto mb-2 h-6 w-6 text-lagoon" />
       <p className="font-semibold text-ink">Your training assistant</p>
       <p className="mt-1">
-        Try “list my plans”, “summarize my push day”, “add a 90s plank to my
-        HIIT plan”, or “start my deadlift session”.
+        Try "list my plans", "summarize my push day", "add a 90s plank to my
+        HIIT plan", or "start my deadlift session".
       </p>
     </div>
   )

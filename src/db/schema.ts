@@ -63,8 +63,36 @@ export const media = sqliteTable('media', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 })
 
+// ---------------------------------------------------------------------------
+// AI Chat history
+// ---------------------------------------------------------------------------
+
+export const chatSessions = sqliteTable('chat_sessions', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  modelId: text('model_id').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+})
+
+export const chatMessages = sqliteTable('chat_messages', {
+  id: text('id').primaryKey(),
+  sessionId: text('session_id')
+    .notNull()
+    .references(() => chatSessions.id, { onDelete: 'cascade' }),
+  role: text('role', { enum: ['user', 'assistant'] }).notNull(),
+  content: text('content').notNull(),
+  // Serialised JSON array of UIMessage parts (for tool calls, thinking, etc.)
+  parts: text('parts'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+})
+
 export type PlanRow = typeof plans.$inferSelect
 export type ActivityRow = typeof activities.$inferSelect
 export type UserRow = typeof users.$inferSelect
 export type RefreshTokenRow = typeof refreshTokens.$inferSelect
 export type MediaRow = typeof media.$inferSelect
+export type ChatSessionRow = typeof chatSessions.$inferSelect
+export type ChatMessageRow = typeof chatMessages.$inferSelect

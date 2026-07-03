@@ -29,6 +29,13 @@
       "when": 1783099097032,
       "tag": "0003_huge_nebula",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1783112483265,
+      "tag": "0004_handy_caretaker",
+      "breakpoints": true
     }
   ]
 }
