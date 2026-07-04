@@ -242,7 +242,9 @@ function ChatSession({
     addToolApprovalResponse,
   } = useChat({
     connection: fetchServerSentEvents('/api/chat'),
-    body: { model, sessionId },
+    // `forwardedProps` (canonical; `body` is a deprecated alias) lands in the
+    // POST payload under `forwardedProps` — the server reads it from there.
+    forwardedProps: { model, sessionId },
   })
 
   // -------------------------------------------------------------------------

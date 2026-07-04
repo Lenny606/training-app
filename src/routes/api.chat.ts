@@ -101,8 +101,17 @@ export const Route = createFileRoute('/api/chat')({
 
         const repo = new SqlitePlanRepository()
         const chatRepo = new ChatRepository()
-        const modelId = resolveModelId(body.model)
-        const sessionId: string | undefined = body.sessionId
+
+        // The client sends the AG-UI RunAgentInput envelope: extra fields from
+        // useChat (`forwardedProps`) arrive nested under `forwardedProps` (with
+        // a legacy mirror under `data`) — NOT at the top level of the body.
+        const props: Record<string, unknown> = {
+          ...(body.data ?? {}),
+          ...(body.forwardedProps ?? {}),
+        }
+        const modelId = resolveModelId(props.model)
+        const sessionId =
+          typeof props.sessionId === 'string' ? props.sessionId : undefined
 
         // ------------------------------------------------------------------
         // Persist: ensure the session row exists. The client is the source of
