@@ -19,6 +19,8 @@ import { Route as ApiUploadRouteImport } from './routes/api.upload'
 import { Route as ApiChatRouteImport } from './routes/api.chat'
 import { Route as AuthenticatedAssistantRouteImport } from './routes/_authenticated/assistant'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ApiChatSessionsRouteImport } from './routes/api.chat.sessions'
+import { Route as ApiChatSessionsSessionIdRouteImport } from './routes/api.chat.sessions.$sessionId'
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
@@ -69,6 +71,17 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const ApiChatSessionsRoute = ApiChatSessionsRouteImport.update({
+  id: '/sessions',
+  path: '/sessions',
+  getParentRoute: () => ApiChatRoute,
+} as any)
+const ApiChatSessionsSessionIdRoute =
+  ApiChatSessionsSessionIdRouteImport.update({
+    id: '/$sessionId',
+    path: '/$sessionId',
+    getParentRoute: () => ApiChatSessionsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -77,9 +90,11 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/assistant': typeof AuthenticatedAssistantRoute
-  '/api/chat': typeof ApiChatRoute
+  '/api/chat': typeof ApiChatRouteWithChildren
   '/api/upload': typeof ApiUploadRoute
   '/uploads/$filename': typeof UploadsFilenameRoute
+  '/api/chat/sessions': typeof ApiChatSessionsRouteWithChildren
+  '/api/chat/sessions/$sessionId': typeof ApiChatSessionsSessionIdRoute
 }
 export interface FileRoutesByTo {
   '/about': typeof AboutRoute
@@ -87,10 +102,12 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/assistant': typeof AuthenticatedAssistantRoute
-  '/api/chat': typeof ApiChatRoute
+  '/api/chat': typeof ApiChatRouteWithChildren
   '/api/upload': typeof ApiUploadRoute
   '/uploads/$filename': typeof UploadsFilenameRoute
   '/': typeof AuthenticatedIndexRoute
+  '/api/chat/sessions': typeof ApiChatSessionsRouteWithChildren
+  '/api/chat/sessions/$sessionId': typeof ApiChatSessionsSessionIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -100,10 +117,12 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/assistant': typeof AuthenticatedAssistantRoute
-  '/api/chat': typeof ApiChatRoute
+  '/api/chat': typeof ApiChatRouteWithChildren
   '/api/upload': typeof ApiUploadRoute
   '/uploads/$filename': typeof UploadsFilenameRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/api/chat/sessions': typeof ApiChatSessionsRouteWithChildren
+  '/api/chat/sessions/$sessionId': typeof ApiChatSessionsSessionIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -117,6 +136,8 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/upload'
     | '/uploads/$filename'
+    | '/api/chat/sessions'
+    | '/api/chat/sessions/$sessionId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/about'
@@ -128,6 +149,8 @@ export interface FileRouteTypes {
     | '/api/upload'
     | '/uploads/$filename'
     | '/'
+    | '/api/chat/sessions'
+    | '/api/chat/sessions/$sessionId'
   id:
     | '__root__'
     | '/_authenticated'
@@ -140,6 +163,8 @@ export interface FileRouteTypes {
     | '/api/upload'
     | '/uploads/$filename'
     | '/_authenticated/'
+    | '/api/chat/sessions'
+    | '/api/chat/sessions/$sessionId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -147,7 +172,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
-  ApiChatRoute: typeof ApiChatRoute
+  ApiChatRoute: typeof ApiChatRouteWithChildren
   ApiUploadRoute: typeof ApiUploadRoute
   UploadsFilenameRoute: typeof UploadsFilenameRoute
 }
@@ -224,6 +249,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/api/chat/sessions': {
+      id: '/api/chat/sessions'
+      path: '/sessions'
+      fullPath: '/api/chat/sessions'
+      preLoaderRoute: typeof ApiChatSessionsRouteImport
+      parentRoute: typeof ApiChatRoute
+    }
+    '/api/chat/sessions/$sessionId': {
+      id: '/api/chat/sessions/$sessionId'
+      path: '/$sessionId'
+      fullPath: '/api/chat/sessions/$sessionId'
+      preLoaderRoute: typeof ApiChatSessionsSessionIdRouteImport
+      parentRoute: typeof ApiChatSessionsRoute
+    }
   }
 }
 
@@ -243,12 +282,35 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface ApiChatSessionsRouteChildren {
+  ApiChatSessionsSessionIdRoute: typeof ApiChatSessionsSessionIdRoute
+}
+
+const ApiChatSessionsRouteChildren: ApiChatSessionsRouteChildren = {
+  ApiChatSessionsSessionIdRoute: ApiChatSessionsSessionIdRoute,
+}
+
+const ApiChatSessionsRouteWithChildren = ApiChatSessionsRoute._addFileChildren(
+  ApiChatSessionsRouteChildren,
+)
+
+interface ApiChatRouteChildren {
+  ApiChatSessionsRoute: typeof ApiChatSessionsRouteWithChildren
+}
+
+const ApiChatRouteChildren: ApiChatRouteChildren = {
+  ApiChatSessionsRoute: ApiChatSessionsRouteWithChildren,
+}
+
+const ApiChatRouteWithChildren =
+  ApiChatRoute._addFileChildren(ApiChatRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutRoute: AboutRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
-  ApiChatRoute: ApiChatRoute,
+  ApiChatRoute: ApiChatRouteWithChildren,
   ApiUploadRoute: ApiUploadRoute,
   UploadsFilenameRoute: UploadsFilenameRoute,
 }

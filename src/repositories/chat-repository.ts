@@ -1,6 +1,6 @@
 // SERVER-ONLY — never import from the client bundle.
 
-import { eq, asc } from 'drizzle-orm'
+import { eq, asc, desc, and } from 'drizzle-orm'
 import type { DbClient } from '../db/client'
 import { getDb } from '../db/client'
 import {
@@ -71,6 +71,48 @@ export class ChatRepository {
       .set({ updatedAt: new Date() })
       .where(eq(chatSessions.id, sessionId))
       .run()
+  }
+
+  /**
+   * All sessions for a user, newest first, each titled by its first user
+   * message (sessions only exist once a first message was persisted).
+   */
+  listSessions(
+    userId: string,
+  ): Array<ChatSessionRow & { title: string | null }> {
+    const sessions = this.db
+      .select()
+      .from(chatSessions)
+      .where(eq(chatSessions.userId, userId))
+      .orderBy(desc(chatSessions.updatedAt))
+      .all()
+
+    return sessions.map((session) => {
+      const first = this.db
+        .select({ content: chatMessages.content })
+        .from(chatMessages)
+        .where(
+          and(
+            eq(chatMessages.sessionId, session.id),
+            eq(chatMessages.role, 'user'),
+          ),
+        )
+        .orderBy(asc(chatMessages.createdAt))
+        .limit(1)
+        .get()
+      return { ...session, title: first?.content ?? null }
+    })
+  }
+
+  /** Deletes a session and its messages. Ownership is checked by the caller. */
+  deleteSession(sessionId: string): void {
+    // Explicit message delete — the FK cascade only fires with
+    // PRAGMA foreign_keys ON, which better-sqlite3 doesn't guarantee.
+    this.db
+      .delete(chatMessages)
+      .where(eq(chatMessages.sessionId, sessionId))
+      .run()
+    this.db.delete(chatSessions).where(eq(chatSessions.id, sessionId)).run()
   }
 
   // ---------------------------------------------------------------------------

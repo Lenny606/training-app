@@ -10,7 +10,7 @@ export const Route = createFileRoute('/_authenticated/assistant')({
 
 function AssistantPage() {
   return (
-    <main className="page-wrap px-4 py-6 sm:py-10 max-w-2xl mx-auto flex flex-col gap-4">
+    <main className="page-wrap px-4 py-6 sm:py-10 max-w-2xl lg:max-w-5xl mx-auto flex flex-col gap-4">
       <div>
         <h1 className="font-display text-xl font-bold text-ink">Assistant</h1>
         <p className="mt-1 text-sm text-ink-soft">

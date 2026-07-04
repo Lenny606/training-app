@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { useChat, fetchServerSentEvents } from '@tanstack/ai-react'
 import type { UIMessage } from '@tanstack/ai-react'
-import { Send, Square, Bot, User, Wrench, Check, X, RotateCcw } from 'lucide-react'
+import { Send, Square, Bot, User, Wrench, Check, X, RotateCcw, Trash2 } from 'lucide-react'
 import { MODELS, DEFAULT_MODEL, type ModelId } from '../ai/models'
 
 // ---------------------------------------------------------------------------
@@ -39,42 +39,174 @@ function getStoredModel(): ModelId {
 }
 
 // ---------------------------------------------------------------------------
-// Root component — handles model selection and mounts per-model sessions
+// Root component — model selection, conversation list, active session
 // ---------------------------------------------------------------------------
+
+interface SessionSummary {
+  id: string
+  modelId: string
+  updatedAt: string
+  title: string | null
+}
 
 export default function Chat() {
   const [model, setModel] = useState<ModelId>(getStoredModel)
+  const [sessionId, setSessionId] = useState<string>(() =>
+    getStoredSessionId(getStoredModel()),
+  )
+  const [sessions, setSessions] = useState<SessionSummary[]>([])
+
+  const refreshSessions = useCallback(() => {
+    fetch('/api/chat/sessions')
+      .then((r) => r.json())
+      .then((data: { sessions: SessionSummary[] }) => setSessions(data.sessions))
+      .catch(() => {
+        // Non-critical — the sidebar just stays as-is
+      })
+  }, [])
+
+  useEffect(() => {
+    refreshSessions()
+  }, [refreshSessions])
 
   const handleModelChange = (next: ModelId) => {
     localStorage.setItem(MODEL_STORAGE_KEY, next)
     setModel(next)
+    setSessionId(getStoredSessionId(next))
   }
 
+  const handleSelect = (session: SessionSummary) => {
+    // Adopt as the active session for its model — both survive a refresh.
+    const modelId = MODELS.some((m) => m.id === session.modelId)
+      ? (session.modelId as ModelId)
+      : DEFAULT_MODEL
+    localStorage.setItem(`chat_session_${modelId}`, session.id)
+    localStorage.setItem(MODEL_STORAGE_KEY, modelId)
+    setModel(modelId)
+    setSessionId(session.id)
+  }
+
+  const handleDelete = async (id: string) => {
+    try {
+      await fetch(`/api/chat/sessions/${id}`, { method: 'DELETE' })
+    } catch {
+      return
+    }
+    if (id === sessionId) {
+      setSessionId(clearStoredSessionId(model))
+    }
+    refreshSessions()
+  }
+
+  const handleReset = useCallback(() => {
+    setSessionId(clearStoredSessionId(model))
+  }, [model])
+
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-3">
-        <label className="text-xs font-semibold text-ink-soft">
-          Model
-          <select
-            value={model}
-            onChange={(e) => handleModelChange(e.target.value as ModelId)}
-            className="ml-2 rounded-lg border border-line bg-chip px-2 py-1 text-xs font-semibold text-ink"
-          >
-            {MODELS.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <span className="text-[10px] uppercase tracking-wide text-ink-soft">
-          each model keeps its own conversation
-        </span>
+    <div className="flex items-start gap-4">
+      <div className="flex min-w-0 flex-1 flex-col gap-4">
+        <div className="flex items-center justify-between gap-3">
+          <label className="text-xs font-semibold text-ink-soft">
+            Model
+            <select
+              value={model}
+              onChange={(e) => handleModelChange(e.target.value as ModelId)}
+              className="ml-2 rounded-lg border border-line bg-chip px-2 py-1 text-xs font-semibold text-ink"
+            >
+              {MODELS.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <span className="text-[10px] uppercase tracking-wide text-ink-soft">
+            each model keeps its own conversation
+          </span>
+        </div>
+
+        {/* key=sessionId so ChatSession remounts (and rehydrates) on switch */}
+        <ChatSession
+          key={sessionId}
+          model={model}
+          sessionId={sessionId}
+          onReset={handleReset}
+          onTurnComplete={refreshSessions}
+        />
       </div>
 
-      {/* key=model so ChatSession remounts when model changes */}
-      <ChatSession key={model} model={model} />
+      <ConversationList
+        sessions={sessions}
+        activeId={sessionId}
+        onSelect={handleSelect}
+        onDelete={handleDelete}
+      />
     </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// ConversationList — desktop-only sidebar with delete per row
+// ---------------------------------------------------------------------------
+
+function ConversationList({
+  sessions,
+  activeId,
+  onSelect,
+  onDelete,
+}: {
+  sessions: SessionSummary[]
+  activeId: string
+  onSelect: (session: SessionSummary) => void
+  onDelete: (id: string) => void
+}) {
+  const modelLabel = (id: string) =>
+    MODELS.find((m) => m.id === id)?.label ?? id
+
+  return (
+    <aside className="hidden w-60 shrink-0 flex-col gap-2 rounded-2xl border border-line bg-chip p-3 lg:flex">
+      <h2 className="px-1 text-xs font-semibold uppercase tracking-wide text-ink-soft">
+        Conversations
+      </h2>
+      {sessions.length === 0 && (
+        <p className="px-1 text-xs text-ink-soft">No conversations yet.</p>
+      )}
+      <ul className="flex flex-col gap-1">
+        {sessions.map((session) => (
+          <li
+            key={session.id}
+            className={`group flex items-center gap-1 rounded-xl border px-2 py-1.5 ${
+              session.id === activeId
+                ? 'border-lagoon bg-header'
+                : 'border-transparent hover:bg-header'
+            }`}
+          >
+            <button
+              type="button"
+              onClick={() => onSelect(session)}
+              className="min-w-0 flex-1 text-left"
+            >
+              <span className="block truncate text-xs text-ink">
+                {session.title ?? 'New conversation'}
+              </span>
+              <span className="block text-[10px] text-ink-soft">
+                {modelLabel(session.modelId)} ·{' '}
+                {new Date(session.updatedAt).toLocaleDateString()}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => onDelete(session.id)}
+              title="Delete conversation"
+              aria-label={`Delete conversation ${session.title ?? ''}`.trim()}
+              className="shrink-0 rounded-lg p-1.5 text-ink-soft opacity-0 transition-opacity hover:text-danger focus-visible:opacity-100 group-hover:opacity-100"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          </li>
+        ))}
+      </ul>
+    </aside>
   )
 }
 
@@ -82,11 +214,18 @@ export default function Chat() {
 // ChatSession — the main conversation component for a given model
 // ---------------------------------------------------------------------------
 
-function ChatSession({ model }: { model: ModelId }) {
+function ChatSession({
+  model,
+  sessionId,
+  onReset,
+  onTurnComplete,
+}: {
+  model: ModelId
+  sessionId: string
+  onReset: () => void
+  onTurnComplete: () => void
+}) {
   const [input, setInput] = useState('')
-  const [sessionId, setSessionId] = useState<string>(() =>
-    getStoredSessionId(model),
-  )
   const [isHydrating, setIsHydrating] = useState(true)
   const navigate = useNavigate()
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -164,6 +303,14 @@ function ChatSession({ model }: { model: ModelId }) {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight })
   }, [messages])
 
+  // Refresh the conversation sidebar when a turn finishes (new session rows
+  // and updated titles/timestamps come from the server).
+  const wasLoadingRef = useRef(false)
+  useEffect(() => {
+    if (wasLoadingRef.current && !isLoading) onTurnComplete()
+    wasLoadingRef.current = isLoading
+  }, [isLoading, onTurnComplete])
+
   const handleSubmit = () => {
     const text = input.trim()
     // Block sends until hydration finishes — a message sent mid-hydration
@@ -173,12 +320,8 @@ function ChatSession({ model }: { model: ModelId }) {
     setInput('')
   }
 
-  const handleReset = useCallback(() => {
-    const next = clearStoredSessionId(model)
-    setSessionId(next)
-    setMessages([])
-    setInput('')
-  }, [model, setMessages])
+  // Parent swaps sessionId, which remounts this component with clean state.
+  const handleReset = onReset
 
   return (
     <div className="flex flex-col rounded-2xl border border-line bg-chip">
