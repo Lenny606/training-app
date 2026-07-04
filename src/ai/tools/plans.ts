@@ -1,3 +1,4 @@
+import { DEFAULT_ACTIVITY_DURATION } from '../../domain/plans'
 import type { NewActivity } from '../../domain/plans'
 import type { PlanRepository } from '../../repositories/plan-repository'
 import {
@@ -13,6 +14,13 @@ import {
   summarizePlanDef,
   updatePlanDef,
 } from './definitions'
+
+/** Tool input allows omitting duration (schema default) — the domain requires it. */
+function withDefaultDuration<T extends { duration?: number }>(
+  activity: T,
+): T & { duration: number } {
+  return { ...activity, duration: activity.duration ?? DEFAULT_ACTIVITY_DURATION }
+}
 
 /** Turn repository errors into a readable string for the model (never leak stacks). */
 function errText(e: unknown): string {
@@ -67,7 +75,11 @@ export function planTools(userId: string, repo: PlanRepository) {
       // model requires a string.
       return {
         plan: await repo.create(
-          { ...input, description: input.description ?? '' },
+          {
+            ...input,
+            description: input.description ?? '',
+            activities: input.activities.map(withDefaultDuration),
+          },
           userId,
         ),
       }
@@ -78,7 +90,11 @@ export function planTools(userId: string, repo: PlanRepository) {
 
   const updatePlan = updatePlanDef.server(async ({ planId, patch }) => {
     try {
-      return { plan: await repo.update(planId, patch, userId) }
+      const domainPatch = {
+        ...patch,
+        activities: patch.activities?.map(withDefaultDuration),
+      }
+      return { plan: await repo.update(planId, domainPatch, userId) }
     } catch (e) {
       return { error: errText(e) }
     }
@@ -94,7 +110,7 @@ export function planTools(userId: string, repo: PlanRepository) {
           position === undefined
             ? activities.length
             : Math.min(position, activities.length)
-        activities.splice(idx, 0, activity)
+        activities.splice(idx, 0, withDefaultDuration(activity))
         return { plan: await repo.update(planId, { activities }, userId) }
       } catch (e) {
         return { error: errText(e) }

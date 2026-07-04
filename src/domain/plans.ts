@@ -6,6 +6,9 @@ export interface Media {
   fileSize: number
 }
 
+/** Applied whenever an activity is created/edited without an explicit duration. */
+export const DEFAULT_ACTIVITY_DURATION = 120
+
 export interface Activity {
   id: string
   name: string

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { arrayMove } from '@dnd-kit/sortable'
+import { DEFAULT_ACTIVITY_DURATION } from '../domain/plans'
 import type { TrainingPlan, Activity, Media } from '../domain/plans'
 import {
   createPlan,
@@ -13,18 +14,15 @@ import { createId } from '../utils/id'
 function parseDurationField(value: string): number {
   const parsed = parseInt(value)
   if (isNaN(parsed) || parsed <= 0) {
-    return 120
+    return DEFAULT_ACTIVITY_DURATION
   }
   return parsed
 }
 
+// Sets are optional — empty or invalid input clears the field.
 function parseSetsField(value: string): number | undefined {
-  if (value === '') return undefined
   const parsed = parseInt(value)
-  if (isNaN(parsed) || parsed <= 0) {
-    return 3
-  }
-  return parsed
+  return isNaN(parsed) || parsed <= 0 ? undefined : parsed
 }
 
 function parseActivityField(

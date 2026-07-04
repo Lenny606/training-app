@@ -81,7 +81,7 @@ export const summarizePlanDef = toolDefinition({
 export const createPlanDef = toolDefinition({
   name: 'create_plan',
   description:
-    'Create a new training plan for the user. Provide name, daysPerWeek (1-7), and an ordered activities array (each: name, type exercise|rest, duration seconds, optional sets/reps/weight).',
+    'Create a new training plan for the user. Provide name, daysPerWeek (1-7), and an ordered activities array (each: required name, type exercise|rest; optional duration seconds (default 120), sets/reps/weight).',
   inputSchema: newPlanInput,
   outputSchema: planResult,
 })

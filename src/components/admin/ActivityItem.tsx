@@ -2,21 +2,23 @@ import { useState, useEffect } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { ArrowUp, ArrowDown, GripVertical, Trash2 } from 'lucide-react'
+import { DEFAULT_ACTIVITY_DURATION } from '../../domain/plans'
 import type { Activity, Media } from '../../domain/plans'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import { MediaUpload } from './MediaUpload'
 
 interface NumericFieldProps {
   value: number | undefined
-  fallback: number
+  /** Snap-to value for invalid input on blur; null clears the field instead. */
+  fallback: number | null
   unit: string
   placeholder: string
-  onCommit: (value: number) => void
+  onCommit: (value: string) => void
 }
 
 // Locally-controlled numeric input: keystrokes stay local so intermediate or
-// invalid values don't fight the parent, and an invalid value snaps to the
-// fallback on blur.
+// invalid values don't fight the parent. On blur an invalid value snaps to
+// the fallback, or is cleared when the field is optional (fallback null).
 function NumericField({
   value,
   fallback,
@@ -36,14 +38,21 @@ function NumericField({
     const val = e.target.value
     setLocal(val)
     const parsed = parseInt(val)
-    if (!isNaN(parsed) && parsed > 0) onCommit(parsed)
+    if (!isNaN(parsed) && parsed > 0) onCommit(parsed.toString())
   }
 
   const handleBlur = () => {
     const parsed = parseInt(local)
-    const next = !isNaN(parsed) && parsed > 0 ? parsed : fallback
-    setLocal(next.toString())
-    onCommit(next)
+    if (!isNaN(parsed) && parsed > 0) {
+      setLocal(parsed.toString())
+      onCommit(parsed.toString())
+    } else if (fallback === null) {
+      setLocal('')
+      onCommit('')
+    } else {
+      setLocal(fallback.toString())
+      onCommit(fallback.toString())
+    }
   }
 
   return (
@@ -83,10 +92,10 @@ function ExerciseFields({
       <div className="col-span-4 sm:col-span-2">
         <NumericField
           value={activity.sets}
-          fallback={3}
+          fallback={null}
           unit="x"
           placeholder="Sets"
-          onCommit={(v) => onActivityChange(index, 'sets', v.toString())}
+          onCommit={(v) => onActivityChange(index, 'sets', v)}
         />
       </div>
       <div className="col-span-4 sm:col-span-2">
@@ -209,10 +218,10 @@ function ActivityInputs({
       <div className="col-span-4 sm:col-span-2">
         <NumericField
           value={activity.duration}
-          fallback={120}
+          fallback={DEFAULT_ACTIVITY_DURATION}
           unit="s"
           placeholder="Sec"
-          onCommit={(v) => onActivityChange(index, 'duration', v.toString())}
+          onCommit={(v) => onActivityChange(index, 'duration', v)}
         />
       </div>
 

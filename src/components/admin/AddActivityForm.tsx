@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
+import { DEFAULT_ACTIVITY_DURATION } from '../../domain/plans'
 import type { Activity, Media } from '../../domain/plans'
 import { MediaUpload } from './MediaUpload'
 
@@ -8,10 +9,10 @@ interface AddActivityFormProps {
 }
 
 interface AddExerciseFieldsProps {
-  sets: string | number
+  sets: string
   reps: string
   weight: string
-  setSets: (val: string | number) => void
+  setSets: (val: string) => void
   setReps: (val: string) => void
   setWeight: (val: string) => void
 }
@@ -34,14 +35,6 @@ function AddExerciseFields({
           type="number"
           value={sets}
           onChange={(e) => setSets(e.target.value)}
-          onBlur={() => {
-            const parsed = parseInt(sets.toString())
-            if (isNaN(parsed) || parsed <= 0) {
-              setSets(3)
-            } else {
-              setSets(parsed)
-            }
-          }}
           className="demo-input py-1.5 text-xs text-right font-mono"
           placeholder="Sets"
         />
@@ -76,39 +69,27 @@ function AddExerciseFields({
   )
 }
 
-function getExerciseParams(sets: number, reps: string, weight: string) {
-  return {
-    sets: sets || undefined,
-    reps: reps.trim() || undefined,
-    weight: weight.trim() || undefined,
-  }
-}
-
-function getDefaultName(type: 'exercise' | 'rest') {
-  return type === 'rest' ? 'Rest' : 'Exercise'
-}
-
 function useAddActivityForm(
   onAddActivity: (activity: Omit<Activity, 'id'>) => void,
 ) {
   const [type, setType] = useState<'exercise' | 'rest'>('exercise')
   const [name, setName] = useState('')
-  const [duration, setDuration] = useState<string | number>(120)
-  const [sets, setSets] = useState<string | number>(3)
+  const [duration, setDuration] = useState('')
+  const [sets, setSets] = useState('')
   const [reps, setReps] = useState('')
   const [weight, setWeight] = useState('')
   const [mediaList, setMediaList] = useState<Media[]>([])
 
   const handleTypeChange = (newType: 'exercise' | 'rest') => {
     setType(newType)
-    setDuration(120)
+    setDuration('')
     setMediaList([])
   }
 
   const resetForm = () => {
     setName('')
-    setDuration(120)
-    setSets(3)
+    setDuration('')
+    setSets('')
     setReps('')
     setWeight('')
     setMediaList([])
@@ -116,10 +97,16 @@ function useAddActivityForm(
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    const activityName = name.trim() || getDefaultName(type)
-    const parsedDuration = parseInt(duration.toString())
+    // Only the name is required; duration falls back to the default and the
+    // remaining fields stay empty unless filled in.
+    const activityName = name.trim()
+    if (!activityName) return
+
+    const parsedDuration = parseInt(duration)
     const finalDuration =
-      isNaN(parsedDuration) || parsedDuration <= 0 ? 120 : parsedDuration
+      isNaN(parsedDuration) || parsedDuration <= 0
+        ? DEFAULT_ACTIVITY_DURATION
+        : parsedDuration
 
     const payload: Omit<Activity, 'id'> = {
       name: activityName,
@@ -129,9 +116,12 @@ function useAddActivityForm(
     }
 
     if (type === 'exercise') {
-      const parsedSets = parseInt(sets.toString())
-      const finalSets = isNaN(parsedSets) || parsedSets <= 0 ? 3 : parsedSets
-      Object.assign(payload, getExerciseParams(finalSets, reps, weight))
+      const parsedSets = parseInt(sets)
+      Object.assign(payload, {
+        sets: isNaN(parsedSets) || parsedSets <= 0 ? undefined : parsedSets,
+        reps: reps.trim() || undefined,
+        weight: weight.trim() || undefined,
+      })
     }
 
     onAddActivity(payload)
@@ -160,9 +150,9 @@ function useAddActivityForm(
 interface CoreFieldsProps {
   type: 'exercise' | 'rest'
   name: string
-  duration: string | number
+  duration: string
   setName: (val: string) => void
-  setDuration: (val: string | number) => void
+  setDuration: (val: string) => void
   handleTypeChange: (newType: 'exercise' | 'rest') => void
 }
 
@@ -200,6 +190,7 @@ function CoreFields({
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          required
           placeholder={
             type === 'exercise' ? 'e.g. Dumbbell Bicep Curl' : 'Rest period'
           }
@@ -215,16 +206,8 @@ function CoreFields({
           type="number"
           value={duration}
           onChange={(e) => setDuration(e.target.value)}
-          onBlur={() => {
-            const parsed = parseInt(duration.toString())
-            if (isNaN(parsed) || parsed <= 0) {
-              setDuration(120)
-            } else {
-              setDuration(parsed)
-            }
-          }}
           className="demo-input py-1.5 text-xs text-right font-mono"
-          placeholder="Sec"
+          placeholder={`${DEFAULT_ACTIVITY_DURATION}`}
         />
       </div>
     </>

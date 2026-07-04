@@ -1,5 +1,6 @@
 import { createInsertSchema } from 'drizzle-zod'
 import { z } from 'zod'
+import { DEFAULT_ACTIVITY_DURATION } from '../domain/plans'
 import { activities, plans } from './schema'
 
 /** Row-level insert schema for an activity (DB shape). */
@@ -27,10 +28,12 @@ export const mediaInput = z.object({
   fileSize: z.number(),
 })
 
+// Only `name` is required — duration falls back to the default when omitted,
+// everything else may stay empty.
 export const activityInput = z.object({
   id: z.string().optional(),
-  name: z.string().min(1),
-  duration: z.number().positive(),
+  name: z.string().trim().min(1),
+  duration: z.number().positive().default(DEFAULT_ACTIVITY_DURATION),
   type: z.enum(['exercise', 'rest']),
   sets: z.number().int().positive().optional(),
   reps: z.string().optional(),
