@@ -35,13 +35,13 @@ export function loggingTools(userId: string, repo: PlanRepository) {
         planId: input.planId,
         durationSeconds: input.durationSeconds,
         completedAt: new Date(input.completedAt),
-        notes: input.notes,
+        notes: input.notes ?? undefined,
         exercises: input.exercises?.map((ex) => ({
-          activityId: ex.activityId,
+          activityId: ex.activityId ?? undefined,
           activityName: ex.activityName,
-          setsCompleted: ex.setsCompleted,
-          reps: ex.reps,
-          weight: ex.weight,
+          setsCompleted: ex.setsCompleted ?? undefined,
+          reps: ex.reps ?? undefined,
+          weight: ex.weight ?? undefined,
         })),
       })
 

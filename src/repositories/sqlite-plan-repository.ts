@@ -209,9 +209,15 @@ export class SqlitePlanRepository implements PlanRepository {
     const existing = await this.getById(id, ownerId)
     if (!existing) throw new PlanNotFoundError(id)
 
+    // A key explicitly set to undefined means "leave unchanged" — drop it so
+    // the spread below can't clobber an existing value.
+    const cleanPatch = Object.fromEntries(
+      Object.entries(patch).filter(([, v]) => v !== undefined),
+    ) as Partial<NewTrainingPlan>
+
     const merged: TrainingPlan = {
       ...existing,
-      ...patch,
+      ...cleanPatch,
       id,
       activities: patch.activities
         ? patch.activities.map((act) => ({

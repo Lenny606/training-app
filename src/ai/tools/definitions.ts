@@ -1,6 +1,11 @@
 import { toolDefinition } from '@tanstack/ai'
 import { z } from 'zod'
-import { activityInput, newPlanInput } from '../../db/validation'
+import {
+  activityInput,
+  newPlanInput,
+  optionalish,
+  planPatchInput,
+} from '../../db/validation'
 
 // Isomorphic tool *definitions* (name, description, Zod schemas). No server or
 // DB code here, so they are safe to import from the client (e.g. to render tool
@@ -90,7 +95,7 @@ export const updatePlanDef = toolDefinition({
   name: 'update_plan',
   description:
     'Update fields of an existing plan. Provide planId and a patch containing only the fields to change. Passing activities replaces the whole ordered list.',
-  inputSchema: z.object({ planId: z.string(), patch: newPlanInput.partial() }),
+  inputSchema: z.object({ planId: z.string(), patch: planPatchInput }),
   outputSchema: planResult,
 })
 
@@ -101,14 +106,11 @@ export const addActivityDef = toolDefinition({
   inputSchema: z.object({
     planId: z.string(),
     activity: activityInput,
-    position: z
-      .number()
-      .int()
-      .nonnegative()
-      .optional()
-      .meta({
+    position: optionalish(
+      z.number().int().nonnegative().meta({
         description: 'Zero-based insert index; omit to append at the end',
       }),
+    ),
   }),
   outputSchema: planResult,
 })
@@ -140,17 +142,23 @@ export const startWorkoutDef = toolDefinition({
 // ---------------------------------------------------------------------------
 
 const exerciseLogShape = z.object({
-  activityId: z.string().optional().meta({
-    description: 'Optional: the activity id from the plan if known.',
-  }),
+  activityId: optionalish(
+    z.string().meta({
+      description: 'Optional: the activity id from the plan if known.',
+    }),
+  ),
   activityName: z.string(),
-  setsCompleted: z.number().int().nonnegative().optional(),
-  reps: z.string().optional().meta({
-    description: 'e.g. "8", "8-10", "AMRAP"',
-  }),
-  weight: z.string().optional().meta({
-    description: 'e.g. "80kg", "bodyweight", "135 lbs"',
-  }),
+  setsCompleted: optionalish(z.number().int().nonnegative()),
+  reps: optionalish(
+    z.string().meta({
+      description: 'e.g. "8", "8-10", "AMRAP"',
+    }),
+  ),
+  weight: optionalish(
+    z.string().meta({
+      description: 'e.g. "80kg", "bodyweight", "135 lbs"',
+    }),
+  ),
 })
 
 export const logWorkoutDef = toolDefinition({
@@ -163,8 +171,8 @@ export const logWorkoutDef = toolDefinition({
     completedAt: z.string().datetime().meta({
       description: 'ISO 8601 datetime of when the workout finished. Use now() if not specified.',
     }),
-    notes: z.string().optional(),
-    exercises: z.array(exerciseLogShape).optional(),
+    notes: optionalish(z.string()),
+    exercises: optionalish(z.array(exerciseLogShape)),
   }),
   outputSchema: z.object({
     ok: z.boolean(),
@@ -187,12 +195,17 @@ export const getWorkoutHistoryDef = toolDefinition({
   description:
     'Fetch the user\'s recent workout history: which plans they trained, duration, and when. Optionally returns a weekly summary. Use this to answer questions like "how many workouts did I do this week?" or "what did I train last Tuesday?"',
   inputSchema: z.object({
-    limit: z.number().int().positive().max(50).optional().meta({
-      description: 'Max number of recent sessions to return (default 10).',
-    }),
-    includWeeklySummary: z.boolean().optional().meta({
-      description: 'If true, also return a week-by-week session count and total duration.',
-    }),
+    limit: optionalish(
+      z.number().int().positive().max(50).meta({
+        description: 'Max number of recent sessions to return (default 10).',
+      }),
+    ),
+    includWeeklySummary: optionalish(
+      z.boolean().meta({
+        description:
+          'If true, also return a week-by-week session count and total duration.',
+      }),
+    ),
   }),
   outputSchema: z.object({
     sessions: z.array(workoutSummaryShape),
@@ -215,9 +228,11 @@ export const getExerciseProgressDef = toolDefinition({
     activityName: z.string().meta({
       description: 'Exact or approximate exercise name, e.g. "Bench Press", "Squat".',
     }),
-    limit: z.number().int().positive().max(30).optional().meta({
-      description: 'Max number of past entries to return (default 15).',
-    }),
+    limit: optionalish(
+      z.number().int().positive().max(30).meta({
+        description: 'Max number of past entries to return (default 15).',
+      }),
+    ),
   }),
   outputSchema: z.object({
     activityName: z.string(),

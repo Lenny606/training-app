@@ -15,11 +15,30 @@ import {
   updatePlanDef,
 } from './definitions'
 
-/** Tool input allows omitting duration (schema default) — the domain requires it. */
-function withDefaultDuration<T extends { duration?: number }>(
-  activity: T,
-): T & { duration: number } {
-  return { ...activity, duration: activity.duration ?? DEFAULT_ACTIVITY_DURATION }
+/**
+ * Normalize a tool-input activity to the domain shape: models may send null
+ * (or omit) any optional field, and the domain requires a duration.
+ */
+function toNewActivity(a: {
+  id?: string | null
+  name: string
+  duration?: number | null
+  type: 'exercise' | 'rest'
+  sets?: number | null
+  reps?: string | null
+  weight?: string | null
+  media?: NewActivity['media'] | null
+}): NewActivity {
+  return {
+    id: a.id ?? undefined,
+    name: a.name,
+    duration: a.duration ?? DEFAULT_ACTIVITY_DURATION,
+    type: a.type,
+    sets: a.sets ?? undefined,
+    reps: a.reps ?? undefined,
+    weight: a.weight ?? undefined,
+    media: a.media ?? undefined,
+  }
 }
 
 /** Turn repository errors into a readable string for the model (never leak stacks). */
@@ -78,7 +97,7 @@ export function planTools(userId: string, repo: PlanRepository) {
           {
             ...input,
             description: input.description ?? '',
-            activities: input.activities.map(withDefaultDuration),
+            activities: input.activities.map(toNewActivity),
           },
           userId,
         ),
@@ -91,8 +110,10 @@ export function planTools(userId: string, repo: PlanRepository) {
   const updatePlan = updatePlanDef.server(async ({ planId, patch }) => {
     try {
       const domainPatch = {
-        ...patch,
-        activities: patch.activities?.map(withDefaultDuration),
+        name: patch.name ?? undefined,
+        description: patch.description ?? undefined,
+        daysPerWeek: patch.daysPerWeek ?? undefined,
+        activities: patch.activities?.map(toNewActivity),
       }
       return { plan: await repo.update(planId, domainPatch, userId) }
     } catch (e) {
@@ -107,10 +128,10 @@ export function planTools(userId: string, repo: PlanRepository) {
         if (!existing) return { error: new PlanNotFoundError(planId).message }
         const activities: NewActivity[] = [...existing.activities]
         const idx =
-          position === undefined
+          position == null
             ? activities.length
             : Math.min(position, activities.length)
-        activities.splice(idx, 0, withDefaultDuration(activity))
+        activities.splice(idx, 0, toNewActivity(activity))
         return { plan: await repo.update(planId, { activities }, userId) }
       } catch (e) {
         return { error: errText(e) }

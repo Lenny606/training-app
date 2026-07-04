@@ -8,6 +8,24 @@ import { SqlitePlanRepository } from '../repositories/sqlite-plan-repository'
 import { SqliteUserRepository } from '../repositories/sqlite-user-repository'
 import { buildTools } from './tools'
 
+// Validate `input` the same way @tanstack/ai's executor does (standard-schema
+// parse against the tool's inputSchema) before calling execute. Models — GPT-4o
+// mini in particular — send explicit `null` for optional fields, so the real
+// path must tolerate nulls that `tool.execute(input)` alone would never see.
+async function parseInput(tool: { inputSchema: unknown }, input: unknown) {
+  const schema = tool.inputSchema as {
+    '~standard': {
+      validate: (v: unknown) =>
+        | { value: unknown; issues?: undefined }
+        | { issues: Array<{ message: string }> }
+    }
+  }
+  const result = await schema['~standard'].validate(input)
+  if (result.issues)
+    throw new Error(result.issues.map((i) => i.message).join(', '))
+  return result.value
+}
+
 async function makeOwner(db: DbClient, email: string): Promise<string> {
   const users = new SqliteUserRepository(db)
   const user = await users.create({ email, passwordHash: 'x' })
@@ -154,6 +172,45 @@ describe('AI plan tools', () => {
         activity: { name: 'Warmup', duration: 60, type: 'exercise' },
       })
       expect(plan.activities[0].name).toBe('Warmup')
+    })
+
+    it('accepts explicit nulls for optional fields (LLM-style arguments)', async () => {
+      const id = await firstPlanId()
+      const tool = tools.find((t) => t.name === 'add_activity')
+      const input = await parseInput(tool, {
+        planId: id,
+        position: null,
+        activity: {
+          id: null,
+          name: 'Plank',
+          duration: null,
+          type: 'exercise',
+          sets: 3,
+          reps: '45s',
+          weight: null,
+          media: null,
+        },
+      })
+      const { plan, error } = await tool.execute(input)
+      expect(error).toBeUndefined()
+      const added = plan.activities[plan.activities.length - 1]
+      expect(added.name).toBe('Plank')
+      expect(added.duration).toBe(120) // default applied for null
+    })
+  })
+
+  describe('update_plan with LLM-style nulls', () => {
+    it('treats null patch fields as omitted', async () => {
+      const id = await firstPlanId()
+      const tool = tools.find((t) => t.name === 'update_plan')
+      const input = await parseInput(tool, {
+        planId: id,
+        patch: { name: 'Renamed', description: null, daysPerWeek: null, activities: null },
+      })
+      const { plan, error } = await tool.execute(input)
+      expect(error).toBeUndefined()
+      expect(plan.name).toBe('Renamed')
+      expect(plan.activities.length).toBeGreaterThan(0) // null ≠ replace with []
     })
   })
 
