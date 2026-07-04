@@ -27,14 +27,26 @@ function clearStoredSessionId(model: ModelId): string {
   return newId
 }
 
+// Selected model survives a refresh too — otherwise a reload silently flips
+// back to the default model and shows a different conversation.
+const MODEL_STORAGE_KEY = 'chat_model'
+
+function getStoredModel(): ModelId {
+  const stored = localStorage.getItem(MODEL_STORAGE_KEY)
+  return MODELS.some((m) => m.id === stored)
+    ? (stored as ModelId)
+    : DEFAULT_MODEL
+}
+
 // ---------------------------------------------------------------------------
 // Root component — handles model selection and mounts per-model sessions
 // ---------------------------------------------------------------------------
 
 export default function Chat() {
-  const [model, setModel] = useState<ModelId>(DEFAULT_MODEL)
+  const [model, setModel] = useState<ModelId>(getStoredModel)
 
   const handleModelChange = (next: ModelId) => {
+    localStorage.setItem(MODEL_STORAGE_KEY, next)
     setModel(next)
   }
 
@@ -56,7 +68,7 @@ export default function Chat() {
           </select>
         </label>
         <span className="text-[10px] uppercase tracking-wide text-ink-soft">
-          switching model starts a new chat
+          each model keeps its own conversation
         </span>
       </div>
 
@@ -105,6 +117,13 @@ function ChatSession({ model }: { model: ModelId }) {
       .then((r) => r.json())
       .then((data: { messages: UIMessage[] }) => {
         if (!cancelled && data.messages.length > 0) {
+          // Restored tool calls must not re-trigger the start_workout
+          // deep-link below — mark them as already handled.
+          for (const message of data.messages) {
+            for (const part of message.parts) {
+              if (part.type === 'tool-call') startedRef.current.add(part.id)
+            }
+          }
           setMessages(data.messages)
         }
       })
@@ -147,7 +166,9 @@ function ChatSession({ model }: { model: ModelId }) {
 
   const handleSubmit = () => {
     const text = input.trim()
-    if (!text || isLoading) return
+    // Block sends until hydration finishes — a message sent mid-hydration
+    // would be clobbered when setMessages applies the stored history.
+    if (!text || isLoading || isHydrating) return
     sendMessage(text)
     setInput('')
   }
@@ -227,7 +248,7 @@ function ChatSession({ model }: { model: ModelId }) {
           <button
             type="button"
             onClick={handleSubmit}
-            disabled={!input.trim()}
+            disabled={!input.trim() || isHydrating}
             className="demo-button demo-button-icon min-h-11 min-w-11 disabled:opacity-40"
             aria-label="Send"
           >

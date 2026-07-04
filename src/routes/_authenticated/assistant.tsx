@@ -2,6 +2,9 @@ import { createFileRoute } from '@tanstack/react-router'
 import Chat from '../../components/Chat'
 
 export const Route = createFileRoute('/_authenticated/assistant')({
+  // Client-only: Chat reads localStorage (session + model) during render,
+  // which would throw on the server. The page is behind auth — no SEO value.
+  ssr: false,
   component: AssistantPage,
 })
 

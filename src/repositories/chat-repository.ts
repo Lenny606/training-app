@@ -99,26 +99,4 @@ export class ChatRepository {
       })
       .run()
   }
-
-  /**
-   * Returns the messages in the TanStack AI `messages` array format so they
-   * can be prepended to the incoming client messages to give the model context.
-   */
-  getHistoryForContext(
-    sessionId: string,
-    limit = 40,
-  ): Array<{ role: 'user' | 'assistant'; content: string }> {
-    const rows = this.db
-      .select()
-      .from(chatMessages)
-      .where(eq(chatMessages.sessionId, sessionId))
-      .orderBy(asc(chatMessages.createdAt))
-      .all()
-
-    // Keep only the latest `limit` messages to avoid blowing the context window
-    return rows.slice(-limit).map((r) => ({
-      role: r.role,
-      content: r.content,
-    }))
-  }
 }

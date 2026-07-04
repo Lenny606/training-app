@@ -61,8 +61,8 @@ export const Route = createFileRoute('/api/chat')({
       // ------------------------------------------------------------------
       // POST /api/chat
       // Accepts { messages, model, sessionId? } — sessionId is optional.
-      // When provided, stored history is prepended as context and every
-      // new round-trip is persisted to the database.
+      // When provided, every new round-trip is persisted to the database
+      // (the client sends the full conversation it hydrated via GET).
       // ------------------------------------------------------------------
       POST: async ({ request }) => {
         const { getSessionUser } = await import('../auth/session')
@@ -105,19 +105,15 @@ export const Route = createFileRoute('/api/chat')({
         const sessionId: string | undefined = body.sessionId
 
         // ------------------------------------------------------------------
-        // Persist: ensure session + load history as extra context
+        // Persist: ensure the session row exists. The client is the source of
+        // truth for conversation content — it hydrates the full history from
+        // GET /api/chat on mount, so `body.messages` already carries the whole
+        // conversation. Prepending stored history here would duplicate every
+        // earlier turn in the model context.
         // ------------------------------------------------------------------
-        let historyContext: Array<{ role: 'user' | 'assistant'; content: string }> = []
-
         if (sessionId) {
           chatRepo.ensureSession(sessionId, user.id, modelId)
-          historyContext = chatRepo.getHistoryForContext(sessionId)
         }
-
-        // The incoming `body.messages` are the messages the client already
-        // knows about. We prepend older history that the client might not have
-        // (e.g. after a page reload where it only sent the current turn).
-        const allMessages = [...historyContext, ...body.messages]
 
         // Extract the latest user message to save before sending to the LLM.
         const lastUserMessage = [...body.messages]
@@ -126,9 +122,24 @@ export const Route = createFileRoute('/api/chat')({
 
         const abortController = new AbortController()
 
+        // Assistant parts assembled across the run — completed tool calls are
+        // recorded as they happen so they survive a reload (GET rehydrates
+        // them as UIMessage tool-call parts, not just the final text).
+        const assistantParts: Array<
+          | { type: 'text'; content: string }
+          | {
+              type: 'tool-call'
+              id: string
+              name: string
+              arguments: string
+              state: 'complete'
+              output?: unknown
+            }
+        > = []
+
         const stream = chat({
           adapter: createAdapter(modelId),
-          messages: allMessages,
+          messages: body.messages,
           systemPrompts: [SYSTEM_PROMPT],
           tools: buildTools(user.id, repo),
           agentLoopStrategy: maxIterations(12),
@@ -159,15 +170,36 @@ export const Route = createFileRoute('/api/chat')({
                   parts: lastUserMessage.parts,
                 })
               },
+              onToolPhaseComplete(_ctx, info) {
+                if (!sessionId) return
+                for (const call of info.toolCalls) {
+                  const result = info.results.find(
+                    (r) => r.toolCallId === call.id,
+                  )
+                  // No result = pending approval / client execution — the tool
+                  // never ran server-side, so there is nothing to restore.
+                  if (!result) continue
+                  assistantParts.push({
+                    type: 'tool-call',
+                    id: call.id,
+                    name: call.function.name,
+                    arguments: call.function.arguments,
+                    state: 'complete',
+                    output: result.result,
+                  })
+                }
+              },
               onFinish(_ctx, info) {
                 if (!sessionId) return
-                // info.content contains the final assembled text from the assistant
+                if (info.content) {
+                  assistantParts.push({ type: 'text', content: info.content })
+                }
                 chatRepo.saveMessage({
                   id: crypto.randomUUID(),
                   sessionId,
                   role: 'assistant',
                   content: info.content ?? '',
-                  parts: [{ type: 'text', content: info.content ?? '' }],
+                  parts: assistantParts,
                 })
                 chatRepo.touchSession(sessionId)
               },
