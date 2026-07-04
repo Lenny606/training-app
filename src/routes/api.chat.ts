@@ -146,7 +146,7 @@ export const Route = createFileRoute('/api/chat')({
             // ---------------------------------------------------------------
             {
               name: 'persist-history',
-              onStart(_ctx) {
+              onStart() {
                 if (!sessionId || !lastUserMessage) return
                 chatRepo.saveMessage({
                   id: crypto.randomUUID(),
