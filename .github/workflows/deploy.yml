@@ -68,7 +68,7 @@ jobs:
           host: ${{ secrets.HOST }}
           port: ${{ secrets.PORT || '22' }}
           username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           envs: OPENAI_API_KEY,ANTHROPIC_API_KEY,NPM_VERSION
           script: |
             set -e
