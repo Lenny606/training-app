@@ -46,7 +46,8 @@ export const activityInput = z.object({
     .positive()
     .nullish()
     .transform((v) => v ?? DEFAULT_ACTIVITY_DURATION),
-  type: z.enum(['exercise', 'rest']),
+  type: z.enum(['exercise', 'rest', 'learning']),
+  description: optionalish(z.string()),
   sets: optionalish(z.number().int().positive()),
   reps: optionalish(z.string()),
   weight: optionalish(z.string()),

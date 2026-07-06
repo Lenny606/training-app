@@ -15,8 +15,9 @@ import {
 const activityShape = z.object({
   id: z.string(),
   name: z.string(),
-  type: z.enum(['exercise', 'rest']),
+  type: z.enum(['exercise', 'rest', 'learning']),
   duration: z.number(),
+  description: z.string().optional(),
   sets: z.number().optional(),
   reps: z.string().optional(),
   weight: z.string().optional(),

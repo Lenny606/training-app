@@ -336,4 +336,52 @@ describe('SqlitePlanRepository', () => {
       expect(deletedRecord).toBeUndefined()
     })
   })
+
+  describe('learning support', () => {
+    it('creates, saves and retrieves a learning activity with description', async () => {
+      const created = await repository.create(
+        {
+          name: 'Learning Workout Plan',
+          description: 'Focus on tutorials',
+          daysPerWeek: 1,
+          activities: [
+            {
+              name: 'Watch squat tutorial',
+              duration: 180,
+              type: 'learning',
+              description: 'Focus on knee angle and heel placement.',
+            },
+          ],
+        },
+        ownerId,
+      )
+
+      expect(created.activities[0].type).toBe('learning')
+      expect(created.activities[0].description).toBe('Focus on knee angle and heel placement.')
+
+      const persisted = await repository.getById(created.id, ownerId)
+      expect(persisted?.activities).toHaveLength(1)
+      expect(persisted?.activities[0].type).toBe('learning')
+      expect(persisted?.activities[0].description).toBe('Focus on knee angle and heel placement.')
+
+      // Update the description of the learning activity
+      const updatedActivity = {
+        ...persisted!.activities[0],
+        description: 'New modified instruction.',
+      }
+
+      const updated = await repository.update(
+        created.id,
+        {
+          activities: [updatedActivity],
+        },
+        ownerId,
+      )
+
+      expect(updated.activities[0].description).toBe('New modified instruction.')
+
+      const persistedAfterUpdate = await repository.getById(created.id, ownerId)
+      expect(persistedAfterUpdate?.activities[0].description).toBe('New modified instruction.')
+    })
+  })
 })

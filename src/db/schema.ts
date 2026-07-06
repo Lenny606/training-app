@@ -42,7 +42,8 @@ export const activities = sqliteTable('activities', {
   position: integer('position').notNull(), // pořadí v plánu
   name: text('name').notNull(),
   duration: integer('duration').notNull(), // sekundy
-  type: text('type', { enum: ['exercise', 'rest'] }).notNull(),
+  type: text('type', { enum: ['exercise', 'rest', 'learning'] }).notNull(),
+  description: text('description'),
   sets: integer('sets'),
   reps: text('reps'),
   weight: text('weight'),

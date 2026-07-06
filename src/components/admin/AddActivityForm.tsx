@@ -72,23 +72,26 @@ function AddExerciseFields({
 function useAddActivityForm(
   onAddActivity: (activity: Omit<Activity, 'id'>) => void,
 ) {
-  const [type, setType] = useState<'exercise' | 'rest'>('exercise')
+  const [type, setType] = useState<'exercise' | 'rest' | 'learning'>('exercise')
   const [name, setName] = useState('')
   const [duration, setDuration] = useState('')
+  const [description, setDescription] = useState('')
   const [sets, setSets] = useState('')
   const [reps, setReps] = useState('')
   const [weight, setWeight] = useState('')
   const [mediaList, setMediaList] = useState<Media[]>([])
 
-  const handleTypeChange = (newType: 'exercise' | 'rest') => {
+  const handleTypeChange = (newType: 'exercise' | 'rest' | 'learning') => {
     setType(newType)
     setDuration('')
+    setDescription('')
     setMediaList([])
   }
 
   const resetForm = () => {
     setName('')
     setDuration('')
+    setDescription('')
     setSets('')
     setReps('')
     setWeight('')
@@ -112,7 +115,6 @@ function useAddActivityForm(
       name: activityName,
       type,
       duration: finalDuration,
-      media: mediaList.length > 0 ? mediaList : undefined,
     }
 
     if (type === 'exercise') {
@@ -121,6 +123,11 @@ function useAddActivityForm(
         sets: isNaN(parsedSets) || parsedSets <= 0 ? undefined : parsedSets,
         reps: reps.trim() || undefined,
         weight: weight.trim() || undefined,
+        media: mediaList.length > 0 ? mediaList : undefined,
+      })
+    } else if (type === 'learning') {
+      Object.assign(payload, {
+        description: description.trim() || undefined,
       })
     }
 
@@ -132,12 +139,14 @@ function useAddActivityForm(
     type,
     name,
     duration,
+    description,
     sets,
     reps,
     weight,
     mediaList,
     setName,
     setDuration,
+    setDescription,
     setSets,
     setReps,
     setWeight,
@@ -148,12 +157,12 @@ function useAddActivityForm(
 }
 
 interface CoreFieldsProps {
-  type: 'exercise' | 'rest'
+  type: 'exercise' | 'rest' | 'learning'
   name: string
   duration: string
   setName: (val: string) => void
   setDuration: (val: string) => void
-  handleTypeChange: (newType: 'exercise' | 'rest') => void
+  handleTypeChange: (newType: 'exercise' | 'rest' | 'learning') => void
 }
 
 function CoreFields({
@@ -173,12 +182,13 @@ function CoreFields({
         <select
           value={type}
           onChange={(e) =>
-            handleTypeChange(e.target.value as 'exercise' | 'rest')
+            handleTypeChange(e.target.value as 'exercise' | 'rest' | 'learning')
           }
           className="demo-select py-1.5 text-xs"
         >
           <option value="exercise">Exercise</option>
           <option value="rest">Rest</option>
+          <option value="learning">Learning</option>
         </select>
       </div>
 
@@ -192,7 +202,11 @@ function CoreFields({
           onChange={(e) => setName(e.target.value)}
           required
           placeholder={
-            type === 'exercise' ? 'e.g. Dumbbell Bicep Curl' : 'Rest period'
+            type === 'exercise'
+              ? 'e.g. Dumbbell Bicep Curl'
+              : type === 'learning'
+                ? 'e.g. Learn proper posture'
+                : 'Rest period'
           }
           className="demo-input py-1.5 text-xs font-medium"
         />
@@ -219,12 +233,14 @@ export function AddActivityForm({ onAddActivity }: AddActivityFormProps) {
     type,
     name,
     duration,
+    description,
     sets,
     reps,
     weight,
     mediaList,
     setName,
     setDuration,
+    setDescription,
     setSets,
     setReps,
     setWeight,
@@ -262,6 +278,19 @@ export function AddActivityForm({ onAddActivity }: AddActivityFormProps) {
             setReps={setReps}
             setWeight={setWeight}
           />
+        ) : type === 'learning' ? (
+          <div className="sm:col-span-4">
+            <label className="block text-[10px] font-semibold text-ink-soft uppercase tracking-wider mb-1">
+              Description
+            </label>
+            <input
+              type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="e.g. Focus on keeping your back flat"
+              className="demo-input py-1.5 text-xs font-medium"
+            />
+          </div>
         ) : (
           <div className="sm:col-span-4" />
         )}

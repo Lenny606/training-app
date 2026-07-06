@@ -16,6 +16,14 @@ interface CurrentActivityInfoProps {
 
 // fallow-ignore-next-line complexity
 function ActivityMetadata({ activity }: { activity: Activity }) {
+  if (activity.type === 'learning') {
+    return (
+      <div className="text-center mt-2 px-4 py-3 bg-purple-500/5 border border-purple-500/15 rounded-xl text-xs text-ink-soft italic">
+        {activity.description || 'No instruction description provided.'}
+      </div>
+    )
+  }
+
   if (activity.type !== 'exercise') return null
 
   const items = [

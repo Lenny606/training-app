@@ -273,4 +273,27 @@ describe('AI plan tools', () => {
       expect(await repo.getById(victimPlanId, ownerId)).not.toBeNull()
     })
   })
+
+  describe('create_plan with learning activity', () => {
+    it('creates a plan with a learning activity and saves its description', async () => {
+      const tool = tools.find((t) => t.name === 'create_plan')
+      const input = await parseInput(tool, {
+        name: 'Learning Plan via AI',
+        description: 'Testing description support',
+        daysPerWeek: 2,
+        activities: [
+          {
+            name: 'Study form',
+            type: 'learning',
+            duration: 150,
+            description: 'Read the instructions carefully',
+          },
+        ],
+      })
+      const { plan, error } = await tool.execute(input)
+      expect(error).toBeUndefined()
+      expect(plan.activities[0].type).toBe('learning')
+      expect(plan.activities[0].description).toBe('Read the instructions carefully')
+    })
+  })
 })

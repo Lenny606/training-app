@@ -16,7 +16,8 @@ export interface Activity {
   sets?: number
   reps?: string // e.g. "8-10" or "10"
   weight?: string // e.g. "80 kg" or "15 kg"
-  type: 'exercise' | 'rest'
+  type: 'exercise' | 'rest' | 'learning'
+  description?: string
   media?: Media[]
 }
 

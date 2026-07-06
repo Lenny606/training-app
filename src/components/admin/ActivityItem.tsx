@@ -171,10 +171,13 @@ interface ActivityItemBadgeProps {
 
 function ActivityItemBadge({ type, index }: ActivityItemBadgeProps) {
   const isRest = type === 'rest'
+  const isLearning = type === 'learning'
   const badgeClass = `px-2 py-0.5 rounded text-[9px] uppercase font-black tracking-wider ${
     isRest
       ? 'bg-sky-500/10 text-sky-600 border border-sky-500/30 dark:text-sky-400'
-      : 'bg-lagoon/10 text-lagoon-deep border border-lagoon/30'
+      : isLearning
+        ? 'bg-purple-500/10 text-purple-600 border border-purple-500/30 dark:text-purple-400'
+        : 'bg-lagoon/10 text-lagoon-deep border border-lagoon/30'
   }`
   return (
     <div className="flex items-center gap-2 sm:w-28 flex-shrink-0">
@@ -202,6 +205,7 @@ function ActivityInputs({
   onActivityChange,
 }: ActivityInputsProps) {
   const isRest = activity.type === 'rest'
+  const isLearning = activity.type === 'learning'
 
   return (
     <div className="flex-grow min-w-0 grid gap-2 grid-cols-12">
@@ -225,14 +229,24 @@ function ActivityInputs({
         />
       </div>
 
-      {!isRest ? (
+      {isLearning ? (
+        <div className="col-span-12 sm:col-span-6">
+          <input
+            type="text"
+            value={activity.description ?? ''}
+            onChange={(e) => onActivityChange(index, 'description', e.target.value)}
+            className="demo-input py-1.5 px-2.5 text-xs"
+            placeholder="Instruction / learning details"
+          />
+        </div>
+      ) : !isRest ? (
         <ExerciseFields
           activity={activity}
           index={index}
           onActivityChange={onActivityChange}
         />
       ) : (
-        <div className="col-span-12 sm:col-span-8 flex items-center text-xs text-ink-soft italic px-2">
+        <div className="col-span-12 sm:col-span-6 flex items-center text-xs text-ink-soft italic px-2">
           Rest Period — No sets, reps or weight tracking needed.
         </div>
       )}
@@ -282,7 +296,11 @@ export function ActivityItem({
     zIndex: isDragging ? 1 : undefined,
   }
   const containerClass = `demo-list-item flex flex-col gap-3 p-3 border transition-all ${
-    isRest ? 'border-line/50' : 'border-line bg-lagoon/[0.03]'
+    isRest
+      ? 'border-line/50'
+      : activity.type === 'learning'
+        ? 'border-purple-500/20 bg-purple-500/[0.02] dark:border-purple-500/30'
+        : 'border-line bg-lagoon/[0.03]'
   }`
 
   return (
@@ -313,7 +331,7 @@ export function ActivityItem({
         />
       </div>
 
-      {!isRest && (
+      {activity.type === 'exercise' && (
         <div className="w-full border-t border-line/35 pt-2.5 sm:pl-10">
           <span className="text-[10px] font-semibold text-ink-soft uppercase tracking-wider block mb-1">
             Activity Media (Images / Videos)

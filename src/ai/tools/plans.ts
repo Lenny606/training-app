@@ -23,7 +23,8 @@ function toNewActivity(a: {
   id?: string | null
   name: string
   duration?: number | null
-  type: 'exercise' | 'rest'
+  type: 'exercise' | 'rest' | 'learning'
+  description?: string | null
   sets?: number | null
   reps?: string | null
   weight?: string | null
@@ -34,6 +35,7 @@ function toNewActivity(a: {
     name: a.name,
     duration: a.duration ?? DEFAULT_ACTIVITY_DURATION,
     type: a.type,
+    description: a.description ?? undefined,
     sets: a.sets ?? undefined,
     reps: a.reps ?? undefined,
     weight: a.weight ?? undefined,

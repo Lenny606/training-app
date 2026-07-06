@@ -4,16 +4,27 @@ interface ProgressCircleProps {
   radius: number
   circumference: number
   strokeDashoffset: number
-  type: 'exercise' | 'rest' | undefined
+  type: 'exercise' | 'rest' | 'learning' | undefined
   isCompleted: boolean
   secondsRemaining: number
   currentActivityIndex: number
   totalActivities: number
 }
 
-function getProgressCircleTheme(type: 'exercise' | 'rest' | undefined) {
-  const isRest = type === 'rest'
-  const base = isRest ? 'var(--palm)' : 'var(--lagoon)'
+function getProgressCircleTheme(type: 'exercise' | 'rest' | 'learning' | undefined) {
+  if (type === 'rest') {
+    return {
+      strokeColor: 'var(--palm)',
+      shadowColor: 'color-mix(in oklab, var(--palm) 35%, transparent)',
+    }
+  }
+  if (type === 'learning') {
+    return {
+      strokeColor: '#a855f7', // purple-500
+      shadowColor: 'color-mix(in oklab, #a855f7 35%, transparent)',
+    }
+  }
+  const base = 'var(--lagoon)'
   return {
     strokeColor: base,
     shadowColor: `color-mix(in oklab, ${base} 35%, transparent)`,
@@ -22,10 +33,12 @@ function getProgressCircleTheme(type: 'exercise' | 'rest' | undefined) {
 
 function getProgressCircleStatus(
   isCompleted: boolean,
-  type: 'exercise' | 'rest' | undefined,
+  type: 'exercise' | 'rest' | 'learning' | undefined,
 ) {
   if (isCompleted) return 'DONE'
-  return type === 'rest' ? 'REST INTERVAL' : 'SET WORK'
+  if (type === 'rest') return 'REST INTERVAL'
+  if (type === 'learning') return 'LEARNING'
+  return 'SET WORK'
 }
 
 export function ProgressCircle({
