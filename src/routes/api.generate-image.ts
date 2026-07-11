@@ -29,22 +29,43 @@ export const Route = createFileRoute('/api/generate-image')({
           const prompt = `A professional, high-quality fitness illustration or photograph demonstrating the exercise: "${name}".${description ? ` Description/Form details: ${description}.` : ''} Clean minimalist gym background, studio lighting, clear form demonstration, no text, aesthetic, centered view.`
 
           // Call OpenAI API
-          const openAiResponse = await fetch('https://api.openai.com/v1/images/generations', {
+          let openAiResponse = await fetch('https://api.openai.com/v1/images/generations', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${apiKey}`,
             },
             body: JSON.stringify({
+              model: 'dall-e-2',
               prompt: prompt,
               n: 1,
               size: '512x512',
             }),
           })
 
+          // Fallback to DALL-E 3 if DALL-E 2 is not supported or fails
+          if (!openAiResponse.ok) {
+            const errorText = await openAiResponse.clone().text()
+            console.warn('[generate-image] DALL-E 2 call failed, trying DALL-E 3 fallback. Error:', errorText)
+
+            openAiResponse = await fetch('https://api.openai.com/v1/images/generations', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${apiKey}`,
+              },
+              body: JSON.stringify({
+                model: 'dall-e-3',
+                prompt: prompt,
+                n: 1,
+                size: '1024x1024',
+              }),
+            })
+          }
+
           if (!openAiResponse.ok) {
             const errorText = await openAiResponse.text()
-            console.error('[generate-image] OpenAI API error:', errorText)
+            console.error('[generate-image] OpenAI API error (both DALL-E 2 and 3 failed):', errorText)
             return new Response(`OpenAI generation failed: ${errorText}`, { status: 502 })
           }
 
