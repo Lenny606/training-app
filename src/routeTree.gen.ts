@@ -16,6 +16,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as UploadsFilenameRouteImport } from './routes/uploads.$filename'
 import { Route as ApiUploadRouteImport } from './routes/api.upload'
+import { Route as ApiGenerateImageRouteImport } from './routes/api.generate-image'
 import { Route as ApiChatRouteImport } from './routes/api.chat'
 import { Route as AuthenticatedAssistantRouteImport } from './routes/_authenticated/assistant'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -56,6 +57,11 @@ const ApiUploadRoute = ApiUploadRouteImport.update({
   path: '/api/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiGenerateImageRoute = ApiGenerateImageRouteImport.update({
+  id: '/api/generate-image',
+  path: '/api/generate-image',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/assistant': typeof AuthenticatedAssistantRoute
   '/api/chat': typeof ApiChatRouteWithChildren
+  '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/upload': typeof ApiUploadRoute
   '/uploads/$filename': typeof UploadsFilenameRoute
   '/api/chat/sessions': typeof ApiChatSessionsRouteWithChildren
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/assistant': typeof AuthenticatedAssistantRoute
   '/api/chat': typeof ApiChatRouteWithChildren
+  '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/upload': typeof ApiUploadRoute
   '/uploads/$filename': typeof UploadsFilenameRoute
   '/': typeof AuthenticatedIndexRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/assistant': typeof AuthenticatedAssistantRoute
   '/api/chat': typeof ApiChatRouteWithChildren
+  '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/upload': typeof ApiUploadRoute
   '/uploads/$filename': typeof UploadsFilenameRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/assistant'
     | '/api/chat'
+    | '/api/generate-image'
     | '/api/upload'
     | '/uploads/$filename'
     | '/api/chat/sessions'
@@ -146,6 +156,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/assistant'
     | '/api/chat'
+    | '/api/generate-image'
     | '/api/upload'
     | '/uploads/$filename'
     | '/'
@@ -160,6 +171,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/assistant'
     | '/api/chat'
+    | '/api/generate-image'
     | '/api/upload'
     | '/uploads/$filename'
     | '/_authenticated/'
@@ -173,6 +185,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
   ApiChatRoute: typeof ApiChatRouteWithChildren
+  ApiGenerateImageRoute: typeof ApiGenerateImageRoute
   ApiUploadRoute: typeof ApiUploadRoute
   UploadsFilenameRoute: typeof UploadsFilenameRoute
 }
@@ -226,6 +239,13 @@ declare module '@tanstack/react-router' {
       path: '/api/upload'
       fullPath: '/api/upload'
       preLoaderRoute: typeof ApiUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/generate-image': {
+      id: '/api/generate-image'
+      path: '/api/generate-image'
+      fullPath: '/api/generate-image'
+      preLoaderRoute: typeof ApiGenerateImageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/chat': {
@@ -311,6 +331,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
   ApiChatRoute: ApiChatRouteWithChildren,
+  ApiGenerateImageRoute: ApiGenerateImageRoute,
   ApiUploadRoute: ApiUploadRoute,
   UploadsFilenameRoute: UploadsFilenameRoute,
 }

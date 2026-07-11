@@ -1,14 +1,22 @@
 import React, { useState } from 'react'
-import { Upload, X, Loader2, Image as ImageIcon, Film, Camera, Video } from 'lucide-react'
+import { Upload, X, Loader2, Image as ImageIcon, Film, Camera, Video, Sparkles } from 'lucide-react'
 import type { Media } from '../../domain/plans'
 
 interface MediaUploadProps {
   media?: Media[]
   onChange: (media: Media[]) => void
+  activityName?: string
+  activityDescription?: string
 }
 
-export function MediaUpload({ media = [], onChange }: MediaUploadProps) {
+export function MediaUpload({
+  media = [],
+  onChange,
+  activityName,
+  activityDescription,
+}: MediaUploadProps) {
   const [uploading, setUploading] = useState(false)
+  const [generating, setGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const handleUploadFiles = async (files: FileList) => {
@@ -67,13 +75,50 @@ export function MediaUpload({ media = [], onChange }: MediaUploadProps) {
     setUploading(false)
   }
 
+  const handleGenerateAiImage = async () => {
+    if (!activityName || !activityName.trim()) return
+
+    setGenerating(true)
+    setError(null)
+
+    try {
+      const response = await fetch('/api/generate-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: activityName,
+          description: activityDescription,
+        }),
+      })
+
+      if (!response.ok) {
+        const text = await response.text()
+        throw new Error(text || 'AI generation failed.')
+      }
+
+      const uploadedMedia: Media = await response.json()
+      onChange([...media, uploadedMedia])
+    } catch (err) {
+      console.error('AI generation error:', err)
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Failed to generate image with AI.',
+      )
+    } finally {
+      setGenerating(false)
+    }
+  }
+
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
   }
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
-    if (uploading) return
+    if (uploading || generating) return
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       handleUploadFiles(e.dataTransfer.files)
@@ -99,17 +144,17 @@ export function MediaUpload({ media = [], onChange }: MediaUploadProps) {
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         className={`border-2 border-dashed rounded-xl p-4 text-center transition-all ${
-          uploading
+          uploading || generating
             ? 'border-line/40 bg-chip/20'
             : 'border-line/60 bg-chip/40 hover:bg-lagoon/[0.02] hover:border-lagoon/50'
         }`}
       >
         <div className="flex flex-col items-center justify-center gap-2">
-          {uploading ? (
+          {uploading || generating ? (
             <>
               <Loader2 className="h-6 w-6 text-lagoon animate-spin" />
               <span className="text-xs text-ink-soft font-medium animate-pulse">
-                Uploading files...
+                {generating ? 'Generating image with AI...' : 'Uploading files...'}
               </span>
             </>
           ) : (
@@ -133,7 +178,7 @@ export function MediaUpload({ media = [], onChange }: MediaUploadProps) {
                     multiple
                     accept="image/*,video/*"
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    disabled={uploading}
+                    disabled={uploading || generating}
                   />
                 </div>
 
@@ -147,7 +192,7 @@ export function MediaUpload({ media = [], onChange }: MediaUploadProps) {
                     accept="image/*"
                     capture="environment"
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    disabled={uploading}
+                    disabled={uploading || generating}
                   />
                 </div>
 
@@ -161,9 +206,25 @@ export function MediaUpload({ media = [], onChange }: MediaUploadProps) {
                     accept="video/*"
                     capture="environment"
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    disabled={uploading}
+                    disabled={uploading || generating}
                   />
                 </div>
+
+                {/* AI Generate */}
+                <button
+                  type="button"
+                  onClick={handleGenerateAiImage}
+                  disabled={uploading || generating || !activityName?.trim()}
+                  className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[11px] font-semibold transition-all active:scale-95 cursor-pointer ${
+                    !activityName?.trim()
+                      ? 'border-line/40 bg-chip/30 text-ink-soft/40 cursor-not-allowed active:scale-100'
+                      : 'border-line bg-chip hover:bg-lagoon/10 hover:border-lagoon/40 text-ink'
+                  }`}
+                  title={!activityName?.trim() ? 'Enter activity name first to generate image' : 'Generate image using AI'}
+                >
+                  <Sparkles className={`h-3.5 w-3.5 ${!activityName?.trim() ? 'text-lagoon-deep/30' : 'text-lagoon-deep'}`} />
+                  <span>AI Generate</span>
+                </button>
               </div>
             </>
           )}

@@ -339,6 +339,8 @@ export function ActivityItem({
           <MediaUpload
             media={activity.media}
             onChange={(m) => onActivityChange(index, 'media', m)}
+            activityName={activity.name}
+            activityDescription={activity.description}
           />
         </div>
       )}
