@@ -36,11 +36,9 @@ export const Route = createFileRoute('/api/generate-image')({
               Authorization: `Bearer ${apiKey}`,
             },
             body: JSON.stringify({
-              model: 'dall-e-2',
               prompt: prompt,
               n: 1,
               size: '512x512',
-              response_format: 'url',
             }),
           })
 

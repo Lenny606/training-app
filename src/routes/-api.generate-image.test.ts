@@ -148,9 +148,8 @@ describe('POST /api/generate-image', () => {
     const requestOptions = openAiCallArgs[1] as RequestInit
     expect(requestOptions.method).toBe('POST')
     expect((requestOptions.headers as Record<string, string>)['Authorization']).toBe('Bearer mock-key')
-    
     const bodyObj = JSON.parse(requestOptions.body as string)
-    expect(bodyObj.model).toBe('dall-e-2')
+    expect(bodyObj.model).toBeUndefined()
     expect(bodyObj.size).toBe('512x512')
     expect(bodyObj.prompt).toContain('Pushups')
     expect(bodyObj.prompt).toContain('Standard pushups')
