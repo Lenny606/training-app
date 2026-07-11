@@ -1,5 +1,14 @@
 import React, { useState } from 'react'
-import { Upload, X, Loader2, Image as ImageIcon, Film, Camera, Video, Sparkles } from 'lucide-react'
+import {
+  Upload,
+  X,
+  Loader2,
+  Image as ImageIcon,
+  Film,
+  Camera,
+  Video,
+  Sparkles,
+} from 'lucide-react'
 import type { Media } from '../../domain/plans'
 
 interface MediaUploadProps {
@@ -154,7 +163,9 @@ export function MediaUpload({
             <>
               <Loader2 className="h-6 w-6 text-lagoon animate-spin" />
               <span className="text-xs text-ink-soft font-medium animate-pulse">
-                {generating ? 'Generating image with AI...' : 'Uploading files...'}
+                {generating
+                  ? 'Generating image with AI...'
+                  : 'Uploading files...'}
               </span>
             </>
           ) : (
@@ -220,9 +231,15 @@ export function MediaUpload({
                       ? 'border-line/40 bg-chip/30 text-ink-soft/40 cursor-not-allowed active:scale-100'
                       : 'border-line bg-chip hover:bg-lagoon/10 hover:border-lagoon/40 text-ink'
                   }`}
-                  title={!activityName?.trim() ? 'Enter activity name first to generate image' : 'Generate image using AI'}
+                  title={
+                    !activityName?.trim()
+                      ? 'Enter activity name first to generate image'
+                      : 'Generate image using AI'
+                  }
                 >
-                  <Sparkles className={`h-3.5 w-3.5 ${!activityName?.trim() ? 'text-lagoon-deep/30' : 'text-lagoon-deep'}`} />
+                  <Sparkles
+                    className={`h-3.5 w-3.5 ${!activityName?.trim() ? 'text-lagoon-deep/30' : 'text-lagoon-deep'}`}
+                  />
                   <span>AI Generate</span>
                 </button>
               </div>

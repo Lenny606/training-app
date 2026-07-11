@@ -90,10 +90,7 @@ export class WorkoutLogRepository {
    * Recent workout history for a user, with plan name.
    * Default: last 30 sessions.
    */
-  getHistory(
-    userId: string,
-    limit = 30,
-  ): WorkoutLogWithPlan[] {
+  getHistory(userId: string, limit = 30): WorkoutLogWithPlan[] {
     const rows = this.db
       .select({
         id: workoutLogs.id,
@@ -130,7 +127,10 @@ export class WorkoutLogRepository {
    * Weekly workout summary — count of sessions and total seconds per week
    * for the last N weeks.
    */
-  getWeeklySummary(userId: string, weeks = 8): Array<{
+  getWeeklySummary(
+    userId: string,
+    weeks = 8,
+  ): Array<{
     weekStart: string
     sessionCount: number
     totalSeconds: number
@@ -153,7 +153,10 @@ export class WorkoutLogRepository {
       .all()
 
     // Group client-side (SQLite date functions are limited; avoids raw SQL)
-    const buckets = new Map<string, { sessionCount: number; totalSeconds: number }>()
+    const buckets = new Map<
+      string,
+      { sessionCount: number; totalSeconds: number }
+    >()
 
     for (const row of rows) {
       const d = new Date(row.completedAt)

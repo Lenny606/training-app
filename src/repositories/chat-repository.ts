@@ -44,13 +44,16 @@ export class ChatRepository {
     modelId: string,
   ): ChatSessionRow {
     const now = new Date()
-    this.db.insert(chatSessions).values({
-      id: sessionId,
-      userId,
-      modelId,
-      createdAt: now,
-      updatedAt: now,
-    }).run()
+    this.db
+      .insert(chatSessions)
+      .values({
+        id: sessionId,
+        userId,
+        modelId,
+        createdAt: now,
+        updatedAt: now,
+      })
+      .run()
 
     return this.findSession(sessionId)!
   }
@@ -61,7 +64,8 @@ export class ChatRepository {
     modelId: string,
   ): ChatSessionRow {
     return (
-      this.findSession(sessionId) ?? this.createSession(sessionId, userId, modelId)
+      this.findSession(sessionId) ??
+      this.createSession(sessionId, userId, modelId)
     )
   }
 

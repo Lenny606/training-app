@@ -357,12 +357,16 @@ describe('SqlitePlanRepository', () => {
       )
 
       expect(created.activities[0].type).toBe('learning')
-      expect(created.activities[0].description).toBe('Focus on knee angle and heel placement.')
+      expect(created.activities[0].description).toBe(
+        'Focus on knee angle and heel placement.',
+      )
 
       const persisted = await repository.getById(created.id, ownerId)
       expect(persisted?.activities).toHaveLength(1)
       expect(persisted?.activities[0].type).toBe('learning')
-      expect(persisted?.activities[0].description).toBe('Focus on knee angle and heel placement.')
+      expect(persisted?.activities[0].description).toBe(
+        'Focus on knee angle and heel placement.',
+      )
 
       // Update the description of the learning activity
       const updatedActivity = {
@@ -378,10 +382,14 @@ describe('SqlitePlanRepository', () => {
         ownerId,
       )
 
-      expect(updated.activities[0].description).toBe('New modified instruction.')
+      expect(updated.activities[0].description).toBe(
+        'New modified instruction.',
+      )
 
       const persistedAfterUpdate = await repository.getById(created.id, ownerId)
-      expect(persistedAfterUpdate?.activities[0].description).toBe('New modified instruction.')
+      expect(persistedAfterUpdate?.activities[0].description).toBe(
+        'New modified instruction.',
+      )
     })
   })
 })

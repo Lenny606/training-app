@@ -33,9 +33,8 @@ export const Route = createFileRoute('/api/chat')({
         }
 
         const { runMigrations } = await import('../db/migrate')
-        const { ChatRepository } = await import(
-          '../repositories/chat-repository'
-        )
+        const { ChatRepository } =
+          await import('../repositories/chat-repository')
 
         runMigrations()
         const chatRepo = new ChatRepository()
@@ -52,7 +51,9 @@ export const Route = createFileRoute('/api/chat')({
           role: r.role,
           content: r.content,
           // Rehydrate the parts array if present (tool calls, thinking, etc.)
-          parts: r.parts ? JSON.parse(r.parts) : [{ type: 'text', content: r.content }],
+          parts: r.parts
+            ? JSON.parse(r.parts)
+            : [{ type: 'text', content: r.content }],
         }))
 
         return Response.json({ messages })
@@ -89,12 +90,10 @@ export const Route = createFileRoute('/api/chat')({
         const { resolveModelId } = await import('../ai/models')
         const { SYSTEM_PROMPT } = await import('../ai/system-prompt')
         const { buildTools } = await import('../ai/tools')
-        const { SqlitePlanRepository } = await import(
-          '../repositories/sqlite-plan-repository'
-        )
-        const { ChatRepository } = await import(
-          '../repositories/chat-repository'
-        )
+        const { SqlitePlanRepository } =
+          await import('../repositories/sqlite-plan-repository')
+        const { ChatRepository } =
+          await import('../repositories/chat-repository')
         const { runMigrations } = await import('../db/migrate')
 
         runMigrations()

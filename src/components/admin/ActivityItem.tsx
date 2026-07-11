@@ -234,7 +234,9 @@ function ActivityInputs({
           <input
             type="text"
             value={activity.description ?? ''}
-            onChange={(e) => onActivityChange(index, 'description', e.target.value)}
+            onChange={(e) =>
+              onActivityChange(index, 'description', e.target.value)
+            }
             className="demo-input py-1.5 px-2.5 text-xs"
             placeholder="Instruction / learning details"
           />

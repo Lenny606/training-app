@@ -15,7 +15,9 @@ import { buildTools } from './tools'
 async function parseInput(tool: { inputSchema: unknown }, input: unknown) {
   const schema = tool.inputSchema as {
     '~standard': {
-      validate: (v: unknown) =>
+      validate: (
+        v: unknown,
+      ) =>
         | { value: unknown; issues?: undefined }
         | { issues: Array<{ message: string }> }
     }
@@ -205,7 +207,12 @@ describe('AI plan tools', () => {
       const tool = tools.find((t) => t.name === 'update_plan')
       const input = await parseInput(tool, {
         planId: id,
-        patch: { name: 'Renamed', description: null, daysPerWeek: null, activities: null },
+        patch: {
+          name: 'Renamed',
+          description: null,
+          daysPerWeek: null,
+          activities: null,
+        },
       })
       const { plan, error } = await tool.execute(input)
       expect(error).toBeUndefined()
@@ -293,7 +300,9 @@ describe('AI plan tools', () => {
       const { plan, error } = await tool.execute(input)
       expect(error).toBeUndefined()
       expect(plan.activities[0].type).toBe('learning')
-      expect(plan.activities[0].description).toBe('Read the instructions carefully')
+      expect(plan.activities[0].description).toBe(
+        'Read the instructions carefully',
+      )
     })
   })
 })
