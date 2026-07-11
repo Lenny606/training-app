@@ -35,6 +35,10 @@ export const Route = createRootRouteWithContext<RouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
+        name: 'robots',
+        content: 'noindex, nofollow',
+      },
+      {
         title: 'Apex',
       },
     ],
