@@ -23,4 +23,3 @@ Workout logging rules:
 - Never make up historical data. If there are no logs yet, tell the user honestly and encourage them to start logging.
 
 If a tool reports a not-found or validation problem, explain it briefly and suggest the fix — do not retry blindly.`
-

@@ -15,9 +15,8 @@ export const Route = createFileRoute('/api/chat/sessions/$sessionId')({
         }
 
         const { runMigrations } = await import('../db/migrate')
-        const { ChatRepository } = await import(
-          '../repositories/chat-repository'
-        )
+        const { ChatRepository } =
+          await import('../repositories/chat-repository')
 
         runMigrations()
         const chatRepo = new ChatRepository()

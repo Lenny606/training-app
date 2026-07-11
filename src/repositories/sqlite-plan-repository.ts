@@ -378,14 +378,16 @@ export class SqlitePlanRepository implements PlanRepository {
     // Delete files from disk after transaction completes successfully
     if (filesToDelete.length > 0) {
       const uploadDir = getUploadDir()
-      for (const fileName of filesToDelete) {
-        const filePath = path.join(uploadDir, fileName)
-        try {
-          fs.unlinkSync(filePath)
-        } catch (err) {
-          console.error(`Failed to delete media file ${filePath}:`, err)
-        }
-      }
+      await Promise.allSettled(
+        filesToDelete.map(async (fileName) => {
+          const filePath = path.join(uploadDir, fileName)
+          try {
+            await fs.promises.unlink(filePath)
+          } catch (err) {
+            console.error(`Failed to delete media file ${filePath}:`, err)
+          }
+        }),
+      )
     }
 
     return merged
@@ -410,14 +412,16 @@ export class SqlitePlanRepository implements PlanRepository {
 
       if (fileNames.length > 0) {
         const uploadDir = getUploadDir()
-        for (const fileName of fileNames) {
-          const filePath = path.join(uploadDir, fileName)
-          try {
-            fs.unlinkSync(filePath)
-          } catch (err) {
-            console.error(`Failed to delete media file ${filePath}:`, err)
-          }
-        }
+        await Promise.allSettled(
+          fileNames.map(async (fileName) => {
+            const filePath = path.join(uploadDir, fileName)
+            try {
+              await fs.promises.unlink(filePath)
+            } catch (err) {
+              console.error(`Failed to delete media file ${filePath}:`, err)
+            }
+          }),
+        )
       }
     }
   }

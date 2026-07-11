@@ -165,12 +165,13 @@ const exerciseLogShape = z.object({
 export const logWorkoutDef = toolDefinition({
   name: 'log_workout',
   description:
-    'Save a completed workout session to the user\'s history. Call this after the user confirms a workout is done. Provide the plan id, actual duration in seconds, and optionally per-exercise performance data (weight, reps, sets).',
+    "Save a completed workout session to the user's history. Call this after the user confirms a workout is done. Provide the plan id, actual duration in seconds, and optionally per-exercise performance data (weight, reps, sets).",
   inputSchema: z.object({
     planId: z.string(),
     durationSeconds: z.number().int().positive(),
     completedAt: z.string().datetime().meta({
-      description: 'ISO 8601 datetime of when the workout finished. Use now() if not specified.',
+      description:
+        'ISO 8601 datetime of when the workout finished. Use now() if not specified.',
     }),
     notes: optionalish(z.string()),
     exercises: optionalish(z.array(exerciseLogShape)),
@@ -210,11 +211,15 @@ export const getWorkoutHistoryDef = toolDefinition({
   }),
   outputSchema: z.object({
     sessions: z.array(workoutSummaryShape),
-    weeklySummary: z.array(z.object({
-      weekStart: z.string(),
-      sessionCount: z.number(),
-      totalSeconds: z.number(),
-    })).optional(),
+    weeklySummary: z
+      .array(
+        z.object({
+          weekStart: z.string(),
+          sessionCount: z.number(),
+          totalSeconds: z.number(),
+        }),
+      )
+      .optional(),
     recentCount: z.number().meta({
       description: 'Number of sessions in the last 7 days.',
     }),
@@ -227,7 +232,8 @@ export const getExerciseProgressDef = toolDefinition({
     'Get the weight/reps progression for a specific exercise over recent sessions. Use this for questions like "what\'s my bench press trend?" or "am I getting stronger on squats?"',
   inputSchema: z.object({
     activityName: z.string().meta({
-      description: 'Exact or approximate exercise name, e.g. "Bench Press", "Squat".',
+      description:
+        'Exact or approximate exercise name, e.g. "Bench Press", "Squat".',
     }),
     limit: optionalish(
       z.number().int().positive().max(30).meta({
@@ -237,12 +243,14 @@ export const getExerciseProgressDef = toolDefinition({
   }),
   outputSchema: z.object({
     activityName: z.string(),
-    entries: z.array(z.object({
-      completedAt: z.string(),
-      setsCompleted: z.number().nullable(),
-      reps: z.string().nullable(),
-      weight: z.string().nullable(),
-    })),
+    entries: z.array(
+      z.object({
+        completedAt: z.string(),
+        setsCompleted: z.number().nullable(),
+        reps: z.string().nullable(),
+        weight: z.string().nullable(),
+      }),
+    ),
     hasData: z.boolean(),
   }),
 })

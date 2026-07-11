@@ -20,10 +20,7 @@ async function seedUser(db: ReturnType<typeof createDb>) {
   return userRepo.create({ email: 'tester@apex.io', passwordHash: 'hash' })
 }
 
-async function seedPlan(
-  db: ReturnType<typeof createDb>,
-  userId: string,
-) {
+async function seedPlan(db: ReturnType<typeof createDb>, userId: string) {
   const planRepo = new SqlitePlanRepository(db)
   return planRepo.create(
     {

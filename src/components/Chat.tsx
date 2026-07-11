@@ -2,7 +2,17 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { useChat, fetchServerSentEvents } from '@tanstack/ai-react'
 import type { UIMessage } from '@tanstack/ai-react'
-import { Send, Square, Bot, User, Wrench, Check, X, RotateCcw, Trash2 } from 'lucide-react'
+import {
+  Send,
+  Square,
+  Bot,
+  User,
+  Wrench,
+  Check,
+  X,
+  RotateCcw,
+  Trash2,
+} from 'lucide-react'
 import { MODELS, DEFAULT_MODEL, type ModelId } from '../ai/models'
 
 // ---------------------------------------------------------------------------
@@ -59,7 +69,9 @@ export default function Chat() {
   const refreshSessions = useCallback(() => {
     fetch('/api/chat/sessions')
       .then((r) => r.json())
-      .then((data: { sessions: SessionSummary[] }) => setSessions(data.sessions))
+      .then((data: { sessions: SessionSummary[] }) =>
+        setSessions(data.sessions),
+      )
       .catch(() => {
         // Non-critical — the sidebar just stays as-is
       })
@@ -367,7 +379,9 @@ function ChatSession({
             }
           }}
           rows={1}
-          placeholder={'Ask about your plans, or say \u201cstart my push day\u201d\u2026'}
+          placeholder={
+            'Ask about your plans, or say \u201cstart my push day\u201d\u2026'
+          }
           className="min-h-11 flex-1 resize-none rounded-xl border border-line bg-header px-3 py-2.5 text-sm text-ink outline-none focus:border-lagoon"
         />
         <button

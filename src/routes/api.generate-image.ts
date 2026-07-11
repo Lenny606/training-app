@@ -17,70 +17,98 @@ export const Route = createFileRoute('/api/generate-image')({
           }
 
           const name = body.name.trim()
-          const description = typeof body.description === 'string' ? body.description.trim() : ''
+          const description =
+            typeof body.description === 'string' ? body.description.trim() : ''
 
           const apiKey = process.env.OPENAI_API_KEY
           if (!apiKey) {
             console.error('[generate-image] OPENAI_API_KEY is not configured.')
-            return new Response('AI generation is not configured on the server.', { status: 500 })
+            return new Response(
+              'AI generation is not configured on the server.',
+              { status: 500 },
+            )
           }
 
           // Construct DALL-E prompt
           const prompt = `A professional, high-quality fitness illustration or photograph demonstrating the exercise: "${name}".${description ? ` Description/Form details: ${description}.` : ''} Clean minimalist gym background, studio lighting, clear form demonstration, no text, aesthetic, centered view.`
 
           // Call OpenAI API
-          let openAiResponse = await fetch('https://api.openai.com/v1/images/generations', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify({
-              model: 'dall-e-2',
-              prompt: prompt,
-              n: 1,
-              size: '512x512',
-            }),
-          })
-
-          // Fallback to DALL-E 3 if DALL-E 2 is not supported or fails
-          if (!openAiResponse.ok) {
-            const errorText = await openAiResponse.clone().text()
-            console.warn('[generate-image] DALL-E 2 call failed, trying DALL-E 3 fallback. Error:', errorText)
-
-            openAiResponse = await fetch('https://api.openai.com/v1/images/generations', {
+          let openAiResponse = await fetch(
+            'https://api.openai.com/v1/images/generations',
+            {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${apiKey}`,
               },
               body: JSON.stringify({
-                model: 'dall-e-3',
+                model: 'dall-e-2',
                 prompt: prompt,
                 n: 1,
-                size: '1024x1024',
+                size: '512x512',
               }),
-            })
+            },
+          )
+
+          // Fallback to DALL-E 3 if DALL-E 2 is not supported or fails
+          if (!openAiResponse.ok) {
+            const errorText = await openAiResponse.clone().text()
+            console.warn(
+              '[generate-image] DALL-E 2 call failed, trying DALL-E 3 fallback. Error:',
+              errorText,
+            )
+
+            openAiResponse = await fetch(
+              'https://api.openai.com/v1/images/generations',
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${apiKey}`,
+                },
+                body: JSON.stringify({
+                  model: 'dall-e-3',
+                  prompt: prompt,
+                  n: 1,
+                  size: '1024x1024',
+                }),
+              },
+            )
           }
 
           if (!openAiResponse.ok) {
             const errorText = await openAiResponse.text()
-            console.error('[generate-image] OpenAI API error (both DALL-E 2 and 3 failed):', errorText)
-            return new Response(`OpenAI generation failed: ${errorText}`, { status: 502 })
+            console.error(
+              '[generate-image] OpenAI API error (both DALL-E 2 and 3 failed):',
+              errorText,
+            )
+            return new Response(`OpenAI generation failed: ${errorText}`, {
+              status: 502,
+            })
           }
 
           const responseData = await openAiResponse.json()
           const imageUrl = responseData.data?.[0]?.url
           if (!imageUrl) {
-            console.error('[generate-image] OpenAI response missing image URL:', responseData)
-            return new Response('Invalid response from AI generator.', { status: 502 })
+            console.error(
+              '[generate-image] OpenAI response missing image URL:',
+              responseData,
+            )
+            return new Response('Invalid response from AI generator.', {
+              status: 502,
+            })
           }
 
           // Download image
           const imageResponse = await fetch(imageUrl)
           if (!imageResponse.ok) {
-            console.error(`[generate-image] Failed to download image from ${imageUrl}`)
-            return new Response('Failed to download generated image from AI service.', { status: 502 })
+            console.error(
+              `[generate-image] Failed to download image from ${imageUrl}`,
+            )
+            return new Response(
+              'Failed to download generated image from AI service.',
+              { status: 502 },
+            )
           }
 
           const arrayBuffer = await imageResponse.arrayBuffer()

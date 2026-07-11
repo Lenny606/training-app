@@ -11,7 +11,9 @@ interface ProgressCircleProps {
   totalActivities: number
 }
 
-function getProgressCircleTheme(type: 'exercise' | 'rest' | 'learning' | undefined) {
+function getProgressCircleTheme(
+  type: 'exercise' | 'rest' | 'learning' | undefined,
+) {
   if (type === 'rest') {
     return {
       strokeColor: 'var(--palm)',

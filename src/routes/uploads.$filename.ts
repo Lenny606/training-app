@@ -46,14 +46,20 @@ export const Route = createFileRoute('/uploads/$filename')({
           const totalSize = fs.statSync(filePath).size
 
           if (range) {
-            const parts = range.replace(/bytes=/, "").split("-")
+            const parts = range.replace(/bytes=/, '').split('-')
             const startPart = parts[0]
             const endPart = parts[1]
 
             const start = parseInt(startPart, 10)
             const end = endPart ? parseInt(endPart, 10) : totalSize - 1
 
-            if (isNaN(start) || start < 0 || isNaN(end) || end >= totalSize || start > end) {
+            if (
+              isNaN(start) ||
+              start < 0 ||
+              isNaN(end) ||
+              end >= totalSize ||
+              start > end
+            ) {
               return new Response('Requested range not satisfiable.', {
                 status: 416,
                 headers: {
@@ -62,10 +68,12 @@ export const Route = createFileRoute('/uploads/$filename')({
               })
             }
 
-            const chunkSize = (end - start) + 1
+            const chunkSize = end - start + 1
             const { Readable } = await import('node:stream')
             const fileStream = fs.createReadStream(filePath, { start, end })
-            const webStream = Readable.toWeb(fileStream) as ReadableStream<Uint8Array>
+            const webStream = Readable.toWeb(
+              fileStream,
+            ) as ReadableStream<Uint8Array>
 
             return new Response(webStream, {
               status: 206,

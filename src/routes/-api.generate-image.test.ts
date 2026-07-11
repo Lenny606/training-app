@@ -112,7 +112,7 @@ describe('POST /api/generate-image', () => {
   it('successfully generates, downloads, optimizes and saves an image', async () => {
     // Mock OpenAI and image download calls
     const fetchMock = vi.spyOn(globalThis, 'fetch')
-    
+
     // First call: OpenAI generations API
     fetchMock.mockResolvedValueOnce({
       ok: true,
@@ -129,7 +129,10 @@ describe('POST /api/generate-image', () => {
 
     const request = new Request('http://localhost/api/generate-image', {
       method: 'POST',
-      body: JSON.stringify({ name: 'Pushups', description: 'Standard pushups' }),
+      body: JSON.stringify({
+        name: 'Pushups',
+        description: 'Standard pushups',
+      }),
     })
 
     const response = await postHandler({ request })
@@ -143,11 +146,15 @@ describe('POST /api/generate-image', () => {
     // Check fetch parameters for DALL-E call
     expect(fetchMock).toHaveBeenCalledTimes(2)
     const openAiCallArgs = fetchMock.mock.calls[0]
-    expect(openAiCallArgs[0]).toBe('https://api.openai.com/v1/images/generations')
-    
+    expect(openAiCallArgs[0]).toBe(
+      'https://api.openai.com/v1/images/generations',
+    )
+
     const requestOptions = openAiCallArgs[1] as RequestInit
     expect(requestOptions.method).toBe('POST')
-    expect((requestOptions.headers as Record<string, string>)['Authorization']).toBe('Bearer mock-key')
+    expect(
+      (requestOptions.headers as Record<string, string>)['Authorization'],
+    ).toBe('Bearer mock-key')
     const bodyObj = JSON.parse(requestOptions.body as string)
     expect(bodyObj.model).toBe('dall-e-2')
     expect(bodyObj.size).toBe('512x512')
@@ -180,7 +187,9 @@ describe('POST /api/generate-image', () => {
 
     const response = await postHandler({ request })
     expect(response.status).toBe(500)
-    expect(await response.text()).toBe('AI generation is not configured on the server.')
+    expect(await response.text()).toBe(
+      'AI generation is not configured on the server.',
+    )
   })
 
   it('handles OpenAI failures with 502 status', async () => {
@@ -206,12 +215,14 @@ describe('POST /api/generate-image', () => {
 
     const response = await postHandler({ request })
     expect(response.status).toBe(502)
-    expect(await response.text()).toContain('OpenAI generation failed: DALL-E 3 failed')
+    expect(await response.text()).toContain(
+      'OpenAI generation failed: DALL-E 3 failed',
+    )
   })
 
   it('successfully falls back to DALL-E 3 if DALL-E 2 fails', async () => {
     const fetchMock = vi.spyOn(globalThis, 'fetch')
-    
+
     // First call: DALL-E 2 (fails)
     fetchMock.mockResolvedValueOnce({
       ok: false,
@@ -225,7 +236,9 @@ describe('POST /api/generate-image', () => {
     fetchMock.mockResolvedValueOnce({
       ok: true,
       json: async () => ({
-        data: [{ url: 'https://fake-openai-url.com/generated-image-dalle3.png' }],
+        data: [
+          { url: 'https://fake-openai-url.com/generated-image-dalle3.png' },
+        ],
       }),
     } as Response)
 
@@ -250,7 +263,7 @@ describe('POST /api/generate-image', () => {
     expect(fetchMock).toHaveBeenCalledTimes(3)
     const dalle3Call = fetchMock.mock.calls[1]
     expect(dalle3Call[0]).toBe('https://api.openai.com/v1/images/generations')
-    
+
     const requestOptions = dalle3Call[1] as RequestInit
     const bodyObj = JSON.parse(requestOptions.body as string)
     expect(bodyObj.model).toBe('dall-e-3')
