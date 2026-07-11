@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import { Upload, X, Loader2, Image as ImageIcon, Film } from 'lucide-react'
+import { Upload, X, Loader2, Image as ImageIcon, Film, Camera, Video } from 'lucide-react'
 import type { Media } from '../../domain/plans'
 
 interface MediaUploadProps {
@@ -11,6 +11,15 @@ export function MediaUpload({ media = [], onChange }: MediaUploadProps) {
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const cameraPhotoInputRef = useRef<HTMLInputElement>(null)
+  const cameraVideoInputRef = useRef<HTMLInputElement>(null)
+
+  const handleCameraClick = (e: React.MouseEvent, ref: React.RefObject<HTMLInputElement | null>) => {
+    e.stopPropagation()
+    if (!uploading) {
+      ref.current?.click()
+    }
+  }
 
   const handleUploadFiles = async (files: FileList) => {
     setUploading(true)
@@ -84,6 +93,7 @@ export function MediaUpload({ media = [], onChange }: MediaUploadProps) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       handleUploadFiles(e.target.files)
+      e.target.value = ''
     }
   }
 
@@ -114,6 +124,24 @@ export function MediaUpload({ media = [], onChange }: MediaUploadProps) {
           className="hidden"
           disabled={uploading}
         />
+        <input
+          type="file"
+          ref={cameraPhotoInputRef}
+          onChange={handleFileChange}
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          disabled={uploading}
+        />
+        <input
+          type="file"
+          ref={cameraVideoInputRef}
+          onChange={handleFileChange}
+          accept="video/*"
+          capture="environment"
+          className="hidden"
+          disabled={uploading}
+        />
 
         <div className="flex flex-col items-center justify-center gap-2">
           {uploading ? (
@@ -132,6 +160,25 @@ export function MediaUpload({ media = [], onChange }: MediaUploadProps) {
               </div>
               <div className="text-[10px] text-ink-soft">
                 Supports Images & Videos up to 50MB
+              </div>
+
+              <div className="flex items-center gap-2.5 mt-3 pt-3 border-t border-line/10 w-full justify-center">
+                <button
+                  type="button"
+                  onClick={(e) => handleCameraClick(e, cameraPhotoInputRef)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line bg-chip hover:bg-lagoon/10 hover:border-lagoon/40 text-[11px] font-semibold text-ink transition-all cursor-pointer active:scale-95"
+                >
+                  <Camera className="h-3.5 w-3.5 text-lagoon-deep" />
+                  Take Photo
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => handleCameraClick(e, cameraVideoInputRef)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line bg-chip hover:bg-lagoon/10 hover:border-lagoon/40 text-[11px] font-semibold text-ink transition-all cursor-pointer active:scale-95"
+                >
+                  <Video className="h-3.5 w-3.5 text-lagoon-deep" />
+                  Record Video
+                </button>
               </div>
             </>
           )}

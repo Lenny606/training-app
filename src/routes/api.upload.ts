@@ -54,12 +54,12 @@ export const Route = createFileRoute('/api/upload')({
               const sharp = (await import('sharp')).default
               finalBuffer = await sharp(buffer)
                 .resize({
-                  width: 1200,
-                  height: 1200,
+                  width: 800,
+                  height: 800,
                   fit: 'inside',
                   withoutEnlargement: true,
                 })
-                .webp({ quality: 80 })
+                .webp({ quality: 60 })
                 .toBuffer()
 
               finalFileName = `${createId('file')}.webp`
