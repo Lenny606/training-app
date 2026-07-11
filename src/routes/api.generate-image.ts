@@ -122,7 +122,7 @@ export const Route = createFileRoute('/api/generate-image')({
           const { media } = await import('../db/schema')
 
           const uploadDir = getUploadDir()
-          fs.mkdirSync(uploadDir, { recursive: true })
+          await fs.promises.mkdir(uploadDir, { recursive: true })
 
           let finalBuffer: Buffer = buffer
           let finalFileName = ''
@@ -153,7 +153,7 @@ export const Route = createFileRoute('/api/generate-image')({
           }
 
           const filePath = path.join(uploadDir, finalFileName)
-          fs.writeFileSync(filePath, finalBuffer)
+          await fs.promises.writeFile(filePath, finalBuffer)
 
           const db = getDb()
           const mediaId = createId('media')
