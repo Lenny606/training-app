@@ -29,6 +29,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@node-rs/argon2": "^2.0.2",
+    "@tailwindcss/typography": "^0.5.16",
     "@tanstack/ai": "^0.38.0",
     "@tanstack/ai-anthropic": "^0.15.11",
     "@tanstack/ai-openai": "^0.15.9",
@@ -51,7 +52,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/devtools-vite": "latest",
     "@tanstack/router-cli": "^1.132.0",
