@@ -65,7 +65,7 @@ function NumericField({
         className="demo-input py-1.5 pl-2.5 pr-6 text-xs text-right font-mono"
         placeholder={placeholder}
       />
-      <span className="absolute right-2 top-2 text-[9px] text-ink-soft font-mono">
+      <span className="absolute right-2 top-2 text-3xs text-ink-soft font-mono">
         {unit}
       </span>
     </div>
@@ -172,7 +172,7 @@ interface ActivityItemBadgeProps {
 function ActivityItemBadge({ type, index }: ActivityItemBadgeProps) {
   const isRest = type === 'rest'
   const isLearning = type === 'learning'
-  const badgeClass = `px-2 py-0.5 rounded text-[9px] uppercase font-black tracking-wider ${
+  const badgeClass = `px-2 py-0.5 rounded text-3xs uppercase font-black tracking-wider ${
     isRest
       ? 'bg-sky-500/10 text-sky-600 border border-sky-500/30 dark:text-sky-400'
       : isLearning
@@ -335,7 +335,7 @@ export function ActivityItem({
 
       {activity.type === 'exercise' && (
         <div className="w-full border-t border-line/35 pt-2.5 sm:pl-10">
-          <span className="text-[10px] font-semibold text-ink-soft uppercase tracking-wider block mb-1">
+          <span className="text-2xs font-semibold text-ink-soft uppercase tracking-wider block mb-1">
             Activity Media (Images / Videos)
           </span>
           <MediaUpload

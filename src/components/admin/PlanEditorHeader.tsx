@@ -11,7 +11,7 @@ function getSaveButtonClass(hasUnsavedChanges: boolean) {
   const base =
     'demo-button demo-button-sm flex items-center gap-1.5 transition-all'
   const modified =
-    'bg-lagoon-deep text-lagoon-ink border-lagoon shadow-[0_0_12px_color-mix(in_oklab,var(--lagoon)_25%,transparent)] hover:bg-lagoon'
+    'bg-lagoon-deep text-lagoon-ink border-lagoon shadow-glow-lagoon hover:bg-lagoon'
   const saved =
     'bg-success/10 text-success border-success/30 hover:bg-success/15'
   return `${base} ${hasUnsavedChanges ? modified : saved}`
@@ -28,7 +28,7 @@ export function PlanEditorHeader({
     <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-line">
       <div>
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-[10px] uppercase tracking-widest text-lagoon font-bold font-display">
+          <span className="text-2xs uppercase tracking-widest text-lagoon font-bold font-display">
             Editing Mode
           </span>
           {hasUnsavedChanges && (

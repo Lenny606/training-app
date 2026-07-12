@@ -174,13 +174,13 @@ export function MediaUpload({
               <div className="text-xs font-semibold text-ink">
                 Drag & drop media or choose below
               </div>
-              <div className="text-[10px] text-ink-soft">
+              <div className="text-2xs text-ink-soft">
                 Supports Images & Videos up to 50MB
               </div>
 
               <div className="flex flex-wrap items-center gap-2.5 mt-3 pt-3 border-t border-line/10 w-full justify-center">
                 {/* Browse Files */}
-                <div className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line bg-chip hover:bg-lagoon/10 hover:border-lagoon/40 text-[11px] font-semibold text-ink transition-all cursor-pointer active:scale-95">
+                <div className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line bg-chip hover:bg-lagoon/10 hover:border-lagoon/40 text-xxs font-semibold text-ink transition-all cursor-pointer active:scale-95">
                   <Upload className="h-3.5 w-3.5 text-lagoon-deep" />
                   <span>Browse Files</span>
                   <input
@@ -194,7 +194,7 @@ export function MediaUpload({
                 </div>
 
                 {/* Take Photo */}
-                <div className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line bg-chip hover:bg-lagoon/10 hover:border-lagoon/40 text-[11px] font-semibold text-ink transition-all cursor-pointer active:scale-95">
+                <div className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line bg-chip hover:bg-lagoon/10 hover:border-lagoon/40 text-xxs font-semibold text-ink transition-all cursor-pointer active:scale-95">
                   <Camera className="h-3.5 w-3.5 text-lagoon-deep" />
                   <span>Take Photo</span>
                   <input
@@ -208,7 +208,7 @@ export function MediaUpload({
                 </div>
 
                 {/* Record Video */}
-                <div className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line bg-chip hover:bg-lagoon/10 hover:border-lagoon/40 text-[11px] font-semibold text-ink transition-all cursor-pointer active:scale-95">
+                <div className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line bg-chip hover:bg-lagoon/10 hover:border-lagoon/40 text-xxs font-semibold text-ink transition-all cursor-pointer active:scale-95">
                   <Video className="h-3.5 w-3.5 text-lagoon-deep" />
                   <span>Record Video</span>
                   <input
@@ -226,7 +226,7 @@ export function MediaUpload({
                   type="button"
                   onClick={handleGenerateAiImage}
                   disabled={uploading || generating || !activityName?.trim()}
-                  className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[11px] font-semibold transition-all active:scale-95 cursor-pointer ${
+                  className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xxs font-semibold transition-all active:scale-95 cursor-pointer ${
                     !activityName?.trim()
                       ? 'border-line/40 bg-chip/30 text-ink-soft/40 cursor-not-allowed active:scale-100'
                       : 'border-line bg-chip hover:bg-lagoon/10 hover:border-lagoon/40 text-ink'
@@ -249,7 +249,7 @@ export function MediaUpload({
       </div>
 
       {error && (
-        <div className="text-[11px] text-danger bg-danger/10 border border-danger/20 px-2.5 py-1.5 rounded-lg">
+        <div className="text-xxs text-danger bg-danger/10 border border-danger/20 px-2.5 py-1.5 rounded-lg">
           {error}
         </div>
       )}
@@ -264,7 +264,7 @@ export function MediaUpload({
             return (
               <div
                 key={item.id}
-                className="group relative h-20 w-full rounded-lg overflow-hidden border border-line bg-foam/30 hover:scale-[1.02] hover:shadow-sm transition-all"
+                className="group relative h-20 w-full rounded-lg overflow-hidden border border-line bg-foam/30 hover:scale-102 hover:shadow-sm transition-all"
               >
                 {isVideo ? (
                   <div className="relative w-full h-full">
@@ -276,7 +276,7 @@ export function MediaUpload({
                       playsInline
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute bottom-1 left-1 bg-black/60 rounded p-0.5 text-[8px] text-white flex items-center gap-0.5 font-semibold">
+                    <div className="absolute bottom-1 left-1 bg-black/60 rounded p-0.5 text-4xs text-white flex items-center gap-0.5 font-semibold">
                       <Film className="h-2 w-2" />
                       <span>VIDEO</span>
                     </div>
@@ -288,7 +288,7 @@ export function MediaUpload({
                       alt={item.originalName}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute bottom-1 left-1 bg-black/60 rounded p-0.5 text-[8px] text-white flex items-center gap-0.5 font-semibold">
+                    <div className="absolute bottom-1 left-1 bg-black/60 rounded p-0.5 text-4xs text-white flex items-center gap-0.5 font-semibold">
                       <ImageIcon className="h-2 w-2" />
                       <span>IMAGE</span>
                     </div>

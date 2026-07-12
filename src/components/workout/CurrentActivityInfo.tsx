@@ -37,7 +37,7 @@ function ActivityMetadata({ activity }: { activity: Activity }) {
   return (
     <div className="flex items-center justify-center gap-2 mt-1.5">
       {items.map((text, idx) => (
-        <span key={idx} className="demo-pill text-[10px] py-0.5 px-2">
+        <span key={idx} className="demo-pill text-2xs py-0.5 px-2">
           {text}
         </span>
       ))}
@@ -77,7 +77,7 @@ function ActivityMediaGallery({ media }: { media: Media[] }) {
             <button
               key={item.id}
               onClick={() => setActiveMedia(item)}
-              className="relative flex-shrink-0 w-28 h-20 rounded-xl overflow-hidden border border-line bg-chip/40 hover:scale-[1.03] active:scale-[0.98] transition-all focus:outline-none focus:ring-1 focus:ring-lagoon snap-start cursor-pointer shadow-sm group"
+              className="relative flex-shrink-0 w-28 h-20 rounded-xl overflow-hidden border border-line bg-chip/40 hover:scale-103 active:scale-98 transition-all focus:outline-none focus:ring-1 focus:ring-lagoon snap-start cursor-pointer shadow-sm group"
             >
               {isVideo ? (
                 <div className="w-full h-full relative">
@@ -90,7 +90,7 @@ function ActivityMediaGallery({ media }: { media: Media[] }) {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
-                  <div className="absolute bottom-1 left-1 bg-black/60 backdrop-blur-sm rounded-sm px-1 py-0.5 text-[7px] text-white flex items-center gap-0.5 font-bold">
+                  <div className="absolute bottom-1 left-1 bg-black/60 backdrop-blur-sm rounded-sm px-1 py-0.5 text-5xs text-white flex items-center gap-0.5 font-bold">
                     <Film className="h-1.5 w-1.5" />
                     <span>PREVIEW</span>
                   </div>
@@ -103,7 +103,7 @@ function ActivityMediaGallery({ media }: { media: Media[] }) {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
-                  <div className="absolute bottom-1 left-1 bg-black/60 backdrop-blur-sm rounded-sm px-1 py-0.5 text-[7px] text-white flex items-center gap-0.5 font-bold">
+                  <div className="absolute bottom-1 left-1 bg-black/60 backdrop-blur-sm rounded-sm px-1 py-0.5 text-5xs text-white flex items-center gap-0.5 font-bold">
                     <ImageIcon className="h-1.5 w-1.5" />
                     <span>VIEW</span>
                   </div>
@@ -128,7 +128,7 @@ function ActivityMediaGallery({ media }: { media: Media[] }) {
           </button>
 
           <div
-            className="relative max-w-4xl max-h-[80vh] w-full flex items-center justify-center"
+            className="relative max-w-4xl max-h-80vh w-full flex items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
             {media.length > 1 && (
@@ -148,13 +148,13 @@ function ActivityMediaGallery({ media }: { media: Media[] }) {
                 autoPlay
                 playsInline
                 loop
-                className="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-2xl border border-white/10"
+                className="max-w-full max-h-75vh object-contain rounded-2xl shadow-2xl border border-white/10"
               />
             ) : (
               <img
                 src={`/uploads/${activeMedia.fileName}`}
                 alt={activeMedia.originalName}
-                className="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-2xl border border-white/10"
+                className="max-w-full max-h-75vh object-contain rounded-2xl shadow-2xl border border-white/10"
               />
             )}
 
@@ -202,7 +202,7 @@ export function CurrentActivityInfo({
 
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-[10px] tracking-widest font-black uppercase text-lagoon">
+      <span className="text-2xs tracking-widest font-black uppercase text-lagoon">
         CURRENT ACTIVITY
       </span>
       <h2 className="m-0 font-display text-xl font-black text-ink">

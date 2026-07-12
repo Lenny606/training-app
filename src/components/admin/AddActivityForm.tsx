@@ -28,7 +28,7 @@ function AddExerciseFields({
   return (
     <>
       <div className="sm:col-span-1">
-        <label className="block text-[10px] font-semibold text-ink-soft uppercase tracking-wider mb-1">
+        <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Sets
         </label>
         <input
@@ -41,7 +41,7 @@ function AddExerciseFields({
       </div>
 
       <div className="sm:col-span-1">
-        <label className="block text-[10px] font-semibold text-ink-soft uppercase tracking-wider mb-1">
+        <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Reps
         </label>
         <input
@@ -54,7 +54,7 @@ function AddExerciseFields({
       </div>
 
       <div className="sm:col-span-2">
-        <label className="block text-[10px] font-semibold text-ink-soft uppercase tracking-wider mb-1">
+        <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Weight
         </label>
         <input
@@ -176,7 +176,7 @@ function CoreFields({
   return (
     <>
       <div className="sm:col-span-2">
-        <label className="block text-[10px] font-semibold text-ink-soft uppercase tracking-wider mb-1">
+        <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Type
         </label>
         <select
@@ -193,7 +193,7 @@ function CoreFields({
       </div>
 
       <div className="sm:col-span-4">
-        <label className="block text-[10px] font-semibold text-ink-soft uppercase tracking-wider mb-1">
+        <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Name
         </label>
         <input
@@ -213,7 +213,7 @@ function CoreFields({
       </div>
 
       <div className="sm:col-span-2">
-        <label className="block text-[10px] font-semibold text-ink-soft uppercase tracking-wider mb-1">
+        <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Seconds
         </label>
         <input
@@ -280,7 +280,7 @@ export function AddActivityForm({ onAddActivity }: AddActivityFormProps) {
           />
         ) : type === 'learning' ? (
           <div className="sm:col-span-4">
-            <label className="block text-[10px] font-semibold text-ink-soft uppercase tracking-wider mb-1">
+            <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
               Description
             </label>
             <input
@@ -298,7 +298,7 @@ export function AddActivityForm({ onAddActivity }: AddActivityFormProps) {
 
       {type === 'exercise' && (
         <div className="border-t border-line/35 pt-3">
-          <label className="block text-[10px] font-semibold text-ink-soft uppercase tracking-wider mb-1">
+          <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
             Activity Media (Images / Videos)
           </label>
           <MediaUpload media={mediaList} onChange={setMediaList} />

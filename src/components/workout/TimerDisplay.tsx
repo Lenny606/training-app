@@ -19,10 +19,10 @@ interface TimerDisplayProps {
 }
 
 const TIMER_PANEL_CLASS =
-  'demo-panel p-6 rounded-[2.5rem] rise-in shadow-[0_22px_50px_color-mix(in_oklab,var(--lagoon)_6%,transparent)] relative overflow-hidden flex flex-col items-center justify-center gap-6'
+  'demo-panel p-6 rounded-4xl rise-in shadow-timer relative overflow-hidden flex flex-col items-center justify-center gap-6'
 
 const TIMER_PANEL_GLOW_CLASS =
-  'pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,color-mix(in_oklab,var(--lagoon)_5%,transparent),transparent_60%)]'
+  'pointer-events-none absolute inset-0 bg-timer-glow'
 
 function EmptyTimerDisplay() {
   return (

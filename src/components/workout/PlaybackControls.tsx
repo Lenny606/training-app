@@ -36,7 +36,7 @@ export function PlaybackControls({
         className={`p-5 rounded-full border flex items-center justify-center shadow-lg transition-all active:scale-95 ${
           isPlaying
             ? 'border-amber-500 bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 dark:text-amber-400'
-            : 'border-lagoon bg-lagoon/10 text-lagoon-deep hover:bg-lagoon/20 shadow-[0_0_15px_color-mix(in_oklab,var(--lagoon)_25%,transparent)]'
+            : 'border-lagoon bg-lagoon/10 text-lagoon-deep hover:bg-lagoon/20 shadow-glow-lagoon-strong'
         }`}
         title={isPlaying ? 'Pause Session' : 'Start Session'}
         aria-label={isPlaying ? 'Pause Session' : 'Start Session'}

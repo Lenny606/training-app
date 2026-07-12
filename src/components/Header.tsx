@@ -84,7 +84,7 @@ export default function Header() {
           {user ? (
             <>
               <span
-                className="hidden md:inline max-w-[16ch] truncate text-xs font-semibold text-ink-soft"
+                className="hidden md:inline max-w-16ch truncate text-xs font-semibold text-ink-soft"
                 title={user.email}
               >
                 {user.email}

@@ -64,13 +64,13 @@ export function ProgressCircle({
           cx="120"
           cy="120"
           r={radius}
-          className="stroke-line fill-none stroke-[8]"
+          className="stroke-line fill-none stroke-8"
         />
         <circle
           cx="120"
           cy="120"
           r={radius}
-          className="fill-none stroke-[8] transition-all duration-1000 ease-linear"
+          className="fill-none stroke-8 transition-all duration-1000 ease-linear"
           stroke={strokeColor}
           strokeWidth="8"
           strokeDasharray={circumference}
@@ -83,7 +83,7 @@ export function ProgressCircle({
       </svg>
 
       <div className="text-center flex flex-col items-center justify-center z-10">
-        <span className="text-[10px] tracking-[0.25em] font-black uppercase text-ink-soft mb-0.5">
+        <span className="text-2xs tracking-widest-plus font-black uppercase text-ink-soft mb-0.5">
           {statusText}
         </span>
 
@@ -91,7 +91,7 @@ export function ProgressCircle({
           {timeText}
         </span>
 
-        <span className="text-[10px] text-ink-soft font-mono mt-1 px-2.5 py-0.5 border border-line bg-chip/40 rounded-full">
+        <span className="text-2xs text-ink-soft font-mono mt-1 px-2.5 py-0.5 border border-line bg-chip/40 rounded-full">
           Step {currentActivityIndex + 1} of {totalActivities}
         </span>
       </div>

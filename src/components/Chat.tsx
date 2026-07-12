@@ -132,7 +132,7 @@ export default function Chat() {
               ))}
             </select>
           </label>
-          <span className="text-[10px] uppercase tracking-wide text-ink-soft">
+          <span className="text-2xs uppercase tracking-wide text-ink-soft">
             each model keeps its own conversation
           </span>
         </div>
@@ -201,7 +201,7 @@ function ConversationList({
               <span className="block truncate text-xs text-ink">
                 {session.title ?? 'New conversation'}
               </span>
-              <span className="block text-[10px] text-ink-soft">
+              <span className="block text-2xs text-ink-soft">
                 {modelLabel(session.modelId)} ·{' '}
                 {new Date(session.updatedAt).toLocaleDateString()}
               </span>
@@ -341,7 +341,7 @@ function ChatSession({
     <div className="flex flex-col rounded-2xl border border-line bg-chip">
       <div
         ref={scrollRef}
-        className="flex min-h-[50vh] flex-col gap-4 overflow-y-auto p-4"
+        className="flex min-h-50vh flex-col gap-4 overflow-y-auto p-4"
         aria-live="polite"
       >
         {isHydrating && (
@@ -454,7 +454,7 @@ function MessageRow({
         )}
       </div>
       <div
-        className={`flex max-w-[85%] flex-col gap-2 ${isUser ? 'items-end' : 'items-start'}`}
+        className={`flex max-w-85pct flex-col gap-2 ${isUser ? 'items-end' : 'items-start'}`}
       >
         {message.parts.map((part, i) => (
           <MessagePart key={i} part={part} onApprove={onApprove} />
@@ -500,7 +500,7 @@ function MessagePart({
         </span>
         {needsApproval && (
           <div className="flex flex-col gap-2">
-            <pre className="whitespace-pre-wrap rounded bg-header px-2 py-1 text-[11px]">
+            <pre className="whitespace-pre-wrap rounded bg-header px-2 py-1 text-xxs">
               {part.arguments}
             </pre>
             <div className="flex gap-2">
