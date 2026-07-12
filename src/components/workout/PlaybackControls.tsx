@@ -26,6 +26,7 @@ export function PlaybackControls({
         disabled={!canSkipBackward}
         className="p-3 rounded-2xl border border-line bg-chip text-ink-soft hover:text-ink disabled:opacity-30"
         title="Previous Activity"
+        aria-label="Previous Activity"
       >
         <SkipBack className="h-5 w-5" />
       </button>
@@ -38,6 +39,7 @@ export function PlaybackControls({
             : 'border-lagoon bg-lagoon/10 text-lagoon-deep hover:bg-lagoon/20 shadow-[0_0_15px_color-mix(in_oklab,var(--lagoon)_25%,transparent)]'
         }`}
         title={isPlaying ? 'Pause Session' : 'Start Session'}
+        aria-label={isPlaying ? 'Pause Session' : 'Start Session'}
       >
         {isPlaying ? (
           <Pause className="h-8 w-8" />
@@ -50,6 +52,7 @@ export function PlaybackControls({
         onClick={onStop}
         className="p-3 rounded-2xl border border-danger/30 bg-danger/10 text-danger hover:bg-danger/20"
         title="Stop / Reset Workout"
+        aria-label="Stop / Reset Workout"
       >
         <RotateCcw className="h-5 w-5" />
       </button>
@@ -59,6 +62,7 @@ export function PlaybackControls({
         disabled={!canSkipForward}
         className="p-3 rounded-2xl border border-line bg-chip text-ink-soft hover:text-ink disabled:opacity-30"
         title="Next Activity"
+        aria-label="Next Activity"
       >
         <SkipForward className="h-5 w-5" />
       </button>
