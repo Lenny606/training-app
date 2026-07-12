@@ -29,7 +29,6 @@ export const Route = createFileRoute('/api/generate-image')({
             )
           }
 
-          // Construct DALL-E prompt
           const prompt = `A professional, high-quality fitness illustration or photograph demonstrating the exercise: "${name}".${description ? ` Description/Form details: ${description}.` : ''} Clean minimalist gym background, studio lighting, clear form demonstration, no text, aesthetic, centered view.`
 
           // Call OpenAI API
@@ -164,7 +163,7 @@ export const Route = createFileRoute('/api/generate-image')({
               userId: user.id,
               activityId: null, // linked during plan save
               fileName: finalFileName,
-              originalName: `${name.substring(0, 50)} (AI Generated).webp`,
+              originalName,
               mimeType: finalMimeType,
               fileSize: finalFileSize,
               createdAt: new Date(),
@@ -175,7 +174,7 @@ export const Route = createFileRoute('/api/generate-image')({
             JSON.stringify({
               id: mediaId,
               fileName: finalFileName,
-              originalName: `${name} (AI Generated).webp`,
+              originalName,
               mimeType: finalMimeType,
               fileSize: finalFileSize,
             }),
