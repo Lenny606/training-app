@@ -31,54 +31,39 @@ export const Route = createFileRoute('/api/generate-image')({
 
           const prompt = `A professional, high-quality fitness illustration or photograph demonstrating the exercise: "${name}".${description ? ` Description/Form details: ${description}.` : ''} Clean minimalist gym background, studio lighting, clear form demonstration, no text, aesthetic, centered view.`
 
-          // Call OpenAI API
-          let openAiResponse = await fetch(
-            'https://api.openai.com/v1/images/generations',
-            {
+          // GPT image models always return base64 (no URL variant)
+          const requestGeneration = (model: string) =>
+            fetch('https://api.openai.com/v1/images/generations', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${apiKey}`,
               },
               body: JSON.stringify({
-                model: 'dall-e-2',
-                prompt: prompt,
+                model,
+                prompt,
                 n: 1,
-                size: '512x512',
+                size: '1024x1024',
+                quality: 'low',
+                output_format: 'png',
               }),
-            },
-          )
+            })
 
-          // Fallback to DALL-E 3 if DALL-E 2 is not supported or fails
+          let openAiResponse = await requestGeneration('gpt-image-1-mini')
+
           if (!openAiResponse.ok) {
             const errorText = await openAiResponse.clone().text()
             console.warn(
-              '[generate-image] DALL-E 2 call failed, trying DALL-E 3 fallback. Error:',
+              '[generate-image] gpt-image-1-mini call failed, trying gpt-image-1 fallback. Error:',
               errorText,
             )
-
-            openAiResponse = await fetch(
-              'https://api.openai.com/v1/images/generations',
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${apiKey}`,
-                },
-                body: JSON.stringify({
-                  model: 'dall-e-3',
-                  prompt: prompt,
-                  n: 1,
-                  size: '1024x1024',
-                }),
-              },
-            )
+            openAiResponse = await requestGeneration('gpt-image-1')
           }
 
           if (!openAiResponse.ok) {
             const errorText = await openAiResponse.text()
             console.error(
-              '[generate-image] OpenAI API error (both DALL-E 2 and 3 failed):',
+              '[generate-image] OpenAI API error (both gpt-image-1-mini and gpt-image-1 failed):',
               errorText,
             )
             return new Response(`OpenAI generation failed: ${errorText}`, {
@@ -87,10 +72,10 @@ export const Route = createFileRoute('/api/generate-image')({
           }
 
           const responseData = await openAiResponse.json()
-          const imageUrl = responseData.data?.[0]?.url
-          if (!imageUrl) {
+          const b64Image = responseData.data?.[0]?.b64_json
+          if (!b64Image) {
             console.error(
-              '[generate-image] OpenAI response missing image URL:',
+              '[generate-image] OpenAI response missing image data:',
               responseData,
             )
             return new Response('Invalid response from AI generator.', {
@@ -98,20 +83,7 @@ export const Route = createFileRoute('/api/generate-image')({
             })
           }
 
-          // Download image
-          const imageResponse = await fetch(imageUrl)
-          if (!imageResponse.ok) {
-            console.error(
-              `[generate-image] Failed to download image from ${imageUrl}`,
-            )
-            return new Response(
-              'Failed to download generated image from AI service.',
-              { status: 502 },
-            )
-          }
-
-          const arrayBuffer = await imageResponse.arrayBuffer()
-          const buffer = Buffer.from(arrayBuffer)
+          const buffer = Buffer.from(b64Image, 'base64')
 
           const fs = await import('node:fs')
           const path = await import('node:path')
@@ -153,6 +125,8 @@ export const Route = createFileRoute('/api/generate-image')({
 
           const filePath = path.join(uploadDir, finalFileName)
           await fs.promises.writeFile(filePath, finalBuffer)
+
+          const originalName = `${name.substring(0, 50)} (AI Generated).${finalMimeType === 'image/png' ? 'png' : 'webp'}`
 
           const db = getDb()
           const mediaId = createId('media')

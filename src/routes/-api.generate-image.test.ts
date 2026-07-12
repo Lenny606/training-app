@@ -139,8 +139,6 @@ describe('POST /api/generate-image', () => {
     // Check fetch parameters for the OpenAI call
     expect(fetchMock).toHaveBeenCalledTimes(1)
     const openAiCallArgs = fetchMock.mock.calls[0]
-    expect(openAiCallArgs[0]).toBe('https://api.openai.com/v1/images/generations')
-
     expect(openAiCallArgs[0]).toBe(
       'https://api.openai.com/v1/images/generations',
     )
@@ -211,14 +209,14 @@ describe('POST /api/generate-image', () => {
     const response = await postHandler({ request })
     expect(response.status).toBe(502)
     expect(await response.text()).toContain(
-      'OpenAI generation failed: DALL-E 3 failed',
+      'OpenAI generation failed: gpt-image-1 failed',
     )
   })
 
   it('successfully falls back to gpt-image-1 if gpt-image-1-mini fails', async () => {
     const fetchMock = vi.spyOn(globalThis, 'fetch')
 
-    // First call: DALL-E 2 (fails)
+    // First call: gpt-image-1-mini (fails)
     fetchMock.mockResolvedValueOnce({
       ok: false,
       clone: () => ({
@@ -231,9 +229,7 @@ describe('POST /api/generate-image', () => {
     fetchMock.mockResolvedValueOnce({
       ok: true,
       json: async () => ({
-        data: [
-          { url: 'https://fake-openai-url.com/generated-image-dalle3.png' },
-        ],
+        data: [{ b64_json: pngBuffer.toString('base64') }],
       }),
     } as Response)
 
@@ -248,12 +244,12 @@ describe('POST /api/generate-image', () => {
     const data = await response.json()
     expect(data.originalName).toBe('Pushups (AI Generated).webp')
 
-    // Verify DALL-E 3 details were sent
-    expect(fetchMock).toHaveBeenCalledTimes(3)
-    const dalle3Call = fetchMock.mock.calls[1]
-    expect(dalle3Call[0]).toBe('https://api.openai.com/v1/images/generations')
+    // Verify fallback model details were sent
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    const fallbackCall = fetchMock.mock.calls[1]
+    expect(fallbackCall[0]).toBe('https://api.openai.com/v1/images/generations')
 
-    const requestOptions = dalle3Call[1] as RequestInit
+    const requestOptions = fallbackCall[1] as RequestInit
     const bodyObj = JSON.parse(requestOptions.body as string)
     expect(bodyObj.model).toBe('gpt-image-1')
     expect(bodyObj.size).toBe('1024x1024')
