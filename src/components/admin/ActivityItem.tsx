@@ -142,6 +142,7 @@ function ActivityActions({
         disabled={isFirst}
         className="demo-button demo-button-icon border-line bg-chip text-ink-soft hover:text-ink disabled:opacity-30 disabled:hover:text-ink-soft"
         title="Move Activity Up"
+        aria-label="Move Activity Up"
       >
         <ArrowUp className="h-3.5 w-3.5" />
       </button>
@@ -150,6 +151,7 @@ function ActivityActions({
         disabled={isLast}
         className="demo-button demo-button-icon border-line bg-chip text-ink-soft hover:text-ink disabled:opacity-30 disabled:hover:text-ink-soft"
         title="Move Activity Down"
+        aria-label="Move Activity Down"
       >
         <ArrowDown className="h-3.5 w-3.5" />
       </button>
@@ -157,6 +159,7 @@ function ActivityActions({
         onClick={() => onDeleteActivity(index)}
         className="demo-button demo-button-icon ml-1 border-danger/30 bg-danger/10 text-danger hover:bg-danger/20"
         title="Delete Activity"
+        aria-label="Delete Activity"
       >
         <Trash2 className="h-3.5 w-3.5" />
       </button>

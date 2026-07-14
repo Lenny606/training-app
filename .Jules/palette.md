@@ -1,3 +1,3 @@
-## 2026-07-12 - Add aria-labels to PlaybackControls buttons
-**Learning:** Icon-only playback controls rely solely on title attributes which aren't fully robust for screen readers. Added aria-labels mirroring the titles for Play/Pause, Stop, Previous, and Next buttons.
-**Action:** Always include aria-label or accessible text inside icon-only buttons to ensure they are screen-reader friendly.
+## 2024-05-24 - Accessibility Labels for Icon Buttons
+**Learning:** Found several icon-only buttons across admin components (`ActivityItem`, `PlansSidebar`, `MediaUpload`) that relied solely on `title` for tooltip display but lacked explicit screen-reader `aria-label`s.
+**Action:** Always ensure that icon-only interactive elements contain an explicit `aria-label` in addition to or instead of just a `title` attribute, ensuring proper accessibility for assistive technology users navigating lists or forms.
