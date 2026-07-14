@@ -301,6 +301,7 @@ export function MediaUpload({
                   onClick={() => handleRemoveMedia(item.id)}
                   className="absolute top-1 right-1 p-1 rounded-full bg-black/60 text-white opacity-90 sm:opacity-0 group-hover:opacity-100 hover:bg-danger hover:scale-110 transition-all duration-150 cursor-pointer"
                   title="Remove media"
+                  aria-label="Remove media"
                 >
                   <X className="h-3 w-3" />
                 </button>
