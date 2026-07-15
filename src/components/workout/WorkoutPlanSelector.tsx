@@ -33,6 +33,7 @@ export function WorkoutPlanSelector({
               : 'border-transparent bg-transparent text-ink-soft'
           }`}
           title={soundEnabled ? 'Mute Beeps' : 'Enable Beeps'}
+          aria-label={soundEnabled ? 'Mute Beeps' : 'Enable Beeps'}
         >
           {soundEnabled ? (
             <Volume2 className="h-4 w-4" />
@@ -59,6 +60,7 @@ export function WorkoutPlanSelector({
           to="/admin"
           className="demo-button demo-button-secondary p-2.5 rounded-xl border border-line hover:bg-lagoon/10 text-ink flex items-center justify-center"
           title="Configure Plans"
+          aria-label="Configure Plans"
         >
           <Settings className="h-4 w-4" />
         </Link>
