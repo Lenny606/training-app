@@ -6,6 +6,7 @@ import { seedDefaultPlansForOwner } from '../db/seed'
 import { DEFAULT_PLANS } from '../domain/plans'
 import { SqlitePlanRepository } from '../repositories/sqlite-plan-repository'
 import { SqliteUserRepository } from '../repositories/sqlite-user-repository'
+import { WorkoutLogRepository } from '../repositories/workout-log-repository'
 import { buildTools } from './tools'
 
 // Validate `input` the same way @tanstack/ai's executor does (standard-schema
@@ -56,7 +57,7 @@ describe('AI plan tools', () => {
     ownerId = await makeOwner(db, 'owner@example.com')
     seedDefaultPlansForOwner(ownerId, db)
     repo = new SqlitePlanRepository(db)
-    tools = buildTools(ownerId, repo)
+    tools = buildTools(ownerId, repo, new WorkoutLogRepository(db))
   })
 
   async function firstPlanId(): Promise<string> {
@@ -278,6 +279,73 @@ describe('AI plan tools', () => {
       // A scoped delete is a no-op against a non-owned plan; the owner keeps it.
       await runAs('delete_plan', { planId: victimPlanId })
       expect(await repo.getById(victimPlanId, ownerId)).not.toBeNull()
+    })
+  })
+
+  describe('get_plan_progress', () => {
+    it('reports not found for a missing plan', async () => {
+      const result = await run('get_plan_progress', { planId: 'nope' })
+      expect(result.found).toBe(false)
+      expect(result.exercises).toHaveLength(0)
+    })
+
+    it('returns plan targets with empty history when nothing is logged', async () => {
+      const id = await firstPlanId()
+      const result = await run('get_plan_progress', { planId: id })
+      expect(result.found).toBe(true)
+      expect(result.planName).toBe(DEFAULT_PLANS[0].name)
+      const exerciseCount = DEFAULT_PLANS[0].activities.filter(
+        (a) => a.type === 'exercise',
+      ).length
+      expect(result.exercises).toHaveLength(exerciseCount)
+      expect(result.exercises[0].recent).toHaveLength(0)
+    })
+
+    it('pairs plan targets with recent logged performances', async () => {
+      const { plan } = await run('create_plan', {
+        name: 'Push',
+        daysPerWeek: 2,
+        activities: [
+          {
+            name: 'Bench',
+            duration: 120,
+            type: 'exercise',
+            sets: 3,
+            reps: '8',
+            weight: '60kg',
+          },
+          { name: 'Rest', duration: 60, type: 'rest' },
+        ],
+      })
+      await run('log_workout', {
+        planId: plan.id,
+        durationSeconds: 1800,
+        completedAt: new Date().toISOString(),
+        exercises: [
+          { activityName: 'Bench', setsCompleted: 3, reps: '8', weight: '60kg' },
+        ],
+      })
+
+      const result = await run('get_plan_progress', { planId: plan.id })
+      expect(result.found).toBe(true)
+      // Rest activities are excluded
+      expect(result.exercises).toHaveLength(1)
+      const bench = result.exercises[0]
+      expect(bench.activityName).toBe('Bench')
+      expect(bench.target).toEqual({ sets: 3, reps: '8', weight: '60kg' })
+      expect(bench.recent).toHaveLength(1)
+      expect(bench.recent[0].weight).toBe('60kg')
+    })
+
+    it('accepts explicit null for perExerciseLimit (LLM-style arguments)', async () => {
+      const id = await firstPlanId()
+      const tool = tools.find((t) => t.name === 'get_plan_progress')
+      const input = await parseInput(tool, {
+        planId: id,
+        perExerciseLimit: null,
+      })
+      const result = await tool.execute(input)
+      expect(result.found).toBe(true)
     })
   })
 

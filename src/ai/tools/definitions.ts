@@ -87,9 +87,10 @@ export const summarizePlanDef = toolDefinition({
 export const createPlanDef = toolDefinition({
   name: 'create_plan',
   description:
-    'Create a new training plan for the user. Provide name, daysPerWeek (1-7), and an ordered activities array (each: required name, type exercise|rest; optional duration seconds (default 120), sets/reps/weight).',
+    'Create a new training plan for the user. Provide name, daysPerWeek (1-7), and an ordered activities array (each: required name, type exercise|rest; optional duration seconds (default 120), sets/reps/weight). The app shows the user a preview of the proposed plan to approve or reject before it is saved — build the complete plan in one call rather than creating an empty plan and adding activities.',
   inputSchema: newPlanInput,
   outputSchema: planResult,
+  needsApproval: true,
 })
 
 export const updatePlanDef = toolDefinition({
@@ -223,6 +224,42 @@ export const getWorkoutHistoryDef = toolDefinition({
     recentCount: z.number().meta({
       description: 'Number of sessions in the last 7 days.',
     }),
+  }),
+})
+
+export const getPlanProgressDef = toolDefinition({
+  name: 'get_plan_progress',
+  description:
+    "For every exercise in a plan, return the plan's target (sets/reps/weight) alongside the most recent logged performances. Use this before a session to suggest progressive overload, e.g. \"last time you did 3×8 @ 60kg — try 3×10 or 62.5kg today.\"",
+  inputSchema: z.object({
+    planId: z.string(),
+    perExerciseLimit: optionalish(
+      z.number().int().positive().max(10).meta({
+        description: 'Recent log entries to return per exercise (default 3).',
+      }),
+    ),
+  }),
+  outputSchema: z.object({
+    found: z.boolean(),
+    planName: z.string().nullable(),
+    exercises: z.array(
+      z.object({
+        activityName: z.string(),
+        target: z.object({
+          sets: z.number().nullable(),
+          reps: z.string().nullable(),
+          weight: z.string().nullable(),
+        }),
+        recent: z.array(
+          z.object({
+            completedAt: z.string(),
+            setsCompleted: z.number().nullable(),
+            reps: z.string().nullable(),
+            weight: z.string().nullable(),
+          }),
+        ),
+      }),
+    ),
   }),
 })
 

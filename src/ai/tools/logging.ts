@@ -6,6 +6,7 @@ import {
   logWorkoutDef,
   getWorkoutHistoryDef,
   getExerciseProgressDef,
+  getPlanProgressDef,
 } from './definitions'
 
 /**
@@ -13,8 +14,11 @@ import {
  * Every call is scoped to `userId` — the model cannot read or write
  * another user's history.
  */
-export function loggingTools(userId: string, repo: PlanRepository) {
-  const logRepo = new WorkoutLogRepository()
+export function loggingTools(
+  userId: string,
+  repo: PlanRepository,
+  logRepo: WorkoutLogRepository = new WorkoutLogRepository(),
+) {
 
   // -------------------------------------------------------------------------
   // log_workout — persist a completed session
@@ -100,5 +104,36 @@ export function loggingTools(userId: string, repo: PlanRepository) {
     }
   })
 
-  return [logWorkout, getWorkoutHistory, getExerciseProgress]
+  // -------------------------------------------------------------------------
+  // get_plan_progress — plan targets vs. recent actuals, per exercise
+  // -------------------------------------------------------------------------
+  const getPlanProgress = getPlanProgressDef.server(async (input) => {
+    const plan = await repo.getById(input.planId, userId)
+    if (!plan) return { found: false, planName: null, exercises: [] }
+
+    const limit = input.perExerciseLimit ?? 3
+    const exercises = plan.activities
+      .filter((a) => a.type === 'exercise')
+      .map((a) => {
+        const progress = logRepo.getExerciseProgress(userId, a.name, limit)
+        return {
+          activityName: a.name,
+          target: {
+            sets: a.sets ?? null,
+            reps: a.reps ?? null,
+            weight: a.weight ?? null,
+          },
+          recent: progress.entries.map((e) => ({
+            completedAt: e.completedAt.toISOString(),
+            setsCompleted: e.setsCompleted,
+            reps: e.reps,
+            weight: e.weight,
+          })),
+        }
+      })
+
+    return { found: true, planName: plan.name, exercises }
+  })
+
+  return [logWorkout, getWorkoutHistory, getExerciseProgress, getPlanProgress]
 }

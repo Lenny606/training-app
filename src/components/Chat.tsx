@@ -429,8 +429,9 @@ function EmptyState() {
       <Bot className="mx-auto mb-2 h-6 w-6 text-lagoon" />
       <p className="font-semibold text-ink">Your training assistant</p>
       <p className="mt-1">
-        Try "list my plans", "summarize my push day", "add a 90s plank to my
-        HIIT plan", or "start my deadlift session".
+        Try "build me a 3-day home plan without equipment", "what should I lift
+        today?", "add a 90s plank to my HIIT plan", or "start my deadlift
+        session".
       </p>
     </div>
   )
@@ -500,9 +501,13 @@ function MessagePart({
         </span>
         {needsApproval && (
           <div className="flex flex-col gap-2">
-            <pre className="whitespace-pre-wrap rounded bg-header px-2 py-1 text-xxs">
-              {part.arguments}
-            </pre>
+            {part.name === 'create_plan' ? (
+              <PlanPreview args={part.arguments} />
+            ) : (
+              <pre className="whitespace-pre-wrap rounded bg-header px-2 py-1 text-xxs">
+                {part.arguments}
+              </pre>
+            )}
             <div className="flex gap-2">
               <button
                 type="button"
@@ -533,8 +538,92 @@ function MessagePart({
 }
 
 function toolLabel(name: string, state: string): string {
-  if (state === 'approval-requested') return `${name} needs approval`
+  if (state === 'approval-requested')
+    return name === 'create_plan'
+      ? 'proposed plan — approve to save'
+      : `${name} needs approval`
   if (state === 'complete') return `ran ${name}`
   if (state === 'error') return `${name} failed`
   return `running ${name}…`
+}
+
+// ---------------------------------------------------------------------------
+// PlanPreview — structured preview of a create_plan proposal awaiting approval
+// ---------------------------------------------------------------------------
+
+interface ProposedActivity {
+  name: string
+  type: 'exercise' | 'rest' | 'learning'
+  duration?: number | null
+  sets?: number | null
+  reps?: string | null
+  weight?: string | null
+}
+
+function formatDuration(seconds: number): string {
+  if (seconds < 60) return `${seconds}s`
+  const m = Math.floor(seconds / 60)
+  const s = seconds % 60
+  return s === 0 ? `${m}min` : `${m}min ${s}s`
+}
+
+function PlanPreview({ args }: { args: string }) {
+  let plan: {
+    name?: string
+    description?: string | null
+    daysPerWeek?: number
+    activities?: ProposedActivity[]
+  }
+  try {
+    plan = JSON.parse(args)
+  } catch {
+    // Malformed arguments — fall back to the raw payload
+    return (
+      <pre className="whitespace-pre-wrap rounded bg-header px-2 py-1 text-xxs">
+        {args}
+      </pre>
+    )
+  }
+
+  const activities = plan.activities ?? []
+  const totalSeconds = activities.reduce((s, a) => s + (a.duration ?? 120), 0)
+
+  return (
+    <div className="flex flex-col gap-2 rounded-lg bg-header p-3">
+      <div>
+        <p className="text-sm font-semibold text-ink">{plan.name}</p>
+        <p className="text-2xs text-ink-soft">
+          {plan.daysPerWeek}×/week · {activities.length}{' '}
+          {activities.length === 1 ? 'activity' : 'activities'} ·{' '}
+          {formatDuration(totalSeconds)} total
+        </p>
+        {plan.description && (
+          <p className="mt-1 text-xs text-ink-soft">{plan.description}</p>
+        )}
+      </div>
+      <ol className="flex flex-col gap-1">
+        {activities.map((a, i) => (
+          <li
+            key={i}
+            className={`flex items-baseline justify-between gap-2 rounded px-2 py-1 ${
+              a.type === 'rest' ? 'text-ink-soft' : 'bg-chip text-ink'
+            }`}
+          >
+            <span className="min-w-0 truncate">
+              {a.type === 'rest' ? '· rest' : a.name}
+              {a.sets != null && a.reps != null && (
+                <span className="ml-1.5 text-ink-soft">
+                  {a.sets}×{a.reps}
+                  {a.weight ? ` @ ${a.weight}` : ''}
+                </span>
+              )}
+            </span>
+            <span className="shrink-0 tabular-nums text-2xs text-ink-soft">
+              {formatDuration(a.duration ?? 120)}
+            </span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  )
 }
