@@ -156,7 +156,10 @@ function ActivityActions({
         <ArrowDown className="h-3.5 w-3.5" />
       </button>
       <button
-        onClick={() => onDeleteActivity(index)}
+        onClick={() => {
+          if (window.confirm('Are you sure you want to delete this activity?'))
+            onDeleteActivity(index)
+        }}
         className="demo-button demo-button-icon ml-1 border-danger/30 bg-danger/10 text-danger hover:bg-danger/20"
         title="Delete Activity"
         aria-label="Delete Activity"

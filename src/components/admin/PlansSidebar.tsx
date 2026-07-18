@@ -106,7 +106,12 @@ function SidebarItem({
         <button
           onClick={(e) => {
             e.stopPropagation()
-            onDelete(plan.id)
+            if (
+              window.confirm(
+                `Are you sure you want to delete the program "${plan.name}"?`,
+              )
+            )
+              onDelete(plan.id)
           }}
           className="demo-button demo-button-icon border-danger/30 bg-danger/10 text-danger hover:bg-danger/20"
           title="Delete Plan"

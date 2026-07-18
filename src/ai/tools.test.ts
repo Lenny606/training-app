@@ -322,7 +322,12 @@ describe('AI plan tools', () => {
         durationSeconds: 1800,
         completedAt: new Date().toISOString(),
         exercises: [
-          { activityName: 'Bench', setsCompleted: 3, reps: '8', weight: '60kg' },
+          {
+            activityName: 'Bench',
+            setsCompleted: 3,
+            reps: '8',
+            weight: '60kg',
+          },
         ],
       })
 
