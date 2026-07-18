@@ -208,7 +208,14 @@ function ConversationList({
             </button>
             <button
               type="button"
-              onClick={() => onDelete(session.id)}
+              onClick={() => {
+                if (
+                  window.confirm(
+                    'Are you sure you want to delete this conversation?',
+                  )
+                )
+                  onDelete(session.id)
+              }}
               title="Delete conversation"
               aria-label={`Delete conversation ${session.title ?? ''}`.trim()}
               className="shrink-0 rounded-lg p-1.5 text-ink-soft opacity-0 transition-opacity hover:text-danger focus-visible:opacity-100 group-hover:opacity-100"

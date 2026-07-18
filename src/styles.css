@@ -8,9 +8,9 @@
 
   /* Custom font sizes */
   --font-size-xxs: 0.6875rem; /* 11px */
-  --font-size-2xs: 0.625rem;  /* 10px */
+  --font-size-2xs: 0.625rem; /* 10px */
   --font-size-3xs: 0.5625rem; /* 9px */
-  --font-size-4xs: 0.5rem;    /* 8px */
+  --font-size-4xs: 0.5rem; /* 8px */
   --font-size-5xs: 0.4375rem; /* 7px */
 
   /* Custom radii */
@@ -32,14 +32,21 @@
   --spacing-640px: 640px;
 
   /* Custom shadows */
-  --shadow-glow-lagoon: 0 0 12px color-mix(in oklab, var(--lagoon) 25%, transparent);
-  --shadow-glow-lagoon-soft: 0 0 14px color-mix(in oklab, var(--lagoon) 12%, transparent);
-  --shadow-glow-lagoon-strong: 0 0 15px color-mix(in oklab, var(--lagoon) 25%, transparent);
+  --shadow-glow-lagoon: 0 0 12px
+    color-mix(in oklab, var(--lagoon) 25%, transparent);
+  --shadow-glow-lagoon-soft: 0 0 14px
+    color-mix(in oklab, var(--lagoon) 12%, transparent);
+  --shadow-glow-lagoon-strong: 0 0 15px
+    color-mix(in oklab, var(--lagoon) 25%, transparent);
   --shadow-timer: 0 22px 50px color-mix(in oklab, var(--lagoon) 6%, transparent);
   --shadow-toggle: 0 8px 22px rgba(30, 90, 72, 0.08);
 
   /* Custom backgrounds */
-  --background-image-timer-glow: radial-gradient(circle at center, color-mix(in oklab, var(--lagoon) 5%, transparent), transparent 60%);
+  --background-image-timer-glow: radial-gradient(
+    circle at center,
+    color-mix(in oklab, var(--lagoon) 5%, transparent),
+    transparent 60%
+  );
 
   /* Custom scales */
   --scale-98: 0.98;
@@ -204,7 +211,11 @@ body::before {
       var(--bg-gradient-radial-c),
       transparent 42%
     ),
-    radial-gradient(circle at 42% 82%, var(--bg-gradient-radial-d), transparent 36%);
+    radial-gradient(
+      circle at 42% 82%,
+      var(--bg-gradient-radial-d),
+      transparent 36%
+    );
 }
 
 body::after {

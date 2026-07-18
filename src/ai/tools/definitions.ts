@@ -230,7 +230,7 @@ export const getWorkoutHistoryDef = toolDefinition({
 export const getPlanProgressDef = toolDefinition({
   name: 'get_plan_progress',
   description:
-    "For every exercise in a plan, return the plan's target (sets/reps/weight) alongside the most recent logged performances. Use this before a session to suggest progressive overload, e.g. \"last time you did 3×8 @ 60kg — try 3×10 or 62.5kg today.\"",
+    'For every exercise in a plan, return the plan\'s target (sets/reps/weight) alongside the most recent logged performances. Use this before a session to suggest progressive overload, e.g. "last time you did 3×8 @ 60kg — try 3×10 or 62.5kg today."',
   inputSchema: z.object({
     planId: z.string(),
     perExerciseLimit: optionalish(

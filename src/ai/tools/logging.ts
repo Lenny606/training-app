@@ -19,7 +19,6 @@ export function loggingTools(
   repo: PlanRepository,
   logRepo: WorkoutLogRepository = new WorkoutLogRepository(),
 ) {
-
   // -------------------------------------------------------------------------
   // log_workout — persist a completed session
   // -------------------------------------------------------------------------
