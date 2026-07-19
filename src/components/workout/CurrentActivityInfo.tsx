@@ -78,6 +78,7 @@ function ActivityMediaGallery({ media }: { media: Media[] }) {
               key={item.id}
               onClick={() => setActiveMedia(item)}
               className="relative flex-shrink-0 w-28 h-20 rounded-xl overflow-hidden border border-line bg-chip/40 hover:scale-103 active:scale-98 transition-all focus:outline-none focus:ring-1 focus:ring-lagoon snap-start cursor-pointer shadow-sm group"
+              aria-label={isVideo ? `Preview video ${item.originalName}` : `View image ${item.originalName}`}
             >
               {isVideo ? (
                 <div className="w-full h-full relative">
