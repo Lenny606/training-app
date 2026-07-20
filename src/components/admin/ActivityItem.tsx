@@ -64,6 +64,7 @@ function NumericField({
         onBlur={handleBlur}
         className="demo-input py-1.5 pl-2.5 pr-6 text-xs text-right font-mono"
         placeholder={placeholder}
+        aria-label={placeholder}
       />
       <span className="absolute right-2 top-2 text-3xs text-ink-soft font-mono">
         {unit}
@@ -105,6 +106,7 @@ function ExerciseFields({
           onChange={(e) => onActivityChange(index, 'reps', e.target.value)}
           className="demo-input py-1.5 px-2 text-xs text-center font-mono"
           placeholder="Reps"
+          aria-label="Reps"
         />
       </div>
       <div className="col-span-12 sm:col-span-2">
@@ -114,6 +116,7 @@ function ExerciseFields({
           onChange={(e) => onActivityChange(index, 'weight', e.target.value)}
           className="demo-input py-1.5 px-2 text-xs text-center font-mono"
           placeholder="Weight"
+          aria-label="Weight"
         />
       </div>
     </>
@@ -222,6 +225,7 @@ function ActivityInputs({
           onChange={(e) => onActivityChange(index, 'name', e.target.value)}
           className="demo-input py-1.5 px-2.5 text-xs font-semibold"
           placeholder="Activity / Rest Name"
+          aria-label="Activity Name"
         />
       </div>
 
@@ -245,6 +249,7 @@ function ActivityInputs({
             }
             className="demo-input py-1.5 px-2.5 text-xs"
             placeholder="Instruction / learning details"
+            aria-label="Instruction details"
           />
         </div>
       ) : !isRest ? (

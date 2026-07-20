@@ -18,6 +18,7 @@ export function PlanMetaForm({ plan, onChange }: PlanMetaFormProps) {
           onChange={(e) => onChange('name', e.target.value)}
           className="demo-input font-display font-medium text-sm"
           placeholder="e.g. Strength Training A"
+          aria-label="Program Name"
         />
       </div>
       <div>
@@ -33,6 +34,7 @@ export function PlanMetaForm({ plan, onChange }: PlanMetaFormProps) {
             onChange('daysPerWeek', Math.max(1, parseInt(e.target.value) || 1))
           }
           className="demo-input text-sm"
+          aria-label="Target Days per Week"
         />
       </div>
       <div className="sm:col-span-3">
