@@ -37,6 +37,7 @@ function AddExerciseFields({
           onChange={(e) => setSets(e.target.value)}
           className="demo-input py-1.5 text-xs text-right font-mono"
           placeholder="Sets"
+          aria-label="Sets"
         />
       </div>
 
@@ -50,6 +51,7 @@ function AddExerciseFields({
           onChange={(e) => setReps(e.target.value)}
           placeholder="e.g. 12"
           className="demo-input py-1.5 text-xs text-center font-mono"
+          aria-label="Reps"
         />
       </div>
 
@@ -63,6 +65,7 @@ function AddExerciseFields({
           onChange={(e) => setWeight(e.target.value)}
           placeholder="e.g. 20 kg"
           className="demo-input py-1.5 text-xs text-center font-mono"
+          aria-label="Weight"
         />
       </div>
     </>
