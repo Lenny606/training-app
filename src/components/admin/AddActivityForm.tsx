@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useId } from 'react'
 import { Plus } from 'lucide-react'
 import { DEFAULT_ACTIVITY_DURATION } from '../../domain/plans'
 import type { Activity, Media } from '../../domain/plans'
@@ -25,13 +25,16 @@ function AddExerciseFields({
   setReps,
   setWeight,
 }: AddExerciseFieldsProps) {
+  const formId = useId()
+
   return (
     <>
       <div className="sm:col-span-1">
-        <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+        <label htmlFor={`${formId}-sets`} className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Sets
         </label>
         <input
+          id={`${formId}-sets`}
           type="number"
           value={sets}
           onChange={(e) => setSets(e.target.value)}
@@ -42,10 +45,11 @@ function AddExerciseFields({
       </div>
 
       <div className="sm:col-span-1">
-        <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+        <label htmlFor={`${formId}-reps`} className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Reps
         </label>
         <input
+          id={`${formId}-reps`}
           type="text"
           value={reps}
           onChange={(e) => setReps(e.target.value)}
@@ -56,10 +60,11 @@ function AddExerciseFields({
       </div>
 
       <div className="sm:col-span-2">
-        <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+        <label htmlFor={`${formId}-weight`} className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Weight
         </label>
         <input
+          id={`${formId}-weight`}
           type="text"
           value={weight}
           onChange={(e) => setWeight(e.target.value)}
@@ -176,13 +181,16 @@ function CoreFields({
   setDuration,
   handleTypeChange,
 }: CoreFieldsProps) {
+  const formId = useId()
+
   return (
     <>
       <div className="sm:col-span-2">
-        <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+        <label htmlFor={`${formId}-type`} className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Type
         </label>
         <select
+          id={`${formId}-type`}
           value={type}
           onChange={(e) =>
             handleTypeChange(e.target.value as 'exercise' | 'rest' | 'learning')
@@ -196,10 +204,11 @@ function CoreFields({
       </div>
 
       <div className="sm:col-span-4">
-        <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+        <label htmlFor={`${formId}-name`} className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Name
         </label>
         <input
+          id={`${formId}-name`}
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -216,10 +225,11 @@ function CoreFields({
       </div>
 
       <div className="sm:col-span-2">
-        <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+        <label htmlFor={`${formId}-duration`} className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Seconds
         </label>
         <input
+          id={`${formId}-duration`}
           type="number"
           value={duration}
           onChange={(e) => setDuration(e.target.value)}
@@ -301,9 +311,9 @@ export function AddActivityForm({ onAddActivity }: AddActivityFormProps) {
 
       {type === 'exercise' && (
         <div className="border-t border-line/35 pt-3">
-          <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+          <span className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
             Activity Media (Images / Videos)
-          </label>
+          </span>
           <MediaUpload media={mediaList} onChange={setMediaList} />
         </div>
       )}
