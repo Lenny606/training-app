@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useId } from 'react'
 import type { FormEvent } from 'react'
 import { Link } from '@tanstack/react-router'
 
@@ -22,6 +22,8 @@ export function AuthForm({
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const emailId = useId()
+  const passwordId = useId()
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -51,9 +53,12 @@ export function AuthForm({
           className="flex flex-col gap-4"
           noValidate
         >
-          <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
-            Email
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor={emailId} className="text-sm font-semibold text-ink-soft">
+              Email
+            </label>
             <input
+              id={emailId}
               type="email"
               autoComplete="email"
               required
@@ -61,11 +66,14 @@ export function AuthForm({
               onChange={(e) => setEmail(e.target.value)}
               className="demo-input text-sm"
             />
-          </label>
+          </div>
 
-          <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
-            Password
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor={passwordId} className="text-sm font-semibold text-ink-soft">
+              Password
+            </label>
             <input
+              id={passwordId}
               type="password"
               autoComplete={
                 submitLabel === 'Create account'
@@ -82,7 +90,7 @@ export function AuthForm({
                 {passwordHint}
               </span>
             )}
-          </label>
+          </div>
 
           {error && (
             <p
