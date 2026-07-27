@@ -26,9 +26,9 @@ function AddExerciseFields({
   setWeight,
 }: AddExerciseFieldsProps) {
   return (
-    <>
-      <div className="sm:col-span-1">
-        <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+    <div className="grid grid-cols-12 gap-3 w-full">
+      <div className="col-span-4">
+        <label className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Sets
         </label>
         <input
@@ -41,8 +41,8 @@ function AddExerciseFields({
         />
       </div>
 
-      <div className="sm:col-span-1">
-        <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+      <div className="col-span-4">
+        <label className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Reps
         </label>
         <input
@@ -55,8 +55,8 @@ function AddExerciseFields({
         />
       </div>
 
-      <div className="sm:col-span-2">
-        <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+      <div className="col-span-4">
+        <label className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Weight
         </label>
         <input
@@ -68,7 +68,7 @@ function AddExerciseFields({
           aria-label="Weight"
         />
       </div>
-    </>
+    </div>
   )
 }
 
@@ -177,9 +177,9 @@ function CoreFields({
   handleTypeChange,
 }: CoreFieldsProps) {
   return (
-    <>
-      <div className="sm:col-span-2">
-        <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+    <div className="grid grid-cols-12 gap-3 w-full">
+      <div className="col-span-12 sm:col-span-3">
+        <label className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Type
         </label>
         <select
@@ -195,8 +195,8 @@ function CoreFields({
         </select>
       </div>
 
-      <div className="sm:col-span-4">
-        <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+      <div className="col-span-8 sm:col-span-6">
+        <label className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Name
         </label>
         <input
@@ -215,8 +215,8 @@ function CoreFields({
         />
       </div>
 
-      <div className="sm:col-span-2">
-        <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+      <div className="col-span-4 sm:col-span-3">
+        <label className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Seconds
         </label>
         <input
@@ -227,7 +227,7 @@ function CoreFields({
           placeholder={`${DEFAULT_ACTIVITY_DURATION}`}
         />
       </div>
-    </>
+    </div>
   )
 }
 
@@ -262,46 +262,44 @@ export function AddActivityForm({ onAddActivity }: AddActivityFormProps) {
         Add Activity
       </h4>
 
-      <div className="grid gap-3 grid-cols-1 sm:grid-cols-12 items-end">
-        <CoreFields
-          type={type}
-          name={name}
-          duration={duration}
-          setName={setName}
-          setDuration={setDuration}
-          handleTypeChange={handleTypeChange}
-        />
+      {/* Line 1: Type, Name, Seconds */}
+      <CoreFields
+        type={type}
+        name={name}
+        duration={duration}
+        setName={setName}
+        setDuration={setDuration}
+        handleTypeChange={handleTypeChange}
+      />
 
-        {type === 'exercise' ? (
-          <AddExerciseFields
-            sets={sets}
-            reps={reps}
-            weight={weight}
-            setSets={setSets}
-            setReps={setReps}
-            setWeight={setWeight}
+      {/* Line 2: Exercise or Learning specific fields */}
+      {type === 'exercise' ? (
+        <AddExerciseFields
+          sets={sets}
+          reps={reps}
+          weight={weight}
+          setSets={setSets}
+          setReps={setReps}
+          setWeight={setWeight}
+        />
+      ) : type === 'learning' ? (
+        <div className="w-full">
+          <label className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+            Description
+          </label>
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="e.g. Focus on keeping your back flat"
+            className="demo-input py-1.5 text-xs font-medium"
           />
-        ) : type === 'learning' ? (
-          <div className="sm:col-span-4">
-            <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
-              Description
-            </label>
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="e.g. Focus on keeping your back flat"
-              className="demo-input py-1.5 text-xs font-medium"
-            />
-          </div>
-        ) : (
-          <div className="sm:col-span-4" />
-        )}
-      </div>
+        </div>
+      ) : null}
 
       {type === 'exercise' && (
         <div className="border-t border-line/35 pt-3">
-          <label className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+          <label className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
             Activity Media (Images / Videos)
           </label>
           <MediaUpload media={mediaList} onChange={setMediaList} />

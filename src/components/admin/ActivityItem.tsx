@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { ArrowUp, ArrowDown, GripVertical, Trash2 } from 'lucide-react'
+import { GripVertical, Trash2 } from 'lucide-react'
 import { DEFAULT_ACTIVITY_DURATION } from '../../domain/plans'
 import type { Activity, Media } from '../../domain/plans'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
@@ -73,97 +73,20 @@ function NumericField({
   )
 }
 
-interface ExerciseFieldsProps {
-  activity: Activity
-  index: number
-  onActivityChange: (
-    index: number,
-    field: keyof Activity,
-    value: string | Media[],
-  ) => void
-}
-
-function ExerciseFields({
-  activity,
-  index,
-  onActivityChange,
-}: ExerciseFieldsProps) {
-  return (
-    <>
-      <div className="col-span-4 sm:col-span-2">
-        <NumericField
-          value={activity.sets}
-          fallback={null}
-          unit="x"
-          placeholder="Sets"
-          onCommit={(v) => onActivityChange(index, 'sets', v)}
-        />
-      </div>
-      <div className="col-span-4 sm:col-span-2">
-        <input
-          type="text"
-          value={activity.reps ?? ''}
-          onChange={(e) => onActivityChange(index, 'reps', e.target.value)}
-          className="demo-input py-1.5 px-2 text-xs text-center font-mono"
-          placeholder="Reps"
-          aria-label="Reps"
-        />
-      </div>
-      <div className="col-span-12 sm:col-span-2">
-        <input
-          type="text"
-          value={activity.weight ?? ''}
-          onChange={(e) => onActivityChange(index, 'weight', e.target.value)}
-          className="demo-input py-1.5 px-2 text-xs text-center font-mono"
-          placeholder="Weight"
-          aria-label="Weight"
-        />
-      </div>
-    </>
-  )
-}
-
 interface ActivityActionsProps {
   index: number
-  isFirst: boolean
-  isLast: boolean
-  onMoveActivity: (index: number, direction: 'up' | 'down') => void
   onDeleteActivity: (index: number) => void
 }
 
 function ActivityActions({
   index,
-  isFirst,
-  isLast,
-  onMoveActivity,
   onDeleteActivity,
 }: ActivityActionsProps) {
   return (
-    <div className="flex items-center gap-1 sm:self-center self-end mt-2 sm:mt-0">
+    <div className="flex items-center">
       <button
-        onClick={() => onMoveActivity(index, 'up')}
-        disabled={isFirst}
-        className="demo-button demo-button-icon border-line bg-chip text-ink-soft hover:text-ink disabled:opacity-30 disabled:hover:text-ink-soft"
-        title="Move Activity Up"
-        aria-label="Move Activity Up"
-      >
-        <ArrowUp className="h-3.5 w-3.5" />
-      </button>
-      <button
-        onClick={() => onMoveActivity(index, 'down')}
-        disabled={isLast}
-        className="demo-button demo-button-icon border-line bg-chip text-ink-soft hover:text-ink disabled:opacity-30 disabled:hover:text-ink-soft"
-        title="Move Activity Down"
-        aria-label="Move Activity Down"
-      >
-        <ArrowDown className="h-3.5 w-3.5" />
-      </button>
-      <button
-        onClick={() => {
-          if (window.confirm('Are you sure you want to delete this activity?'))
-            onDeleteActivity(index)
-        }}
-        className="demo-button demo-button-icon ml-1 border-danger/30 bg-danger/10 text-danger hover:bg-danger/20"
+        onClick={() => onDeleteActivity(index)}
+        className="demo-button demo-button-icon border-danger/30 bg-danger/10 text-danger hover:bg-danger/20"
         title="Delete Activity"
         aria-label="Delete Activity"
       >
@@ -181,17 +104,16 @@ interface ActivityItemBadgeProps {
 function ActivityItemBadge({ type, index }: ActivityItemBadgeProps) {
   const isRest = type === 'rest'
   const isLearning = type === 'learning'
-  const badgeClass = `px-2 py-0.5 rounded text-3xs uppercase font-black tracking-wider ${
-    isRest
+  const badgeClass = `px-1.5 py-0.5 rounded text-4xs uppercase font-black tracking-wider ${isRest
       ? 'bg-sky-500/10 text-sky-600 border border-sky-500/30 dark:text-sky-400'
       : isLearning
         ? 'bg-purple-500/10 text-purple-600 border border-purple-500/30 dark:text-purple-400'
         : 'bg-lagoon/10 text-lagoon-deep border border-lagoon/30'
-  }`
+    }`
   return (
-    <div className="flex items-center gap-2 sm:w-28 flex-shrink-0">
+    <div className="flex items-center gap-1.5 sm:w-28 flex-shrink-0">
       <span className={badgeClass}>{type}</span>
-      <span className="text-xs text-ink-soft font-mono font-bold">
+      <span className="text-2xs text-ink-soft font-mono font-bold">
         #{index + 1}
       </span>
     </div>
@@ -217,30 +139,33 @@ function ActivityInputs({
   const isLearning = activity.type === 'learning'
 
   return (
-    <div className="flex-grow min-w-0 grid gap-2 grid-cols-12">
-      <div className="col-span-12 sm:col-span-4">
-        <input
-          type="text"
-          value={activity.name}
-          onChange={(e) => onActivityChange(index, 'name', e.target.value)}
-          className="demo-input py-1.5 px-2.5 text-xs font-semibold"
-          placeholder="Activity / Rest Name"
-          aria-label="Activity Name"
-        />
+    <div className="flex-grow min-w-0 flex flex-col gap-2">
+      {/* Line 1: Name & Duration */}
+      <div className="grid grid-cols-12 gap-2">
+        <div className="col-span-8 sm:col-span-9">
+          <input
+            type="text"
+            value={activity.name}
+            onChange={(e) => onActivityChange(index, 'name', e.target.value)}
+            className="demo-input py-1.5 px-2.5 text-xs font-semibold"
+            placeholder="Activity / Rest Name"
+          />
+        </div>
+
+        <div className="col-span-4 sm:col-span-3">
+          <NumericField
+            value={activity.duration}
+            fallback={DEFAULT_ACTIVITY_DURATION}
+            unit="s"
+            placeholder="Sec"
+            onCommit={(v) => onActivityChange(index, 'duration', v)}
+          />
+        </div>
       </div>
 
-      <div className="col-span-4 sm:col-span-2">
-        <NumericField
-          value={activity.duration}
-          fallback={DEFAULT_ACTIVITY_DURATION}
-          unit="s"
-          placeholder="Sec"
-          onCommit={(v) => onActivityChange(index, 'duration', v)}
-        />
-      </div>
-
+      {/* Line 2: Specific fields (exercise sets/reps/weight or learning description) */}
       {isLearning ? (
-        <div className="col-span-12 sm:col-span-6">
+        <div className="w-full">
           <input
             type="text"
             value={activity.description ?? ''}
@@ -249,20 +174,39 @@ function ActivityInputs({
             }
             className="demo-input py-1.5 px-2.5 text-xs"
             placeholder="Instruction / learning details"
-            aria-label="Instruction details"
           />
         </div>
       ) : !isRest ? (
-        <ExerciseFields
-          activity={activity}
-          index={index}
-          onActivityChange={onActivityChange}
-        />
-      ) : (
-        <div className="col-span-12 sm:col-span-6 flex items-center text-xs text-ink-soft italic px-2">
-          Rest Period — No sets, reps or weight tracking needed.
+        <div className="grid grid-cols-12 gap-2">
+          <div className="col-span-4">
+            <NumericField
+              value={activity.sets}
+              fallback={null}
+              unit="x"
+              placeholder="Sets"
+              onCommit={(v) => onActivityChange(index, 'sets', v)}
+            />
+          </div>
+          <div className="col-span-4">
+            <input
+              type="text"
+              value={activity.reps ?? ''}
+              onChange={(e) => onActivityChange(index, 'reps', e.target.value)}
+              className="demo-input py-1.5 px-2 text-xs text-center font-mono"
+              placeholder="Reps"
+            />
+          </div>
+          <div className="col-span-4">
+            <input
+              type="text"
+              value={activity.weight ?? ''}
+              onChange={(e) => onActivityChange(index, 'weight', e.target.value)}
+              className="demo-input py-1.5 px-2 text-xs text-center font-mono"
+              placeholder="Weight"
+            />
+          </div>
         </div>
-      )}
+      ) : null}
     </div>
   )
 }
@@ -270,24 +214,21 @@ function ActivityInputs({
 interface ActivityItemProps {
   activity: Activity
   index: number
-  isFirst: boolean
-  isLast: boolean
+  isFirst?: boolean
+  isLast?: boolean
   onActivityChange: (
     index: number,
     field: keyof Activity,
     value: string | Media[],
   ) => void
-  onMoveActivity: (index: number, direction: 'up' | 'down') => void
+  onMoveActivity?: (index: number, direction: 'up' | 'down') => void
   onDeleteActivity: (index: number) => void
 }
 
 export function ActivityItem({
   activity,
   index,
-  isFirst,
-  isLast,
   onActivityChange,
-  onMoveActivity,
   onDeleteActivity,
 }: ActivityItemProps) {
   const reducedMotion = usePrefersReducedMotion()
@@ -308,45 +249,50 @@ export function ActivityItem({
     opacity: isDragging ? 0.4 : undefined,
     zIndex: isDragging ? 1 : undefined,
   }
-  const containerClass = `demo-list-item flex flex-col gap-3 p-3 border transition-all ${
-    isRest
-      ? 'border-line/50'
-      : activity.type === 'learning'
-        ? 'border-purple-500/20 bg-purple-500/[0.02] dark:border-purple-500/30'
-        : 'border-line bg-lagoon/[0.03]'
-  }`
+  const containerClass = `demo-list-item flex flex-col gap-3 p-3 border transition-all ${isRest
+    ? 'border-line/50'
+    : activity.type === 'learning'
+      ? 'border-purple-500/20 bg-purple-500/[0.02] dark:border-purple-500/30'
+      : 'border-line bg-lagoon/[0.03]'
+    }`
 
   return (
     <div ref={setNodeRef} style={style} className={containerClass}>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center w-full">
+      <div className="flex flex-row items-start gap-2.5 w-full">
         <button
           ref={setActivatorNodeRef}
           {...attributes}
           {...listeners}
-          className="demo-button demo-button-icon flex-shrink-0 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 touch-none cursor-grab active:cursor-grabbing border-line bg-chip text-ink-soft hover:text-ink"
+          className="demo-button demo-button-icon flex-shrink-0 mt-1 touch-none cursor-grab active:cursor-grabbing border-line bg-chip text-ink-soft hover:text-ink"
           title="Drag to reorder"
           aria-label={`Reorder activity ${index + 1}: ${activity.name}`}
         >
           <GripVertical className="h-4 w-4" />
         </button>
-        <ActivityItemBadge type={activity.type} index={index} />
+        <div className="flex-shrink-0 mt-1 hidden sm:block">
+          <ActivityItemBadge type={activity.type} index={index} />
+        </div>
         <ActivityInputs
           activity={activity}
           index={index}
           onActivityChange={onActivityChange}
         />
-        <ActivityActions
-          index={index}
-          isFirst={isFirst}
-          isLast={isLast}
-          onMoveActivity={onMoveActivity}
-          onDeleteActivity={onDeleteActivity}
-        />
+        <div className="flex-shrink-0 mt-1">
+          <ActivityActions
+            index={index}
+            onDeleteActivity={onDeleteActivity}
+          />
+        </div>
+      </div>
+
+      {/* Small badge visible on mobile under top bar or inside item */}
+      <div className="sm:hidden -mt-1 flex items-center">
+        <ActivityItemBadge type={activity.type} index={index} />
       </div>
 
       {activity.type === 'exercise' && (
         <div className="w-full border-t border-line/35 pt-2.5 sm:pl-10">
-          <span className="text-2xs font-semibold text-ink-soft uppercase tracking-wider block mb-1">
+          <span className="text-3xs font-semibold text-ink-soft uppercase tracking-wider block mb-1">
             Activity Media (Images / Videos)
           </span>
           <MediaUpload
@@ -360,3 +306,4 @@ export function ActivityItem({
     </div>
   )
 }
+

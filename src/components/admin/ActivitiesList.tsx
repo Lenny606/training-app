@@ -16,7 +16,7 @@ interface ActivitiesListProps {
     field: keyof Activity,
     value: string | Media[],
   ) => void
-  onMoveActivity: (index: number, direction: 'up' | 'down') => void
+  onMoveActivity?: (index: number, direction: 'up' | 'down') => void
   onReorderActivity: (from: number, to: number) => void
   onDeleteActivity: (index: number) => void
 }
@@ -24,7 +24,6 @@ interface ActivitiesListProps {
 export function ActivitiesList({
   activities,
   onActivityChange,
-  onMoveActivity,
   onReorderActivity,
   onDeleteActivity,
 }: ActivitiesListProps) {
@@ -56,10 +55,7 @@ export function ActivitiesList({
               key={act.id}
               activity={act}
               index={index}
-              isFirst={index === 0}
-              isLast={index === activities.length - 1}
               onActivityChange={onActivityChange}
-              onMoveActivity={onMoveActivity}
               onDeleteActivity={onDeleteActivity}
             />
           ))}
