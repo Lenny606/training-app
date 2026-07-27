@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useId } from 'react'
 import type { FormEvent } from 'react'
 import { Link } from '@tanstack/react-router'
+import { Loader2 } from 'lucide-react'
 
 interface AuthFormProps {
   title: string
@@ -22,6 +23,9 @@ export function AuthForm({
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const emailId = useId()
+  const passwordId = useId()
+  const passwordHintId = useId()
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -51,21 +55,23 @@ export function AuthForm({
           className="flex flex-col gap-4"
           noValidate
         >
-          <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
-            Email
+          <div className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
+            <label htmlFor={emailId}>Email</label>
             <input
+              id={emailId}
               type="email"
               autoComplete="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="demo-input text-sm"
+              className="demo-input text-sm focus-visible:ring-2 focus-visible:outline-none"
             />
-          </label>
+          </div>
 
-          <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
-            Password
+          <div className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
+            <label htmlFor={passwordId}>Password</label>
             <input
+              id={passwordId}
               type="password"
               autoComplete={
                 submitLabel === 'Create account'
@@ -75,14 +81,18 @@ export function AuthForm({
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="demo-input text-sm"
+              aria-describedby={passwordHint ? passwordHintId : undefined}
+              className="demo-input text-sm focus-visible:ring-2 focus-visible:outline-none"
             />
             {passwordHint && (
-              <span className="text-xs font-normal text-ink-soft opacity-70">
+              <span
+                id={passwordHintId}
+                className="text-xs font-normal text-ink-soft opacity-70"
+              >
                 {passwordHint}
               </span>
             )}
-          </label>
+          </div>
 
           {error && (
             <p
@@ -96,8 +106,9 @@ export function AuthForm({
           <button
             type="submit"
             disabled={submitting}
-            className="demo-button min-h-11 justify-center"
+            className="demo-button min-h-11 justify-center flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:outline-none"
           >
+            {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
             {submitting ? 'Please wait…' : submitLabel}
           </button>
         </form>
@@ -106,7 +117,7 @@ export function AuthForm({
           {footer.prompt}{' '}
           <Link
             to={footer.to}
-            className="font-semibold text-lagoon no-underline"
+            className="font-semibold text-lagoon no-underline focus-visible:ring-2 focus-visible:ring-lagoon focus-visible:outline-none rounded-sm"
           >
             {footer.linkLabel}
           </Link>
