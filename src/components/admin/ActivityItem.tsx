@@ -78,10 +78,7 @@ interface ActivityActionsProps {
   onDeleteActivity: (index: number) => void
 }
 
-function ActivityActions({
-  index,
-  onDeleteActivity,
-}: ActivityActionsProps) {
+function ActivityActions({ index, onDeleteActivity }: ActivityActionsProps) {
   return (
     <div className="flex items-center">
       <button
@@ -104,12 +101,13 @@ interface ActivityItemBadgeProps {
 function ActivityItemBadge({ type, index }: ActivityItemBadgeProps) {
   const isRest = type === 'rest'
   const isLearning = type === 'learning'
-  const badgeClass = `px-1.5 py-0.5 rounded text-4xs uppercase font-black tracking-wider ${isRest
+  const badgeClass = `px-1.5 py-0.5 rounded text-4xs uppercase font-black tracking-wider ${
+    isRest
       ? 'bg-sky-500/10 text-sky-600 border border-sky-500/30 dark:text-sky-400'
       : isLearning
         ? 'bg-purple-500/10 text-purple-600 border border-purple-500/30 dark:text-purple-400'
         : 'bg-lagoon/10 text-lagoon-deep border border-lagoon/30'
-    }`
+  }`
   return (
     <div className="flex items-center gap-1.5 sm:w-28 flex-shrink-0">
       <span className={badgeClass}>{type}</span>
@@ -200,7 +198,9 @@ function ActivityInputs({
             <input
               type="text"
               value={activity.weight ?? ''}
-              onChange={(e) => onActivityChange(index, 'weight', e.target.value)}
+              onChange={(e) =>
+                onActivityChange(index, 'weight', e.target.value)
+              }
               className="demo-input py-1.5 px-2 text-xs text-center font-mono"
               placeholder="Weight"
             />
@@ -249,12 +249,13 @@ export function ActivityItem({
     opacity: isDragging ? 0.4 : undefined,
     zIndex: isDragging ? 1 : undefined,
   }
-  const containerClass = `demo-list-item flex flex-col gap-3 p-3 border transition-all ${isRest
-    ? 'border-line/50'
-    : activity.type === 'learning'
-      ? 'border-purple-500/20 bg-purple-500/[0.02] dark:border-purple-500/30'
-      : 'border-line bg-lagoon/[0.03]'
-    }`
+  const containerClass = `demo-list-item flex flex-col gap-3 p-3 border transition-all ${
+    isRest
+      ? 'border-line/50'
+      : activity.type === 'learning'
+        ? 'border-purple-500/20 bg-purple-500/[0.02] dark:border-purple-500/30'
+        : 'border-line bg-lagoon/[0.03]'
+  }`
 
   return (
     <div ref={setNodeRef} style={style} className={containerClass}>
@@ -278,10 +279,7 @@ export function ActivityItem({
           onActivityChange={onActivityChange}
         />
         <div className="flex-shrink-0 mt-1">
-          <ActivityActions
-            index={index}
-            onDeleteActivity={onDeleteActivity}
-          />
+          <ActivityActions index={index} onDeleteActivity={onDeleteActivity} />
         </div>
       </div>
 
@@ -306,4 +304,3 @@ export function ActivityItem({
     </div>
   )
 }
-
