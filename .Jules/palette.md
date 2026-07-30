@@ -7,3 +7,7 @@
 
 **Learning:** Found a pattern where several form inputs in admin panels (e.g. ActivityItem, AddActivityForm, PlanMetaForm) lacked explicit `aria-label`s or associated `<label htmlFor="id">` attributes. While they rely on placeholders, visually unlinked labels are not read properly by screen readers, creating an accessibility gap.
 **Action:** Always ensure inputs have an explicit accessible name using `aria-label` or `<label htmlFor="...">` when the label element does not explicitly wrap the input or use the `htmlFor` property to target it.
+## 2024-07-30 - Form Input Accessible Names
+
+**Learning:** It is crucial for accessibility to link visible `<label>` elements to `<input>` and `<select>` fields explicitly using `htmlFor` and unique `id`s (generated easily with React's `useId()` hook). This not only assists screen reader users in knowing which input is which but also improves usability for mouse and touch users by letting them focus the input by clicking the label. When visible labels exist, prefer linking them explicitly over adding standalone `aria-label`s to the inputs to avoid redundancy.
+**Action:** Always link form labels to their inputs utilizing `useId` and `htmlFor` properties when rendering fields.
