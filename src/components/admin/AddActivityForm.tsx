@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useId } from 'react'
 import { Plus } from 'lucide-react'
 import { DEFAULT_ACTIVITY_DURATION } from '../../domain/plans'
 import type { Activity, Media } from '../../domain/plans'
@@ -25,47 +25,51 @@ function AddExerciseFields({
   setReps,
   setWeight,
 }: AddExerciseFieldsProps) {
+  const setsId = useId()
+  const repsId = useId()
+  const weightId = useId()
+
   return (
     <div className="grid grid-cols-12 gap-3 w-full">
       <div className="col-span-4">
-        <label className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+        <label htmlFor={setsId} className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Sets
         </label>
         <input
+          id={setsId}
           type="number"
           value={sets}
           onChange={(e) => setSets(e.target.value)}
           className="demo-input py-1.5 text-xs text-right font-mono"
           placeholder="Sets"
-          aria-label="Sets"
         />
       </div>
 
       <div className="col-span-4">
-        <label className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+        <label htmlFor={repsId} className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Reps
         </label>
         <input
+          id={repsId}
           type="text"
           value={reps}
           onChange={(e) => setReps(e.target.value)}
           placeholder="e.g. 12"
           className="demo-input py-1.5 text-xs text-center font-mono"
-          aria-label="Reps"
         />
       </div>
 
       <div className="col-span-4">
-        <label className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+        <label htmlFor={weightId} className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Weight
         </label>
         <input
+          id={weightId}
           type="text"
           value={weight}
           onChange={(e) => setWeight(e.target.value)}
           placeholder="e.g. 20 kg"
           className="demo-input py-1.5 text-xs text-center font-mono"
-          aria-label="Weight"
         />
       </div>
     </div>
@@ -176,13 +180,18 @@ function CoreFields({
   setDuration,
   handleTypeChange,
 }: CoreFieldsProps) {
+  const typeId = useId()
+  const nameId = useId()
+  const durationId = useId()
+
   return (
     <div className="grid grid-cols-12 gap-3 w-full">
       <div className="col-span-12 sm:col-span-3">
-        <label className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+        <label htmlFor={typeId} className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Type
         </label>
         <select
+          id={typeId}
           value={type}
           onChange={(e) =>
             handleTypeChange(e.target.value as 'exercise' | 'rest' | 'learning')
@@ -196,10 +205,11 @@ function CoreFields({
       </div>
 
       <div className="col-span-8 sm:col-span-6">
-        <label className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+        <label htmlFor={nameId} className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Name
         </label>
         <input
+          id={nameId}
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -216,10 +226,11 @@ function CoreFields({
       </div>
 
       <div className="col-span-4 sm:col-span-3">
-        <label className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+        <label htmlFor={durationId} className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
           Seconds
         </label>
         <input
+          id={durationId}
           type="number"
           value={duration}
           onChange={(e) => setDuration(e.target.value)}
@@ -232,6 +243,7 @@ function CoreFields({
 }
 
 export function AddActivityForm({ onAddActivity }: AddActivityFormProps) {
+  const descriptionId = useId()
   const {
     type,
     name,
@@ -284,10 +296,11 @@ export function AddActivityForm({ onAddActivity }: AddActivityFormProps) {
         />
       ) : type === 'learning' ? (
         <div className="w-full">
-          <label className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
+          <label htmlFor={descriptionId} className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
             Description
           </label>
           <input
+            id={descriptionId}
             type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
