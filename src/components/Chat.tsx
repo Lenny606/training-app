@@ -389,6 +389,7 @@ function ChatSession({
           placeholder={
             'Ask about your plans, or say \u201cstart my push day\u201d\u2026'
           }
+          aria-label="Chat input"
           className="min-h-11 flex-1 resize-none rounded-xl border border-line bg-header px-3 py-2.5 text-sm text-ink outline-none focus:border-lagoon"
         />
         <button
