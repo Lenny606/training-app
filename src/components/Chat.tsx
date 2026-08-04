@@ -379,6 +379,7 @@ function ChatSession({
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          aria-label="Message the assistant"
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault()
