@@ -190,6 +190,7 @@ export function MediaUpload({
                     accept="image/*,video/*"
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     disabled={uploading || generating}
+                    aria-label="Browse Files"
                   />
                 </div>
 
@@ -204,6 +205,7 @@ export function MediaUpload({
                     capture="environment"
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     disabled={uploading || generating}
+                    aria-label="Take Photo"
                   />
                 </div>
 
@@ -218,6 +220,7 @@ export function MediaUpload({
                     capture="environment"
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     disabled={uploading || generating}
+                    aria-label="Record Video"
                   />
                 </div>
 
