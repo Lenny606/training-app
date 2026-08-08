@@ -35,6 +35,8 @@ export function PlanEditorHeader({
             <span
               className="h-2 w-2 rounded-full bg-amber-500 animate-pulse"
               title="Unsaved changes"
+              aria-label="Unsaved changes"
+              role="status"
             />
           )}
         </div>

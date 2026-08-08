@@ -20,7 +20,10 @@ export function WorkoutPlanSelector({
   return (
     <section className="demo-panel p-4 rounded-2xl rise-in flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-bold uppercase tracking-wider text-ink-soft flex items-center gap-1.5">
+        <label
+          htmlFor="plan-select"
+          className="text-xs font-bold uppercase tracking-wider text-ink-soft flex items-center gap-1.5"
+        >
           <Dumbbell className="h-4 w-4 text-lagoon" />
           Training Plan
         </label>
@@ -45,6 +48,7 @@ export function WorkoutPlanSelector({
 
       <div className="flex gap-2">
         <select
+          id="plan-select"
           value={selectedPlanId}
           onChange={(e) => onPlanChange(e.target.value)}
           className="demo-select font-display font-bold text-sm flex-grow cursor-pointer"
