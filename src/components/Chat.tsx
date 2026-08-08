@@ -377,6 +377,7 @@ function ChatSession({
 
       <div className="flex items-end gap-2 border-t border-line p-3">
         <textarea
+          aria-label="Ask your training assistant"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
