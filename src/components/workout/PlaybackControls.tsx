@@ -24,7 +24,7 @@ export function PlaybackControls({
       <button
         onClick={onSkipBackward}
         disabled={!canSkipBackward}
-        className="p-3 rounded-2xl border border-line bg-chip text-ink-soft hover:text-ink disabled:opacity-30"
+        className="p-3 rounded-2xl border border-line bg-chip text-ink-soft hover:text-ink disabled:opacity-30 focus-visible:ring-2 focus-visible:outline-none"
         title="Previous Activity"
         aria-label="Previous Activity"
       >
@@ -33,7 +33,7 @@ export function PlaybackControls({
 
       <button
         onClick={onPlayPause}
-        className={`p-5 rounded-full border flex items-center justify-center shadow-lg transition-all active:scale-95 ${
+        className={`p-5 rounded-full border flex items-center justify-center shadow-lg transition-all active:scale-95 focus-visible:ring-2 focus-visible:outline-none ${
           isPlaying
             ? 'border-amber-500 bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 dark:text-amber-400'
             : 'border-lagoon bg-lagoon/10 text-lagoon-deep hover:bg-lagoon/20 shadow-glow-lagoon-strong'
@@ -50,7 +50,7 @@ export function PlaybackControls({
 
       <button
         onClick={onStop}
-        className="p-3 rounded-2xl border border-danger/30 bg-danger/10 text-danger hover:bg-danger/20"
+        className="p-3 rounded-2xl border border-danger/30 bg-danger/10 text-danger hover:bg-danger/20 focus-visible:ring-2 focus-visible:outline-none"
         title="Stop / Reset Workout"
         aria-label="Stop / Reset Workout"
       >
@@ -60,7 +60,7 @@ export function PlaybackControls({
       <button
         onClick={onSkipForward}
         disabled={!canSkipForward}
-        className="p-3 rounded-2xl border border-line bg-chip text-ink-soft hover:text-ink disabled:opacity-30"
+        className="p-3 rounded-2xl border border-line bg-chip text-ink-soft hover:text-ink disabled:opacity-30 focus-visible:ring-2 focus-visible:outline-none"
         title="Next Activity"
         aria-label="Next Activity"
       >
