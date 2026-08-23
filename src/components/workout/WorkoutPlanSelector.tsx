@@ -30,7 +30,7 @@ export function WorkoutPlanSelector({
 
         <button
           onClick={onToggleSound}
-          className={`p-1.5 rounded-lg border transition-all ${
+          className={`p-1.5 rounded-lg border transition-all focus-visible:ring-2 focus-visible:outline-none ${
             soundEnabled
               ? 'border-line bg-lagoon/10 text-lagoon'
               : 'border-transparent bg-transparent text-ink-soft'
