@@ -252,7 +252,11 @@ export function MediaUpload({
       </div>
 
       {error && (
-        <div className="text-xxs text-danger bg-danger/10 border border-danger/20 px-2.5 py-1.5 rounded-lg">
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="text-xxs text-danger bg-danger/10 border border-danger/20 px-2.5 py-1.5 rounded-lg"
+        >
           {error}
         </div>
       )}

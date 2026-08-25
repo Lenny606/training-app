@@ -9,6 +9,7 @@
 **Action:** Always ensure inputs have an explicit accessible name using `aria-label` or `<label htmlFor="...">` when the label element does not explicitly wrap the input or use the `htmlFor` property to target it.
 
 ## 2024-08-07 - [Visually Hidden File Inputs Overlay Accessibility]
+
 **Learning:** Found an accessibility pattern where visually hidden `<input type="file" className="... opacity-0">` elements overlaying custom UI buttons (like "Browse Files", "Take Photo") lack ARIA labels. Because the UI button itself is visually informative, the underlying invisible native `<input>` that captures focus/interaction is read generically by screen readers, confusing non-sighted users.
 **Action:** When using the pattern of an invisible file input over a styled custom button, ensure the `<input type="file">` explicitly sets an `aria-label` that mirrors the visual intent (e.g., `aria-label="Take Photo"`).
 
