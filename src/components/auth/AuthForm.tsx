@@ -97,6 +97,7 @@ export function AuthForm({
           {error && (
             <p
               role="alert"
+              aria-live="assertive"
               className="m-0 rounded-xl border border-danger/30 bg-danger/10 px-4 py-2.5 text-xs text-danger"
             >
               {error}

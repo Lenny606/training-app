@@ -370,7 +370,11 @@ function ChatSession({
       </div>
 
       {error && (
-        <div className="border-t border-line px-4 py-2 text-xs text-danger">
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="border-t border-line px-4 py-2 text-xs text-danger"
+        >
           {error.message}
         </div>
       )}
