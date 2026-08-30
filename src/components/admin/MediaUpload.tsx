@@ -239,6 +239,11 @@ export function MediaUpload({
                       ? 'Enter activity name first to generate image'
                       : 'Generate image using AI'
                   }
+                  aria-label={
+                    !activityName?.trim()
+                      ? 'Enter activity name first to generate image'
+                      : 'Generate image using AI'
+                  }
                 >
                   <Sparkles
                     className={`h-3.5 w-3.5 ${!activityName?.trim() ? 'text-lagoon-deep/30' : 'text-lagoon-deep'}`}
