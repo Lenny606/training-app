@@ -92,7 +92,7 @@ export default function Header() {
 
               {/* Hamburger — only on mobile */}
               <button
-                className="sm:!hidden demo-button demo-button-icon min-h-11 min-w-11 border-line bg-chip text-ink-soft hover:text-ink"
+                className="sm:!hidden demo-button demo-button-icon min-h-11 min-w-11 border-line bg-chip text-ink-soft hover:text-ink focus-visible:ring-2 focus-visible:outline-none"
                 onClick={() => setMenuOpen((o) => !o)}
                 aria-label={menuOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={menuOpen}
@@ -136,7 +136,7 @@ export default function Header() {
           <button
             type="button"
             onClick={handleLogout}
-            className="flex items-center gap-2 rounded-xl px-4 py-3 text-left text-sm font-semibold text-ink-soft transition-colors hover:bg-link-hover hover:text-ink"
+            className="flex items-center gap-2 rounded-xl px-4 py-3 text-left text-sm font-semibold text-ink-soft transition-colors hover:bg-link-hover hover:text-ink focus-visible:ring-2 focus-visible:outline-none"
           >
             <LogOut className="h-4 w-4" />
             Sign out
