@@ -196,7 +196,7 @@ function ConversationList({
             <button
               type="button"
               onClick={() => onSelect(session)}
-              className="min-w-0 flex-1 text-left"
+              className="min-w-0 flex-1 text-left focus-visible:ring-2 focus-visible:outline-none rounded"
             >
               <span className="block truncate text-xs text-ink">
                 {session.title ?? 'New conversation'}
@@ -218,7 +218,7 @@ function ConversationList({
               }}
               title="Delete conversation"
               aria-label={`Delete conversation ${session.title ?? ''}`.trim()}
-              className="shrink-0 rounded-lg p-1.5 text-ink-soft opacity-0 transition-opacity hover:text-danger focus-visible:opacity-100 group-hover:opacity-100"
+              className="shrink-0 rounded-lg p-1.5 text-ink-soft opacity-0 transition-opacity hover:text-danger focus-visible:opacity-100 group-hover:opacity-100 focus-visible:ring-2 focus-visible:outline-none"
             >
               <Trash2 className="h-3.5 w-3.5" />
             </button>
@@ -401,7 +401,7 @@ function ChatSession({
           onClick={handleReset}
           disabled={isLoading}
           title="Start new conversation"
-          className="demo-button demo-button-icon min-h-11 min-w-11 text-ink-soft disabled:opacity-40"
+          className="demo-button demo-button-icon min-h-11 min-w-11 text-ink-soft disabled:opacity-40 focus-visible:ring-2 focus-visible:outline-none"
           aria-label="New conversation"
         >
           <RotateCcw className="h-4 w-4" />
@@ -410,7 +410,7 @@ function ChatSession({
           <button
             type="button"
             onClick={stop}
-            className="demo-button demo-button-icon min-h-11 min-w-11"
+            className="demo-button demo-button-icon min-h-11 min-w-11 focus-visible:ring-2 focus-visible:outline-none"
             aria-label="Stop"
           >
             <Square className="h-4 w-4" />
@@ -420,7 +420,7 @@ function ChatSession({
             type="button"
             onClick={handleSubmit}
             disabled={!input.trim() || isHydrating}
-            className="demo-button demo-button-icon min-h-11 min-w-11 disabled:opacity-40"
+            className="demo-button demo-button-icon min-h-11 min-w-11 disabled:opacity-40 focus-visible:ring-2 focus-visible:outline-none"
             aria-label="Send"
           >
             <Send className="h-4 w-4" />
@@ -526,7 +526,7 @@ function MessagePart({
                 onClick={() =>
                   onApprove({ id: part.approval!.id, approved: true })
                 }
-                className="demo-button demo-button-sm inline-flex items-center gap-1"
+                className="demo-button demo-button-sm inline-flex items-center gap-1 focus-visible:ring-2 focus-visible:outline-none"
               >
                 <Check className="h-3 w-3" /> Approve
               </button>
@@ -535,7 +535,7 @@ function MessagePart({
                 onClick={() =>
                   onApprove({ id: part.approval!.id, approved: false })
                 }
-                className="demo-button demo-button-sm inline-flex items-center gap-1"
+                className="demo-button demo-button-sm inline-flex items-center gap-1 focus-visible:ring-2 focus-visible:outline-none"
               >
                 <X className="h-3 w-3" /> Deny
               </button>
