@@ -9,7 +9,7 @@ interface PlanEditorHeaderProps {
 
 function getSaveButtonClass(hasUnsavedChanges: boolean) {
   const base =
-    'demo-button demo-button-sm flex items-center gap-1.5 transition-all'
+    'demo-button demo-button-sm flex items-center gap-1.5 transition-all focus-visible:ring-2 focus-visible:outline-none'
   const modified =
     'bg-lagoon-deep text-lagoon-ink border-lagoon shadow-glow-lagoon hover:bg-lagoon'
   const saved =
@@ -49,7 +49,7 @@ export function PlanEditorHeader({
         {hasUnsavedChanges && (
           <button
             onClick={onDiscardChanges}
-            className="demo-button demo-button-sm demo-button-secondary flex items-center gap-1.5"
+            className="demo-button demo-button-sm demo-button-secondary flex items-center gap-1.5 focus-visible:ring-2 focus-visible:outline-none"
             title="Discard changes"
           >
             <RotateCcw className="h-3.5 w-3.5" />

@@ -17,3 +17,9 @@
 
 **Learning:** Found a pulsating colored dot indicator for "Unsaved changes" that only relied on a hover `title`. While sighted users could see the animation and color, and mouse users could see the tooltip, screen reader users navigating the header received no context.
 **Action:** When adding dynamic visual status indicators (like colored dots or badges), use `role="status"` and a clear `aria-label` so that assistive technologies announce the state change or convey the meaning explicitly without relying on hover text alone.
+
+## 2024-09-14 - Keyboard focus indicators
+
+**Learning:** When navigating by keyboard, interactive elements (especially custom icon buttons or stylized inputs) need explicit `focus-visible` styling because default browser outlines can clash with Tailwind's resets or look inconsistent. Using `focus-visible:ring-2 focus-visible:outline-none` is a reliable and safe pattern.
+
+**Action:** Standardize on adding `focus-visible:ring-2 focus-visible:outline-none` across custom buttons, drag handles, and links to ensure keyboard users always know what element has focus.
