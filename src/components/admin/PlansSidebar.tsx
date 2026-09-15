@@ -81,7 +81,7 @@ function SidebarItem({
             {...attributes}
             {...listeners}
             onClick={(e) => e.stopPropagation()}
-            className="demo-button demo-button-icon flex-shrink-0 min-h-11 min-w-11 touch-none cursor-grab active:cursor-grabbing border-line bg-chip text-ink-soft hover:text-ink"
+            className="demo-button demo-button-icon flex-shrink-0 min-h-11 min-w-11 touch-none cursor-grab active:cursor-grabbing border-line bg-chip text-ink-soft hover:text-ink focus-visible:ring-2 focus-visible:outline-none"
             title="Drag to reorder"
             aria-label={`Reorder plan: ${plan.name}`}
           >
@@ -113,7 +113,7 @@ function SidebarItem({
             )
               onDelete(plan.id)
           }}
-          className="demo-button demo-button-icon border-danger/30 bg-danger/10 text-danger hover:bg-danger/20"
+          className="demo-button demo-button-icon border-danger/30 bg-danger/10 text-danger hover:bg-danger/20 focus-visible:ring-2 focus-visible:outline-none"
           title="Delete Plan"
           aria-label="Delete Plan"
         >

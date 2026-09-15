@@ -401,7 +401,7 @@ function ChatSession({
           onClick={handleReset}
           disabled={isLoading}
           title="Start new conversation"
-          className="demo-button demo-button-icon min-h-11 min-w-11 text-ink-soft disabled:opacity-40"
+          className="demo-button demo-button-icon min-h-11 min-w-11 text-ink-soft disabled:opacity-40 focus-visible:ring-2 focus-visible:outline-none"
           aria-label="New conversation"
         >
           <RotateCcw className="h-4 w-4" />
@@ -410,7 +410,7 @@ function ChatSession({
           <button
             type="button"
             onClick={stop}
-            className="demo-button demo-button-icon min-h-11 min-w-11"
+            className="demo-button demo-button-icon min-h-11 min-w-11 focus-visible:ring-2 focus-visible:outline-none"
             aria-label="Stop"
           >
             <Square className="h-4 w-4" />
@@ -420,7 +420,7 @@ function ChatSession({
             type="button"
             onClick={handleSubmit}
             disabled={!input.trim() || isHydrating}
-            className="demo-button demo-button-icon min-h-11 min-w-11 disabled:opacity-40"
+            className="demo-button demo-button-icon min-h-11 min-w-11 disabled:opacity-40 focus-visible:ring-2 focus-visible:outline-none"
             aria-label="Send"
           >
             <Send className="h-4 w-4" />
