@@ -81,7 +81,7 @@ function SidebarItem({
             {...attributes}
             {...listeners}
             onClick={(e) => e.stopPropagation()}
-            className="demo-button demo-button-icon flex-shrink-0 min-h-11 min-w-11 touch-none cursor-grab active:cursor-grabbing border-line bg-chip text-ink-soft hover:text-ink"
+            className="demo-button demo-button-icon flex-shrink-0 min-h-11 min-w-11 touch-none cursor-grab active:cursor-grabbing border-line bg-chip text-ink-soft hover:text-ink focus-visible:ring-2 focus-visible:outline-none"
             title="Drag to reorder"
             aria-label={`Reorder plan: ${plan.name}`}
           >
@@ -113,7 +113,7 @@ function SidebarItem({
             )
               onDelete(plan.id)
           }}
-          className="demo-button demo-button-icon border-danger/30 bg-danger/10 text-danger hover:bg-danger/20"
+          className="demo-button demo-button-icon border-danger/30 bg-danger/10 text-danger hover:bg-danger/20 focus-visible:ring-2 focus-visible:outline-none"
           title="Delete Plan"
           aria-label="Delete Plan"
         >
@@ -151,7 +151,7 @@ export function PlansSidebar({
           </h2>
           <button
             onClick={onCreateNewPlan}
-            className="demo-button demo-button-sm bg-lagoon/15 text-lagoon-deep border-lagoon/30 flex items-center gap-1"
+            className="demo-button demo-button-sm bg-lagoon/15 text-lagoon-deep border-lagoon/30 flex items-center gap-1 focus-visible:ring-2 focus-visible:outline-none"
             title="Create New Plan"
           >
             <Plus className="h-3.5 w-3.5" />
@@ -191,7 +191,7 @@ export function PlansSidebar({
               <p className="text-xs text-ink-soft mb-3">No plans found</p>
               <button
                 onClick={onCreateNewPlan}
-                className="demo-button demo-button-sm"
+                className="demo-button demo-button-sm focus-visible:ring-2 focus-visible:outline-none"
               >
                 Create your first plan
               </button>

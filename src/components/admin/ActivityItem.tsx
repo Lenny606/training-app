@@ -83,7 +83,7 @@ function ActivityActions({ index, onDeleteActivity }: ActivityActionsProps) {
     <div className="flex items-center">
       <button
         onClick={() => onDeleteActivity(index)}
-        className="demo-button demo-button-icon border-danger/30 bg-danger/10 text-danger hover:bg-danger/20"
+        className="demo-button demo-button-icon border-danger/30 bg-danger/10 text-danger hover:bg-danger/20 focus-visible:ring-2 focus-visible:outline-none"
         title="Delete Activity"
         aria-label="Delete Activity"
       >
@@ -268,7 +268,7 @@ export function ActivityItem({
           ref={setActivatorNodeRef}
           {...attributes}
           {...listeners}
-          className="demo-button demo-button-icon flex-shrink-0 mt-1 touch-none cursor-grab active:cursor-grabbing border-line bg-chip text-ink-soft hover:text-ink"
+          className="demo-button demo-button-icon flex-shrink-0 mt-1 touch-none cursor-grab active:cursor-grabbing border-line bg-chip text-ink-soft hover:text-ink focus-visible:ring-2 focus-visible:outline-none"
           title="Drag to reorder"
           aria-label={`Reorder activity ${index + 1}: ${activity.name}`}
         >
