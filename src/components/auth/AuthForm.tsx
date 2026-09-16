@@ -1,7 +1,7 @@
 import { useState, useId } from 'react'
 import type { FormEvent } from 'react'
 import { Link } from '@tanstack/react-router'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Eye, EyeOff } from 'lucide-react'
 
 interface AuthFormProps {
   title: string
@@ -21,6 +21,7 @@ export function AuthForm({
 }: AuthFormProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const emailId = useId()
@@ -70,20 +71,34 @@ export function AuthForm({
 
           <div className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
             <label htmlFor={passwordId}>Password</label>
-            <input
-              id={passwordId}
-              type="password"
-              autoComplete={
-                submitLabel === 'Create account'
-                  ? 'new-password'
-                  : 'current-password'
-              }
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              aria-describedby={passwordHint ? passwordHintId : undefined}
-              className="demo-input text-sm focus-visible:ring-2 focus-visible:outline-none"
-            />
+            <div className="relative flex items-center">
+              <input
+                id={passwordId}
+                type={showPassword ? 'text' : 'password'}
+                autoComplete={
+                  submitLabel === 'Create account'
+                    ? 'new-password'
+                    : 'current-password'
+                }
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                aria-describedby={passwordHint ? passwordHintId : undefined}
+                className="demo-input text-sm focus-visible:ring-2 focus-visible:outline-none w-full pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 text-ink-soft hover:text-ink focus-visible:ring-2 focus-visible:outline-none rounded-sm"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
             {passwordHint && (
               <span
                 id={passwordHintId}
