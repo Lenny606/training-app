@@ -20,6 +20,7 @@ export function EmptyPlanEditorState({
       <button
         onClick={onCreateNewPlan}
         className="demo-button text-xs py-2 px-4 focus-visible:ring-2 focus-visible:outline-none"
+        aria-label="Create a New Program"
       >
         Create a New Program
       </button>

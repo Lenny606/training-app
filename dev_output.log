@@ -1,0 +1,44 @@
+
+> dev
+> vite dev --port 3000
+
+
+  VITE v8.1.0  ready in 1428 ms
+
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: use --host to expose
+5:46:22 AM [vite] (client) [optimizer] bundling dependencies...
+5:47:19 AM [vite] (client) [optimizer] bundling dependencies...
+[tanstack-router] These exports from "/app/src/routes/_authenticated/index.tsx" will not be code-split and will increase your bundle size:
+- App
+For the best optimization, these items should either have their export statements removed, or be imported from another location that is not a route file.
+5:47:21 AM [vite] (client) ✨ new dependencies optimized: @tanstack/router-core, @tanstack/router-core/isServer, @tanstack/router-core/ssr/client, seroval
+5:47:21 AM [vite] (client) ✨ optimized dependencies changed. reloading
+[tanstack-router] These exports from "/app/src/routes/_authenticated/index.tsx" will not be code-split and will increase your bundle size:
+- App
+For the best optimization, these items should either have their export statements removed, or be imported from another location that is not a route file.
+[Client] [tanstack-router] These exports from "/app/src/routes/_authenticated/index.tsx" will not be code-split and will increase your bundle size:
+- App
+For the best optimization, these items should either have their export statements removed, or be imported from another location that is not a route file.
+[Client] [tanstack-router] These exports from "/app/src/routes/_authenticated/index.tsx" will not be code-split and will increase your bundle size:
+- App
+For the best optimization, these items should either have their export statements removed, or be imported from another location that is not a route file.
+[Client] [tanstack-router] These exports from "/app/src/routes/_authenticated/index.tsx" will not be code-split and will increase your bundle size:
+- App
+For the best optimization, these items should either have their export statements removed, or be imported from another location that is not a route file.
+[Client] [tanstack-router] These exports from "/app/src/routes/_authenticated/index.tsx" will not be code-split and will increase your bundle size:
+- App
+For the best optimization, these items should either have their export statements removed, or be imported from another location that is not a route file.
+[auth] JWT_SECRET is not set — using an INSECURE development fallback.
+[Client] [tanstack-router] These exports from "/app/src/routes/_authenticated/index.tsx" will not be code-split and will increase your bundle size:
+- App
+For the best optimization, these items should either have their export statements removed, or be imported from another location that is not a route file.
+5:49:57 AM [vite] (client) [optimizer] bundling dependencies...
+5:49:58 AM [vite] (client) ✨ new dependencies optimized: @tanstack/history, @tanstack/router-core/ssr/server, h3-v2
+5:49:58 AM [vite] (client) ✨ optimized dependencies changed. reloading
+[tanstack-router] These exports from "/app/src/routes/_authenticated/index.tsx" will not be code-split and will increase your bundle size:
+- App
+For the best optimization, these items should either have their export statements removed, or be imported from another location that is not a route file.
+[Client] [tanstack-router] These exports from "/app/src/routes/_authenticated/index.tsx" will not be code-split and will increase your bundle size:
+- App
+For the best optimization, these items should either have their export statements removed, or be imported from another location that is not a route file.
