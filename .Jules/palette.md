@@ -23,3 +23,8 @@
 **Learning:** When navigating by keyboard, interactive elements (especially custom icon buttons or stylized inputs) need explicit `focus-visible` styling because default browser outlines can clash with Tailwind's resets or look inconsistent. Using `focus-visible:ring-2 focus-visible:outline-none` is a reliable and safe pattern.
 
 **Action:** Standardize on adding `focus-visible:ring-2 focus-visible:outline-none` across custom buttons, drag handles, and links to ensure keyboard users always know what element has focus.
+
+## 2024-11-20 - Adding destructive action confirmations
+
+**Learning:** Found an opportunity where an action (deleting an activity item in the plan editor) lacked a confirmation prompt. Although `PlansSidebar.tsx` confirmed when deleting a whole plan, removing individual activities happens often and deleting one without warning is a poor UX.
+**Action:** Implemented a standard `window.confirm` for deleting activities to prevent accidental data loss. Always add confirmation dialogs for destructive actions.
