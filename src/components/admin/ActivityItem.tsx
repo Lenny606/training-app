@@ -75,14 +75,23 @@ function NumericField({
 
 interface ActivityActionsProps {
   index: number
+  activityName: string
   onDeleteActivity: (index: number) => void
 }
 
-function ActivityActions({ index, onDeleteActivity }: ActivityActionsProps) {
+function ActivityActions({ index, activityName, onDeleteActivity }: ActivityActionsProps) {
   return (
     <div className="flex items-center">
       <button
-        onClick={() => onDeleteActivity(index)}
+        onClick={() => {
+          if (
+            window.confirm(
+              `Are you sure you want to delete the activity "${activityName}"?`,
+            )
+          ) {
+            onDeleteActivity(index)
+          }
+        }}
         className="demo-button demo-button-icon border-danger/30 bg-danger/10 text-danger hover:bg-danger/20 focus-visible:ring-2 focus-visible:outline-none"
         title="Delete Activity"
         aria-label="Delete Activity"
@@ -283,7 +292,11 @@ export function ActivityItem({
           onActivityChange={onActivityChange}
         />
         <div className="flex-shrink-0 mt-1">
-          <ActivityActions index={index} onDeleteActivity={onDeleteActivity} />
+          <ActivityActions
+            index={index}
+            activityName={activity.name || 'Unnamed Activity'}
+            onDeleteActivity={onDeleteActivity}
+          />
         </div>
       </div>
 
