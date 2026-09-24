@@ -341,7 +341,8 @@ export function AddActivityForm({ onAddActivity }: AddActivityFormProps) {
       <div className="flex justify-end mt-1">
         <button
           type="submit"
-          className="demo-button demo-button-sm bg-lagoon-deep text-lagoon-ink border-lagoon font-bold flex items-center gap-1 focus-visible:ring-2 focus-visible:outline-none"
+          disabled={!name.trim()}
+          className="demo-button demo-button-sm bg-lagoon-deep text-lagoon-ink border-lagoon font-bold flex items-center gap-1 focus-visible:ring-2 focus-visible:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Plus className="h-3.5 w-3.5" />
           Add to Route
