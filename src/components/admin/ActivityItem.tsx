@@ -79,7 +79,11 @@ interface ActivityActionsProps {
   onDeleteActivity: (index: number) => void
 }
 
-function ActivityActions({ index, activityName, onDeleteActivity }: ActivityActionsProps) {
+function ActivityActions({
+  index,
+  activityName,
+  onDeleteActivity,
+}: ActivityActionsProps) {
   return (
     <div className="flex items-center">
       <button

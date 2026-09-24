@@ -3,7 +3,10 @@
 // this list purely to render the provider picker and to label runs.
 
 export type ModelId =
-  'gpt-4o-mini' | 'gpt-5.2' | 'claude-opus-4.8' | 'claude-haiku-4-5'
+  | 'gpt-4o-mini'
+  | 'gpt-5.2'
+  | 'claude-opus-4.8'
+  | 'claude-haiku-4-5'
 
 export type Provider = 'anthropic' | 'openai'
 
