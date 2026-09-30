@@ -28,3 +28,8 @@
 
 **Learning:** Found an opportunity where an action (deleting an activity item in the plan editor) lacked a confirmation prompt. Although `PlansSidebar.tsx` confirmed when deleting a whole plan, removing individual activities happens often and deleting one without warning is a poor UX.
 **Action:** Implemented a standard `window.confirm` for deleting activities to prevent accidental data loss. Always add confirmation dialogs for destructive actions.
+
+## 2024-12-05 - Avoid redundant aria-labels
+
+**Learning:** Found instances where buttons contained both explicitly descriptive visible text (e.g. `<span>Save Changes</span>`) and an identical `aria-label` attribute. Adding an `aria-label` that exactly matches the visible text creates redundant screen reader announcements or unnecessarily replaces perfectly good accessible content.
+**Action:** When a button or interactive element has descriptive visible text, do not add an identical or redundant `aria-label` attribute.
