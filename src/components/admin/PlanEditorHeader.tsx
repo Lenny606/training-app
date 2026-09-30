@@ -51,7 +51,6 @@ export function PlanEditorHeader({
             onClick={onDiscardChanges}
             className="demo-button demo-button-sm demo-button-secondary flex items-center gap-1.5 focus-visible:ring-2 focus-visible:outline-none"
             title="Discard changes"
-            aria-label="Discard changes"
           >
             <RotateCcw className="h-3.5 w-3.5" />
             <span>Discard</span>
@@ -60,7 +59,6 @@ export function PlanEditorHeader({
         <button
           onClick={onSavePlan}
           className={getSaveButtonClass(hasUnsavedChanges)}
-          aria-label={hasUnsavedChanges ? 'Save Changes' : 'Saved'}
         >
           <Save className="h-3.5 w-3.5" />
           <span>{hasUnsavedChanges ? 'Save Changes' : 'Saved'}</span>
