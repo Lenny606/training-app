@@ -33,3 +33,8 @@
 
 **Learning:** Found instances where buttons contained both explicitly descriptive visible text (e.g. `<span>Save Changes</span>`) and an identical `aria-label` attribute. Adding an `aria-label` that exactly matches the visible text creates redundant screen reader announcements or unnecessarily replaces perfectly good accessible content.
 **Action:** When a button or interactive element has descriptive visible text, do not add an identical or redundant `aria-label` attribute.
+
+## 2025-01-23 - Hydration Timing for Automated Tests in React
+
+**Learning:** When using Playwright to test React controlled forms (like the user registration form), interacting with inputs immediately after the DOM selector resolves can lead to silent failures where `page.fill()` does not successfully update the component's state because React has not fully hydrated the page.
+**Action:** Always wait for full hydration (e.g., by using `await page.waitForLoadState('networkidle')` or incorporating explicit timeouts) before filling controlled inputs in headless browser tests.
