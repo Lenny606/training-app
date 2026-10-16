@@ -45,7 +45,11 @@ function PlanEditorPanel({
         onSavePlan={handlers.handleSavePlan}
       />
       {saveSuccess && (
-        <div className="flex items-center gap-2 bg-success/10 border border-success/30 rounded-xl px-4 py-2.5 text-xs text-success">
+        <div
+          role="status"
+          aria-live="polite"
+          className="flex items-center gap-2 bg-success/10 border border-success/30 rounded-xl px-4 py-2.5 text-xs text-success"
+        >
           <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
           <span>
             Workout program configuration successfully saved to active memory.
