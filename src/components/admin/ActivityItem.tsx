@@ -13,6 +13,7 @@ interface NumericFieldProps {
   fallback: number | null
   unit: string
   placeholder: string
+  ariaLabel?: string
   onCommit: (value: string) => void
 }
 
@@ -24,6 +25,7 @@ function NumericField({
   fallback,
   unit,
   placeholder,
+  ariaLabel,
   onCommit,
 }: NumericFieldProps) {
   const [local, setLocal] = useState(
@@ -64,7 +66,7 @@ function NumericField({
         onBlur={handleBlur}
         className="demo-input py-1.5 pl-2.5 pr-6 text-xs text-right font-mono"
         placeholder={placeholder}
-        aria-label={placeholder}
+        aria-label={ariaLabel || placeholder}
       />
       <span className="absolute right-2 top-2 text-3xs text-ink-soft font-mono">
         {unit}
@@ -79,7 +81,11 @@ interface ActivityActionsProps {
   onDeleteActivity: (index: number) => void
 }
 
-function ActivityActions({ index, activityName, onDeleteActivity }: ActivityActionsProps) {
+function ActivityActions({
+  index,
+  activityName,
+  onDeleteActivity,
+}: ActivityActionsProps) {
   return (
     <div className="flex items-center">
       <button
@@ -94,7 +100,7 @@ function ActivityActions({ index, activityName, onDeleteActivity }: ActivityActi
         }}
         className="demo-button demo-button-icon border-danger/30 bg-danger/10 text-danger hover:bg-danger/20 focus-visible:ring-2 focus-visible:outline-none"
         title="Delete Activity"
-        aria-label="Delete Activity"
+        aria-label={`Delete activity: ${activityName || 'Unnamed Activity'}`}
       >
         <Trash2 className="h-3.5 w-3.5" />
       </button>
@@ -166,6 +172,7 @@ function ActivityInputs({
             fallback={DEFAULT_ACTIVITY_DURATION}
             unit="s"
             placeholder="Sec"
+            ariaLabel="Duration in seconds"
             onCommit={(v) => onActivityChange(index, 'duration', v)}
           />
         </div>
@@ -193,6 +200,7 @@ function ActivityInputs({
               fallback={null}
               unit="x"
               placeholder="Sets"
+              ariaLabel="Number of sets"
               onCommit={(v) => onActivityChange(index, 'sets', v)}
             />
           </div>
@@ -203,7 +211,7 @@ function ActivityInputs({
               onChange={(e) => onActivityChange(index, 'reps', e.target.value)}
               className="demo-input py-1.5 px-2 text-xs text-center font-mono"
               placeholder="Reps"
-              aria-label="Reps"
+              aria-label="Number of reps"
             />
           </div>
           <div className="col-span-4">
@@ -215,7 +223,7 @@ function ActivityInputs({
               }
               className="demo-input py-1.5 px-2 text-xs text-center font-mono"
               placeholder="Weight"
-              aria-label="Weight"
+              aria-label="Weight amount"
             />
           </div>
         </div>
