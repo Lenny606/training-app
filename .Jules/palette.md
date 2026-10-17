@@ -38,3 +38,8 @@
 
 **Learning:** When using Playwright to test React controlled forms (like the user registration form), interacting with inputs immediately after the DOM selector resolves can lead to silent failures where `page.fill()` does not successfully update the component's state because React has not fully hydrated the page.
 **Action:** Always wait for full hydration (e.g., by using `await page.waitForLoadState('networkidle')` or incorporating explicit timeouts) before filling controlled inputs in headless browser tests.
+
+## 2025-02-12 - Disambiguating List Items for Screen Readers
+
+**Learning:** When rendering lists of identical items (e.g., plans or activities) containing compact inputs or action buttons without visible labels, generic ARIA labels like `aria-label="Sets"` or `aria-label="Delete Activity"` fail to provide enough context for screen reader users. They do not know _which_ activity they are modifying or deleting.
+**Action:** Always provide item-specific, descriptive ARIA labels in repetitive list items (e.g., `aria-label="Number of sets"` or `aria-label={"Delete activity: " + activity.name}`) to ensure complete context.

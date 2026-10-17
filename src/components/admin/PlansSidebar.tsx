@@ -115,7 +115,7 @@ function SidebarItem({
           }}
           className="demo-button demo-button-icon border-danger/30 bg-danger/10 text-danger hover:bg-danger/20 focus-visible:ring-2 focus-visible:outline-none"
           title="Delete Plan"
-          aria-label="Delete Plan"
+          aria-label={`Delete Plan: ${plan.name}`}
         >
           <Trash2 className="h-3.5 w-3.5" />
         </button>
