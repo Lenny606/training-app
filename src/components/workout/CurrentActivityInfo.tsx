@@ -126,7 +126,7 @@ function ActivityMediaGallery({ media }: { media: Media[] }) {
         >
           <button
             onClick={() => setActiveMedia(null)}
-            className="absolute top-4 right-4 p-2.5 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white transition-all cursor-pointer z-55"
+            className="absolute top-4 right-4 p-2.5 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white transition-all cursor-pointer z-55 focus-visible:ring-2 focus-visible:outline-none"
             aria-label="Close lightbox"
           >
             <X className="h-6 w-6" />
@@ -139,7 +139,7 @@ function ActivityMediaGallery({ media }: { media: Media[] }) {
             {media.length > 1 && (
               <button
                 onClick={handlePrev}
-                className="absolute left-0 -translate-x-4 sm:-translate-x-12 p-3 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white transition-all cursor-pointer z-55"
+                className="absolute left-0 -translate-x-4 sm:-translate-x-12 p-3 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white transition-all cursor-pointer z-55 focus-visible:ring-2 focus-visible:outline-none"
                 aria-label="Previous media"
               >
                 <ChevronLeft className="h-6 w-6" />
@@ -166,7 +166,7 @@ function ActivityMediaGallery({ media }: { media: Media[] }) {
             {media.length > 1 && (
               <button
                 onClick={handleNext}
-                className="absolute right-0 translate-x-4 sm:translate-x-12 p-3 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white transition-all cursor-pointer z-55"
+                className="absolute right-0 translate-x-4 sm:translate-x-12 p-3 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white transition-all cursor-pointer z-55 focus-visible:ring-2 focus-visible:outline-none"
                 aria-label="Next media"
               >
                 <ChevronRight className="h-6 w-6" />
