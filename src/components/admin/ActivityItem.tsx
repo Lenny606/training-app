@@ -162,7 +162,7 @@ function ActivityInputs({
             onChange={(e) => onActivityChange(index, 'name', e.target.value)}
             className="demo-input py-1.5 px-2.5 text-xs font-semibold"
             placeholder="Activity / Rest Name"
-            aria-label="Activity Name"
+            aria-label={`Activity Name: ${activity.name || 'Unnamed Activity'}`}
           />
         </div>
 
@@ -172,7 +172,7 @@ function ActivityInputs({
             fallback={DEFAULT_ACTIVITY_DURATION}
             unit="s"
             placeholder="Sec"
-            ariaLabel="Duration in seconds"
+            ariaLabel={`Duration in seconds: ${activity.name || 'Unnamed Activity'}`}
             onCommit={(v) => onActivityChange(index, 'duration', v)}
           />
         </div>
@@ -189,7 +189,7 @@ function ActivityInputs({
             }
             className="demo-input py-1.5 px-2.5 text-xs"
             placeholder="Instruction / learning details"
-            aria-label="Instruction details"
+            aria-label={`Instruction details: ${activity.name || 'Unnamed Activity'}`}
           />
         </div>
       ) : !isRest ? (
@@ -200,7 +200,7 @@ function ActivityInputs({
               fallback={null}
               unit="x"
               placeholder="Sets"
-              ariaLabel="Number of sets"
+              ariaLabel={`Number of sets: ${activity.name || 'Unnamed Activity'}`}
               onCommit={(v) => onActivityChange(index, 'sets', v)}
             />
           </div>
@@ -211,7 +211,7 @@ function ActivityInputs({
               onChange={(e) => onActivityChange(index, 'reps', e.target.value)}
               className="demo-input py-1.5 px-2 text-xs text-center font-mono"
               placeholder="Reps"
-              aria-label="Number of reps"
+              aria-label={`Number of reps: ${activity.name || 'Unnamed Activity'}`}
             />
           </div>
           <div className="col-span-4">
@@ -223,7 +223,7 @@ function ActivityInputs({
               }
               className="demo-input py-1.5 px-2 text-xs text-center font-mono"
               placeholder="Weight"
-              aria-label="Weight amount"
+              aria-label={`Weight amount: ${activity.name || 'Unnamed Activity'}`}
             />
           </div>
         </div>
