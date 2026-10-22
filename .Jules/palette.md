@@ -43,3 +43,8 @@
 
 **Learning:** When rendering lists of identical items (e.g., plans or activities) containing compact inputs or action buttons without visible labels, generic ARIA labels like `aria-label="Sets"` or `aria-label="Delete Activity"` fail to provide enough context for screen reader users. They do not know _which_ activity they are modifying or deleting.
 **Action:** Always provide item-specific, descriptive ARIA labels in repetitive list items (e.g., `aria-label="Number of sets"` or `aria-label={"Delete activity: " + activity.name}`) to ensure complete context.
+
+## 2024-10-22 - Add confirmation dialog to discard changes
+
+**Learning:** Users need a confirmation for actions where data might be lost, especially complex form data like workout plans. A simple native dialog provides adequate protection without cluttering the UI.
+**Action:** Always wrap destructive or potentially data-loss actions (like "Discard changes", "Delete") with a confirmation prompt (`window.confirm` or equivalent dialog) before executing them.
