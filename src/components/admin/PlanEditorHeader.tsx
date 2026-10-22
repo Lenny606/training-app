@@ -48,7 +48,15 @@ export function PlanEditorHeader({
       <div className="flex items-center gap-2">
         {hasUnsavedChanges && (
           <button
-            onClick={onDiscardChanges}
+            onClick={() => {
+              if (
+                window.confirm(
+                  'Are you sure you want to discard your unsaved changes?',
+                )
+              ) {
+                onDiscardChanges()
+              }
+            }}
             className="demo-button demo-button-sm demo-button-secondary flex items-center gap-1.5 focus-visible:ring-2 focus-visible:outline-none"
             title="Discard changes"
           >
