@@ -273,6 +273,11 @@ function usePlanEditor({
   }
 
   const handleDiscardChanges = () => {
+    if (
+      !window.confirm('Are you sure you want to discard your unsaved changes?')
+    ) {
+      return
+    }
     const original = plans.find((p) => p.id === selectedPlanId)
     if (original) {
       setEditingPlan(JSON.parse(JSON.stringify(original)))
