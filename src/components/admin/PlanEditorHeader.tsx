@@ -25,35 +25,26 @@ export function PlanEditorHeader({
   onSavePlan,
 }: PlanEditorHeaderProps) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-line">
-      <div>
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-2xs uppercase tracking-widest text-lagoon font-bold font-display">
-            Editing Mode
-          </span>
-          {hasUnsavedChanges && (
-            <span
-              className="h-2 w-2 rounded-full bg-amber-500 animate-pulse"
-              title="Unsaved changes"
-              aria-label="Unsaved changes"
-              role="status"
-            />
-          )}
-        </div>
-        <h1 className="m-0 font-display text-2xl font-black tracking-tight text-ink">
+    <div className="flex flex-wrap items-center justify-between gap-4 pb-3 border-b border-line">
+      <div className="flex items-center gap-2 min-w-0">
+        <h1 className="m-0 font-display text-xl font-bold tracking-tight text-ink truncate">
           {planName || 'Unnamed Plan'}
         </h1>
+        {hasUnsavedChanges && (
+          <span
+            className="h-2 w-2 flex-shrink-0 rounded-full bg-amber-500"
+            title="Unsaved changes"
+            aria-label="Unsaved changes"
+            role="status"
+          />
+        )}
       </div>
 
       <div className="flex items-center gap-2">
         {hasUnsavedChanges && (
           <button
             onClick={() => {
-              if (
-                window.confirm(
-                  'Are you sure you want to discard your unsaved changes?',
-                )
-              ) {
+              if (window.confirm('Discard unsaved changes?')) {
                 onDiscardChanges()
               }
             }}
@@ -69,7 +60,7 @@ export function PlanEditorHeader({
           className={getSaveButtonClass(hasUnsavedChanges)}
         >
           <Save className="h-3.5 w-3.5" />
-          <span>{hasUnsavedChanges ? 'Save Changes' : 'Saved'}</span>
+          <span>{hasUnsavedChanges ? 'Save' : 'Saved'}</span>
         </button>
       </div>
     </div>

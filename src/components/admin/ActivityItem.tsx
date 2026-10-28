@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, Trash2 } from 'lucide-react'
+import { ChevronDown, GripVertical, ImageIcon, Trash2 } from 'lucide-react'
 import { DEFAULT_ACTIVITY_DURATION } from '../../domain/plans'
 import type { Activity, Media } from '../../domain/plans'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
@@ -90,16 +90,12 @@ function ActivityActions({
     <div className="flex items-center">
       <button
         onClick={() => {
-          if (
-            window.confirm(
-              `Are you sure you want to delete the activity "${activityName}"?`,
-            )
-          ) {
+          if (window.confirm(`Delete "${activityName}"?`)) {
             onDeleteActivity(index)
           }
         }}
-        className="demo-button demo-button-icon border-danger/30 bg-danger/10 text-danger hover:bg-danger/20 focus-visible:ring-2 focus-visible:outline-none"
-        title="Delete Activity"
+        className="demo-button demo-button-icon border-transparent bg-transparent text-ink-soft hover:text-danger hover:bg-danger/10 focus-visible:ring-2 focus-visible:outline-none"
+        title="Delete activity"
         aria-label={`Delete activity: ${activityName || 'Unnamed Activity'}`}
       >
         <Trash2 className="h-3.5 w-3.5" />
@@ -161,7 +157,7 @@ function ActivityInputs({
             value={activity.name}
             onChange={(e) => onActivityChange(index, 'name', e.target.value)}
             className="demo-input py-1.5 px-2.5 text-xs font-semibold"
-            placeholder="Activity / Rest Name"
+            placeholder="Name"
             aria-label={`Activity Name: ${activity.name || 'Unnamed Activity'}`}
           />
         </div>
@@ -188,7 +184,7 @@ function ActivityInputs({
               onActivityChange(index, 'description', e.target.value)
             }
             className="demo-input py-1.5 px-2.5 text-xs"
-            placeholder="Instruction / learning details"
+            placeholder="Details"
             aria-label={`Instruction details: ${activity.name || 'Unnamed Activity'}`}
           />
         </div>
@@ -253,6 +249,8 @@ export function ActivityItem({
   onDeleteActivity,
 }: ActivityItemProps) {
   const reducedMotion = usePrefersReducedMotion()
+  const [mediaOpen, setMediaOpen] = useState(false)
+  const mediaCount = activity.media?.length ?? 0
   const {
     attributes,
     listeners,
@@ -270,7 +268,7 @@ export function ActivityItem({
     opacity: isDragging ? 0.4 : undefined,
     zIndex: isDragging ? 1 : undefined,
   }
-  const containerClass = `demo-list-item flex flex-col gap-3 p-3 border transition-all ${
+  const containerClass = `demo-list-item flex flex-col gap-2 p-2.5 border transition-all ${
     isRest
       ? 'border-line/50'
       : activity.type === 'learning'
@@ -299,6 +297,22 @@ export function ActivityItem({
           index={index}
           onActivityChange={onActivityChange}
         />
+        {activity.type === 'exercise' && (
+          <button
+            type="button"
+            onClick={() => setMediaOpen((o) => !o)}
+            className="demo-button demo-button-icon flex-shrink-0 mt-1 gap-0.5 border-transparent bg-transparent text-ink-soft hover:text-ink focus-visible:ring-2 focus-visible:outline-none"
+            title="Media"
+            aria-expanded={mediaOpen}
+            aria-label={`Media for ${activity.name || 'Unnamed Activity'}`}
+          >
+            <ImageIcon className="h-3.5 w-3.5" />
+            {mediaCount > 0 && <span className="text-2xs">{mediaCount}</span>}
+            <ChevronDown
+              className={`h-3 w-3 transition-transform ${mediaOpen ? 'rotate-180' : ''}`}
+            />
+          </button>
+        )}
         <div className="flex-shrink-0 mt-1">
           <ActivityActions
             index={index}
@@ -313,11 +327,8 @@ export function ActivityItem({
         <ActivityItemBadge type={activity.type} index={index} />
       </div>
 
-      {activity.type === 'exercise' && (
-        <div className="w-full border-t border-line/35 pt-2.5 sm:pl-10">
-          <span className="text-3xs font-semibold text-ink-soft uppercase tracking-wider block mb-1">
-            Activity Media (Images / Videos)
-          </span>
+      {activity.type === 'exercise' && mediaOpen && (
+        <div className="w-full border-t border-line/35 pt-2 sm:pl-10">
           <MediaUpload
             media={activity.media}
             onChange={(m) => onActivityChange(index, 'media', m)}

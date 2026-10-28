@@ -147,113 +147,70 @@ export function MediaUpload({
   }
 
   return (
-    <div className="space-y-3 mt-2">
-      {/* Upload Zone */}
+    <div className="space-y-2">
       <div
         onDragOver={handleDragOver}
         onDrop={handleDrop}
-        className={`border-2 border-dashed rounded-xl p-4 text-center transition-all ${
-          uploading || generating
-            ? 'border-line/40 bg-chip/20'
-            : 'border-line/60 bg-chip/40 hover:bg-lagoon/[0.02] hover:border-lagoon/50'
-        }`}
+        className="flex flex-wrap items-center gap-2"
       >
-        <div className="flex flex-col items-center justify-center gap-2">
-          {uploading || generating ? (
-            <>
-              <Loader2 className="h-6 w-6 text-lagoon animate-spin" />
-              <span className="text-xs text-ink-soft font-medium animate-pulse">
-                {generating
-                  ? 'Generating image with AI...'
-                  : 'Uploading files...'}
-              </span>
-            </>
-          ) : (
-            <>
-              <Upload className="h-6 w-6 text-lagoon-deep hover:scale-110 transition-transform" />
-              <div className="text-xs font-semibold text-ink">
-                Drag & drop media or choose below
-              </div>
-              <div className="text-2xs text-ink-soft">
-                Supports Images & Videos up to 50MB
-              </div>
-
-              <div className="flex flex-wrap items-center gap-2.5 mt-3 pt-3 border-t border-line/10 w-full justify-center">
-                {/* Browse Files */}
-                <div className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line bg-chip hover:bg-lagoon/10 hover:border-lagoon/40 text-xxs font-semibold text-ink transition-all cursor-pointer active:scale-95">
-                  <Upload className="h-3.5 w-3.5 text-lagoon-deep" />
-                  <span>Browse Files</span>
-                  <input
-                    type="file"
-                    onChange={handleFileChange}
-                    multiple
-                    accept="image/*,video/*"
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    disabled={uploading || generating}
-                    aria-label="Browse Files"
-                  />
-                </div>
-
-                {/* Take Photo */}
-                <div className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line bg-chip hover:bg-lagoon/10 hover:border-lagoon/40 text-xxs font-semibold text-ink transition-all cursor-pointer active:scale-95">
-                  <Camera className="h-3.5 w-3.5 text-lagoon-deep" />
-                  <span>Take Photo</span>
-                  <input
-                    type="file"
-                    onChange={handleFileChange}
-                    accept="image/*"
-                    capture="environment"
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    disabled={uploading || generating}
-                    aria-label="Take Photo"
-                  />
-                </div>
-
-                {/* Record Video */}
-                <div className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line bg-chip hover:bg-lagoon/10 hover:border-lagoon/40 text-xxs font-semibold text-ink transition-all cursor-pointer active:scale-95">
-                  <Video className="h-3.5 w-3.5 text-lagoon-deep" />
-                  <span>Record Video</span>
-                  <input
-                    type="file"
-                    onChange={handleFileChange}
-                    accept="video/*"
-                    capture="environment"
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    disabled={uploading || generating}
-                    aria-label="Record Video"
-                  />
-                </div>
-
-                {/* AI Generate */}
-                <button
-                  type="button"
-                  onClick={handleGenerateAiImage}
-                  disabled={uploading || generating || !activityName?.trim()}
-                  className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xxs font-semibold transition-all active:scale-95 cursor-pointer ${
-                    !activityName?.trim()
-                      ? 'border-line/40 bg-chip/30 text-ink-soft/40 cursor-not-allowed active:scale-100'
-                      : 'border-line bg-chip hover:bg-lagoon/10 hover:border-lagoon/40 text-ink'
-                  }`}
-                  title={
-                    !activityName?.trim()
-                      ? 'Enter activity name first to generate image'
-                      : 'Generate image using AI'
-                  }
-                  aria-label={
-                    !activityName?.trim()
-                      ? 'Enter activity name first to generate image'
-                      : 'Generate image using AI'
-                  }
-                >
-                  <Sparkles
-                    className={`h-3.5 w-3.5 ${!activityName?.trim() ? 'text-lagoon-deep/30' : 'text-lagoon-deep'}`}
-                  />
-                  <span>AI Generate</span>
-                </button>
-              </div>
-            </>
-          )}
-        </div>
+        {uploading || generating ? (
+          <span className="flex items-center gap-1.5 text-xs text-ink-soft">
+            <Loader2 className="h-4 w-4 text-lagoon animate-spin" />
+            {generating ? 'Generating…' : 'Uploading…'}
+          </span>
+        ) : (
+          <>
+            <div className="relative flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-line bg-chip hover:bg-lagoon/10 hover:border-lagoon/40 text-xxs font-semibold text-ink transition-all cursor-pointer">
+              <Upload className="h-3.5 w-3.5 text-lagoon-deep" />
+              <span>Upload</span>
+              <input
+                type="file"
+                onChange={handleFileChange}
+                multiple
+                accept="image/*,video/*"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                aria-label="Upload images or videos"
+              />
+            </div>
+            <div className="relative flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-line bg-chip hover:bg-lagoon/10 hover:border-lagoon/40 text-xxs font-semibold text-ink transition-all cursor-pointer sm:hidden">
+              <Camera className="h-3.5 w-3.5 text-lagoon-deep" />
+              <span>Photo</span>
+              <input
+                type="file"
+                onChange={handleFileChange}
+                accept="image/*"
+                capture="environment"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                aria-label="Take Photo"
+              />
+            </div>
+            <div className="relative flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-line bg-chip hover:bg-lagoon/10 hover:border-lagoon/40 text-xxs font-semibold text-ink transition-all cursor-pointer sm:hidden">
+              <Video className="h-3.5 w-3.5 text-lagoon-deep" />
+              <span>Video</span>
+              <input
+                type="file"
+                onChange={handleFileChange}
+                accept="video/*"
+                capture="environment"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                aria-label="Record Video"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={handleGenerateAiImage}
+              disabled={!activityName?.trim()}
+              className="relative flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-line bg-chip hover:bg-lagoon/10 hover:border-lagoon/40 text-xxs font-semibold text-ink transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              title="Generate image with AI"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-lagoon-deep" />
+              <span>AI</span>
+            </button>
+            <span className="text-2xs text-ink-soft">
+              or drop files · max 50 MB
+            </span>
+          </>
+        )}
       </div>
 
       {error && (

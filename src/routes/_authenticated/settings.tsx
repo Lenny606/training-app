@@ -35,28 +35,20 @@ function Settings() {
   }
 
   async function handleRevoke(id: string, tokenName: string) {
-    if (
-      !window.confirm(
-        `Revoke token “${tokenName}”? Clients using it stop working.`,
-      )
-    )
-      return
+    if (!window.confirm(`Revoke “${tokenName}”?`)) return
     await revokeApiToken({ data: { id } })
     await router.invalidate()
   }
 
   return (
-    <main className="page-wrap px-4 py-12">
-      <section className="island-shell rounded-2xl p-6 sm:p-8 flex flex-col gap-6">
+    <main className="page-wrap px-4 py-8 sm:py-12">
+      <section className="demo-panel p-5 flex flex-col gap-4">
         <div>
-          <p className="island-kicker mb-2">Settings</p>
-          <h1 className="display-title mb-3 text-3xl font-bold text-ink">
+          <h1 className="m-0 mb-1 font-display text-xl font-bold text-ink">
             API tokens
           </h1>
-          <p className="m-0 max-w-3xl text-sm leading-7 text-ink-soft">
-            Connect Claude Code (or any MCP client) to manage your plans from
-            the terminal. A token grants full access to your plans and workout
-            logs — treat it like a password.
+          <p className="m-0 text-xs text-ink-soft">
+            For Claude Code / MCP. Full access — keep it secret.
           </p>
         </div>
 
@@ -65,7 +57,7 @@ function Settings() {
           className="flex flex-wrap items-end gap-3"
         >
           <label className="flex flex-col gap-1 text-xs text-ink-soft">
-            Token name
+            Name
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -75,7 +67,7 @@ function Settings() {
             />
           </label>
           <button type="submit" disabled={busy} className="demo-button">
-            <KeyRound className="h-4 w-4" aria-hidden /> Create token
+            <KeyRound className="h-4 w-4" aria-hidden /> Create
           </button>
         </form>
 
@@ -85,7 +77,7 @@ function Settings() {
             className="flex flex-col gap-2 rounded-xl border border-success/30 bg-success/10 p-4 text-xs"
           >
             <strong className="text-success">
-              Copy the command now — the token won’t be shown again.
+              Copy now — shown only once.
             </strong>
             <div className="flex items-start gap-2">
               <code className="flex-1 break-all">{command}</code>

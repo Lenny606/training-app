@@ -1,8 +1,7 @@
 import { useState, useId } from 'react'
 import { Plus } from 'lucide-react'
 import { DEFAULT_ACTIVITY_DURATION } from '../../domain/plans'
-import type { Activity, Media } from '../../domain/plans'
-import { MediaUpload } from './MediaUpload'
+import type { Activity } from '../../domain/plans'
 
 interface AddActivityFormProps {
   onAddActivity: (activity: Omit<Activity, 'id'>) => void
@@ -94,13 +93,11 @@ function useAddActivityForm(
   const [sets, setSets] = useState('')
   const [reps, setReps] = useState('')
   const [weight, setWeight] = useState('')
-  const [mediaList, setMediaList] = useState<Media[]>([])
 
   const handleTypeChange = (newType: 'exercise' | 'rest' | 'learning') => {
     setType(newType)
     setDuration('')
     setDescription('')
-    setMediaList([])
   }
 
   const resetForm = () => {
@@ -110,7 +107,6 @@ function useAddActivityForm(
     setSets('')
     setReps('')
     setWeight('')
-    setMediaList([])
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -138,7 +134,6 @@ function useAddActivityForm(
         sets: isNaN(parsedSets) || parsedSets <= 0 ? undefined : parsedSets,
         reps: reps.trim() || undefined,
         weight: weight.trim() || undefined,
-        media: mediaList.length > 0 ? mediaList : undefined,
       })
     } else if (type === 'learning') {
       Object.assign(payload, {
@@ -158,14 +153,12 @@ function useAddActivityForm(
     sets,
     reps,
     weight,
-    mediaList,
     setName,
     setDuration,
     setDescription,
     setSets,
     setReps,
     setWeight,
-    setMediaList,
     handleTypeChange,
     handleSubmit,
   }
@@ -268,14 +261,12 @@ export function AddActivityForm({ onAddActivity }: AddActivityFormProps) {
     sets,
     reps,
     weight,
-    mediaList,
     setName,
     setDuration,
     setDescription,
     setSets,
     setReps,
     setWeight,
-    setMediaList,
     handleTypeChange,
     handleSubmit,
   } = useAddActivityForm(onAddActivity)
@@ -283,14 +274,8 @@ export function AddActivityForm({ onAddActivity }: AddActivityFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mt-3 p-4 rounded-xl border border-lagoon/20 bg-lagoon/[0.03] flex flex-col gap-3"
+      className="mt-1 p-3 rounded-xl border border-dashed border-line flex flex-col gap-2.5"
     >
-      <h4 className="m-0 text-xs font-bold text-ink flex items-center gap-1.5">
-        <Plus className="h-3.5 w-3.5 text-lagoon" />
-        Add Activity
-      </h4>
-
-      {/* Line 1: Type, Name, Seconds */}
       <CoreFields
         type={type}
         name={name}
@@ -323,28 +308,19 @@ export function AddActivityForm({ onAddActivity }: AddActivityFormProps) {
             type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="e.g. Focus on keeping your back flat"
+            placeholder="Optional"
             className="demo-input py-1.5 text-xs font-medium"
           />
         </div>
       ) : null}
 
-      {type === 'exercise' && (
-        <div className="border-t border-line/35 pt-3">
-          <label className="block text-3xs font-semibold text-ink-soft uppercase tracking-wider mb-1">
-            Activity Media (Images / Videos)
-          </label>
-          <MediaUpload media={mediaList} onChange={setMediaList} />
-        </div>
-      )}
-
-      <div className="flex justify-end mt-1">
+      <div className="flex justify-end">
         <button
           type="submit"
           className="demo-button demo-button-sm bg-lagoon-deep text-lagoon-ink border-lagoon font-bold flex items-center gap-1 focus-visible:ring-2 focus-visible:outline-none"
         >
           <Plus className="h-3.5 w-3.5" />
-          Add to Route
+          Add
         </button>
       </div>
     </form>

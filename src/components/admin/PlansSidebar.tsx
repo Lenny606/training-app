@@ -10,7 +10,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Plus, Trash2, Calendar, GripVertical, Layers } from 'lucide-react'
+import { Plus, Trash2, GripVertical } from 'lucide-react'
 import type { TrainingPlan } from '../../domain/plans'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import { useDndSensors } from '../../hooks/useDndSensors'
@@ -47,10 +47,6 @@ function SidebarItem({
     transition,
     isDragging,
   } = useSortable({ id: plan.id })
-  const exerciseCount = plan.activities.filter(
-    (a) => a.type === 'exercise',
-  ).length
-
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition: reducedMotion ? undefined : transition,
@@ -63,7 +59,7 @@ function SidebarItem({
       ref={setNodeRef}
       style={style}
       onClick={() => onSelect(plan.id)}
-      className={`demo-list-item relative overflow-hidden cursor-pointer flex flex-col gap-1 transition-all ${
+      className={`demo-list-item relative overflow-hidden cursor-pointer py-1.5 pl-1.5 transition-all ${
         isSelected
           ? 'border-lagoon-deep/80 bg-lagoon/[0.06] shadow-glow-lagoon-soft'
           : 'hover:border-lagoon/30 hover:bg-link-hover'
@@ -74,47 +70,33 @@ function SidebarItem({
           isSelected ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'
         }`}
       />
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-1.5 min-w-0">
-          <button
-            ref={setActivatorNodeRef}
-            {...attributes}
-            {...listeners}
-            onClick={(e) => e.stopPropagation()}
-            className="demo-button demo-button-icon flex-shrink-0 min-h-11 min-w-11 touch-none cursor-grab active:cursor-grabbing border-line bg-chip text-ink-soft hover:text-ink focus-visible:ring-2 focus-visible:outline-none"
-            title="Drag to reorder"
-            aria-label={`Reorder plan: ${plan.name}`}
-          >
-            <GripVertical className="h-4 w-4" />
-          </button>
+      <div className="flex items-center gap-1.5 min-w-0">
+        <button
+          ref={setActivatorNodeRef}
+          {...attributes}
+          {...listeners}
+          onClick={(e) => e.stopPropagation()}
+          className="flex-shrink-0 min-h-11 min-w-8 flex items-center justify-center touch-none cursor-grab active:cursor-grabbing text-ink-soft hover:text-ink rounded focus-visible:ring-2 focus-visible:outline-none"
+          title="Drag to reorder"
+          aria-label={`Reorder plan: ${plan.name}`}
+        >
+          <GripVertical className="h-4 w-4" />
+        </button>
+        <div className="min-w-0 flex-grow">
           <h3 className="m-0 text-sm font-semibold text-ink truncate">
-            {plan.name}
+            {plan.name || 'Unnamed'}
           </h3>
+          <p className="m-0 text-2xs text-ink-soft">
+            {plan.activities.length} activities
+          </p>
         </div>
-        <span className="demo-pill px-2 py-0.5 text-2xs flex-shrink-0">
-          {exerciseCount} ex
-        </span>
-      </div>
-      <p className="text-xs text-ink-soft m-0 line-clamp-2">
-        {plan.description || 'No description provided.'}
-      </p>
-      <div className="flex items-center justify-between mt-2 pt-2 border-t border-line/60 text-2xs text-ink-soft">
-        <span className="flex items-center gap-1">
-          <Calendar className="h-3 w-3 text-lagoon-deep" />
-          {plan.daysPerWeek} days/wk
-        </span>
         <button
           onClick={(e) => {
             e.stopPropagation()
-            if (
-              window.confirm(
-                `Are you sure you want to delete the program "${plan.name}"?`,
-              )
-            )
-              onDelete(plan.id)
+            if (window.confirm(`Delete "${plan.name}"?`)) onDelete(plan.id)
           }}
-          className="demo-button demo-button-icon border-danger/30 bg-danger/10 text-danger hover:bg-danger/20 focus-visible:ring-2 focus-visible:outline-none"
-          title="Delete Plan"
+          className="demo-button demo-button-icon flex-shrink-0 border-transparent bg-transparent text-ink-soft hover:text-danger hover:bg-danger/10 focus-visible:ring-2 focus-visible:outline-none"
+          title="Delete plan"
           aria-label={`Delete Plan: ${plan.name}`}
         >
           <Trash2 className="h-3.5 w-3.5" />
@@ -142,13 +124,10 @@ export function PlansSidebar({
   }
 
   return (
-    <section className="w-full lg:w-80 flex-shrink-0">
-      <div className="demo-panel p-5 rise-in h-full flex flex-col gap-4">
+    <section className="w-full lg:w-72 flex-shrink-0">
+      <div className="demo-panel p-4 rise-in h-full flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-lg font-bold text-ink flex items-center gap-2">
-            <Layers className="h-5 w-5 text-lagoon" />
-            Training Programs
-          </h2>
+          <h2 className="m-0 font-display text-lg font-bold text-ink">Plans</h2>
           <button
             onClick={onCreateNewPlan}
             className="demo-button demo-button-sm bg-lagoon/15 text-lagoon-deep border-lagoon/30 flex items-center gap-1 focus-visible:ring-2 focus-visible:outline-none"
@@ -159,11 +138,7 @@ export function PlansSidebar({
           </button>
         </div>
 
-        <p className="text-xs text-ink-soft m-0">
-          Select a plan to configure activities, sets, weights, and durations.
-        </p>
-
-        <div className="flex flex-col gap-2.5 overflow-y-auto max-h-480px lg:max-h-640px pr-1">
+        <div className="flex flex-col gap-1.5 overflow-y-auto max-h-480px lg:max-h-640px pr-1">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -187,15 +162,9 @@ export function PlansSidebar({
           </DndContext>
 
           {plans.length === 0 && (
-            <div className="text-center py-8 border border-dashed border-line rounded-xl">
-              <p className="text-xs text-ink-soft mb-3">No plans found</p>
-              <button
-                onClick={onCreateNewPlan}
-                className="demo-button demo-button-sm focus-visible:ring-2 focus-visible:outline-none"
-              >
-                Create your first plan
-              </button>
-            </div>
+            <p className="m-0 py-6 text-center text-xs text-ink-soft border border-dashed border-line rounded-xl">
+              No plans yet
+            </p>
           )}
         </div>
       </div>

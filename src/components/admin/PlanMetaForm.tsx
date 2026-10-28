@@ -8,17 +8,16 @@ interface PlanMetaFormProps {
 
 export function PlanMetaForm({ plan, onChange }: PlanMetaFormProps) {
   const nameId = useId()
-  const daysId = useId()
   const descId = useId()
 
   return (
-    <div className="grid gap-4 sm:grid-cols-3">
-      <div className="sm:col-span-2">
+    <div className="grid gap-3">
+      <div>
         <label
           htmlFor={nameId}
-          className="block text-xs font-semibold text-ink-soft uppercase tracking-wider mb-1.5"
+          className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1"
         >
-          Program Name
+          Name
         </label>
         <input
           id={nameId}
@@ -26,41 +25,22 @@ export function PlanMetaForm({ plan, onChange }: PlanMetaFormProps) {
           value={plan.name}
           onChange={(e) => onChange('name', e.target.value)}
           className="demo-input font-display font-medium text-sm"
-          placeholder="e.g. Strength Training A"
+          placeholder="e.g. Strength A"
         />
       </div>
       <div>
         <label
-          htmlFor={daysId}
-          className="block text-xs font-semibold text-ink-soft uppercase tracking-wider mb-1.5"
-        >
-          Target Days / Week
-        </label>
-        <input
-          id={daysId}
-          type="number"
-          min="1"
-          max="7"
-          value={plan.daysPerWeek}
-          onChange={(e) =>
-            onChange('daysPerWeek', Math.max(1, parseInt(e.target.value) || 1))
-          }
-          className="demo-input text-sm"
-        />
-      </div>
-      <div className="sm:col-span-3">
-        <label
           htmlFor={descId}
-          className="block text-xs font-semibold text-ink-soft uppercase tracking-wider mb-1.5"
+          className="block text-2xs font-semibold text-ink-soft uppercase tracking-wider mb-1"
         >
-          Description & Objectives
+          Description
         </label>
         <textarea
           id={descId}
           value={plan.description}
           onChange={(e) => onChange('description', e.target.value)}
           className="demo-textarea text-xs"
-          placeholder="Brief description of key target areas, cycles, or notes..."
+          placeholder="Optional"
         />
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { CheckCircle2, Dumbbell } from 'lucide-react'
+import { CheckCircle2 } from 'lucide-react'
 import { useAdminState } from '../../hooks/useAdminState'
 import { PlansSidebar } from '../../components/admin/PlansSidebar'
 import { PlanEditorHeader } from '../../components/admin/PlanEditorHeader'
@@ -11,6 +11,14 @@ import { EmptyPlanEditorState } from '../../components/admin/EmptyPlanEditorStat
 export const Route = createFileRoute('/_authenticated/admin')({
   component: Admin,
 })
+
+function formatTotal(activities: Array<{ duration: number }>) {
+  const sec = activities.reduce((sum, a) => sum + a.duration, 0)
+  const min = Math.floor(sec / 60)
+  return min > 0
+    ? `${min} min ${sec % 60 ? `${sec % 60} s` : ''}`.trim()
+    : `${sec} s`
+}
 
 interface PlanEditorPanelProps {
   editingPlan: ReturnType<typeof useAdminState>['editingPlan']
@@ -37,7 +45,7 @@ function PlanEditorPanel({
 }: PlanEditorPanelProps) {
   if (!editingPlan) return null
   return (
-    <div className="demo-panel p-6 rise-in flex flex-col gap-6">
+    <div className="demo-panel p-5 rise-in flex flex-col gap-5">
       <PlanEditorHeader
         planName={editingPlan.name}
         hasUnsavedChanges={hasUnsavedChanges}
@@ -51,16 +59,14 @@ function PlanEditorPanel({
           className="flex items-center gap-2 bg-success/10 border border-success/30 rounded-xl px-4 py-2.5 text-xs text-success"
         >
           <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
-          <span>
-            Workout program configuration successfully saved to active memory.
-          </span>
+          <span>Saved</span>
         </div>
       )}
       <PlanMetaForm plan={editingPlan} onChange={handlers.handleMetaChange} />
       <div className="flex flex-col gap-3">
-        <h3 className="m-0 text-sm font-bold text-ink-soft uppercase tracking-wider flex items-center gap-2">
-          <Dumbbell className="h-4 w-4 text-lagoon" />
-          Workout Route / Activities
+        <h3 className="m-0 text-xs font-semibold text-ink-soft uppercase tracking-wider">
+          Activities · {editingPlan.activities.length} ·{' '}
+          {formatTotal(editingPlan.activities)}
         </h3>
         <ActivitiesList
           activities={editingPlan.activities}
