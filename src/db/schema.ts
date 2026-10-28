@@ -21,6 +21,20 @@ export const refreshTokens = sqliteTable('refresh_tokens', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 })
 
+// Personal API tokens for the remote MCP endpoint (/api/mcp). Only the SHA-256
+// hash is stored; the plaintext token is shown to the user exactly once.
+export const apiTokens = sqliteTable('api_tokens', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  tokenHash: text('token_hash').notNull().unique(),
+  lastUsedAt: integer('last_used_at', { mode: 'timestamp' }),
+  revokedAt: integer('revoked_at', { mode: 'timestamp' }), // null = still valid
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+})
+
 export const plans = sqliteTable('plans', {
   id: text('id').primaryKey(),
   ownerId: text('owner_id')
@@ -128,6 +142,7 @@ export type PlanRow = typeof plans.$inferSelect
 export type ActivityRow = typeof activities.$inferSelect
 export type UserRow = typeof users.$inferSelect
 export type RefreshTokenRow = typeof refreshTokens.$inferSelect
+export type ApiTokenRow = typeof apiTokens.$inferSelect
 export type MediaRow = typeof media.$inferSelect
 export type ChatSessionRow = typeof chatSessions.$inferSelect
 export type ChatMessageRow = typeof chatMessages.$inferSelect

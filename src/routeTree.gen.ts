@@ -16,8 +16,10 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as UploadsFilenameRouteImport } from './routes/uploads.$filename'
 import { Route as ApiUploadRouteImport } from './routes/api.upload'
+import { Route as ApiMcpRouteImport } from './routes/api.mcp'
 import { Route as ApiGenerateImageRouteImport } from './routes/api.generate-image'
 import { Route as ApiChatRouteImport } from './routes/api.chat'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedAssistantRouteImport } from './routes/_authenticated/assistant'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiChatSessionsRouteImport } from './routes/api.chat.sessions'
@@ -57,6 +59,11 @@ const ApiUploadRoute = ApiUploadRouteImport.update({
   path: '/api/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiMcpRoute = ApiMcpRouteImport.update({
+  id: '/api/mcp',
+  path: '/api/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiGenerateImageRoute = ApiGenerateImageRouteImport.update({
   id: '/api/generate-image',
   path: '/api/generate-image',
@@ -66,6 +73,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedAssistantRoute = AuthenticatedAssistantRouteImport.update({
   id: '/assistant',
@@ -96,8 +108,10 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/assistant': typeof AuthenticatedAssistantRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRouteWithChildren
   '/api/generate-image': typeof ApiGenerateImageRoute
+  '/api/mcp': typeof ApiMcpRoute
   '/api/upload': typeof ApiUploadRoute
   '/uploads/$filename': typeof UploadsFilenameRoute
   '/api/chat/sessions': typeof ApiChatSessionsRouteWithChildren
@@ -109,8 +123,10 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/assistant': typeof AuthenticatedAssistantRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRouteWithChildren
   '/api/generate-image': typeof ApiGenerateImageRoute
+  '/api/mcp': typeof ApiMcpRoute
   '/api/upload': typeof ApiUploadRoute
   '/uploads/$filename': typeof UploadsFilenameRoute
   '/': typeof AuthenticatedIndexRoute
@@ -125,8 +141,10 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/assistant': typeof AuthenticatedAssistantRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/api/chat': typeof ApiChatRouteWithChildren
   '/api/generate-image': typeof ApiGenerateImageRoute
+  '/api/mcp': typeof ApiMcpRoute
   '/api/upload': typeof ApiUploadRoute
   '/uploads/$filename': typeof UploadsFilenameRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
@@ -142,8 +160,10 @@ export interface FileRouteTypes {
     | '/register'
     | '/admin'
     | '/assistant'
+    | '/settings'
     | '/api/chat'
     | '/api/generate-image'
+    | '/api/mcp'
     | '/api/upload'
     | '/uploads/$filename'
     | '/api/chat/sessions'
@@ -155,8 +175,10 @@ export interface FileRouteTypes {
     | '/register'
     | '/admin'
     | '/assistant'
+    | '/settings'
     | '/api/chat'
     | '/api/generate-image'
+    | '/api/mcp'
     | '/api/upload'
     | '/uploads/$filename'
     | '/'
@@ -170,8 +192,10 @@ export interface FileRouteTypes {
     | '/register'
     | '/_authenticated/admin'
     | '/_authenticated/assistant'
+    | '/_authenticated/settings'
     | '/api/chat'
     | '/api/generate-image'
+    | '/api/mcp'
     | '/api/upload'
     | '/uploads/$filename'
     | '/_authenticated/'
@@ -186,6 +210,7 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   ApiChatRoute: typeof ApiChatRouteWithChildren
   ApiGenerateImageRoute: typeof ApiGenerateImageRoute
+  ApiMcpRoute: typeof ApiMcpRoute
   ApiUploadRoute: typeof ApiUploadRoute
   UploadsFilenameRoute: typeof UploadsFilenameRoute
 }
@@ -241,6 +266,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/mcp': {
+      id: '/api/mcp'
+      path: '/api/mcp'
+      fullPath: '/api/mcp'
+      preLoaderRoute: typeof ApiMcpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/generate-image': {
       id: '/api/generate-image'
       path: '/api/generate-image'
@@ -254,6 +286,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/chat'
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/assistant': {
       id: '/_authenticated/assistant'
@@ -289,12 +328,14 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAssistantRoute: typeof AuthenticatedAssistantRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedAssistantRoute: AuthenticatedAssistantRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
 
@@ -332,6 +373,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   ApiChatRoute: ApiChatRouteWithChildren,
   ApiGenerateImageRoute: ApiGenerateImageRoute,
+  ApiMcpRoute: ApiMcpRoute,
   ApiUploadRoute: ApiUploadRoute,
   UploadsFilenameRoute: UploadsFilenameRoute,
 }
