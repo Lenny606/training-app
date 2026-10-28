@@ -104,31 +104,6 @@ function ActivityActions({
   )
 }
 
-interface ActivityItemBadgeProps {
-  type: string
-  index: number
-}
-
-function ActivityItemBadge({ type, index }: ActivityItemBadgeProps) {
-  const isRest = type === 'rest'
-  const isLearning = type === 'learning'
-  const badgeClass = `px-1.5 py-0.5 rounded text-4xs uppercase font-black tracking-wider ${
-    isRest
-      ? 'bg-sky-500/10 text-sky-600 border border-sky-500/30 dark:text-sky-400'
-      : isLearning
-        ? 'bg-purple-500/10 text-purple-600 border border-purple-500/30 dark:text-purple-400'
-        : 'bg-lagoon/10 text-lagoon-deep border border-lagoon/30'
-  }`
-  return (
-    <div className="flex items-center gap-1.5 sm:w-28 flex-shrink-0">
-      <span className={badgeClass}>{type}</span>
-      <span className="text-2xs text-ink-soft font-mono font-bold">
-        #{index + 1}
-      </span>
-    </div>
-  )
-}
-
 interface ActivityInputsProps {
   activity: Activity
   index: number
@@ -289,9 +264,9 @@ export function ActivityItem({
         >
           <GripVertical className="h-4 w-4" />
         </button>
-        <div className="flex-shrink-0 mt-1 hidden sm:block">
-          <ActivityItemBadge type={activity.type} index={index} />
-        </div>
+        <span className="flex-shrink-0 mt-2.5 w-5 text-right text-2xs text-ink-soft font-mono font-bold">
+          {index + 1}
+        </span>
         <ActivityInputs
           activity={activity}
           index={index}
@@ -320,11 +295,6 @@ export function ActivityItem({
             onDeleteActivity={onDeleteActivity}
           />
         </div>
-      </div>
-
-      {/* Small badge visible on mobile under top bar or inside item */}
-      <div className="sm:hidden -mt-1 flex items-center">
-        <ActivityItemBadge type={activity.type} index={index} />
       </div>
 
       {activity.type === 'exercise' && mediaOpen && (
