@@ -57,6 +57,13 @@
       "when": 1793190505275,
       "tag": "0007_api_tokens",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1793195565765,
+      "tag": "0008_videos",
+      "breakpoints": true
     }
   ]
 }

@@ -8,6 +8,7 @@ import { ApiTokenRepository } from '../repositories/api-token-repository'
 import { SqlitePlanRepository } from '../repositories/sqlite-plan-repository'
 import { SqliteUserRepository } from '../repositories/sqlite-user-repository'
 import { WorkoutLogRepository } from '../repositories/workout-log-repository'
+import { VideoRepository } from '../repositories/video-repository'
 import { buildMcpServer } from './mcp-server'
 
 async function makeUser(db: DbClient, email: string): Promise<string> {
@@ -54,6 +55,7 @@ describe('ApiTokenRepository', () => {
 describe('MCP server', () => {
   let client: Client
   let plans: SqlitePlanRepository
+  let videos: VideoRepository
   let userId: string
 
   beforeEach(async () => {
@@ -61,7 +63,13 @@ describe('MCP server', () => {
     runMigrations(db)
     userId = await makeUser(db, 'u@e.com')
     plans = new SqlitePlanRepository(db)
-    const server = buildMcpServer(userId, plans, new WorkoutLogRepository(db))
+    videos = new VideoRepository(db)
+    const server = buildMcpServer(
+      userId,
+      plans,
+      new WorkoutLogRepository(db),
+      videos,
+    )
     const [clientT, serverT] = InMemoryTransport.createLinkedPair()
     client = new Client({ name: 'test', version: '0' })
     await Promise.all([server.connect(serverT), client.connect(clientT)])
@@ -103,5 +111,50 @@ describe('MCP server', () => {
     const [plan] = await plans.list(userId)
     expect(plan.name).toBe('Push day')
     expect(plan.activities.map((a) => a.name)).toEqual(['Bench press', 'Rest'])
+  })
+
+  it('supports video CRUD scoped to the token owner', async () => {
+    const call = async (name: string, args: Record<string, unknown>) => {
+      const res = await client.callTool({ name, arguments: args })
+      const [c] = res.content as Array<{ text: string }>
+      return JSON.parse(c.text)
+    }
+
+    const added = await call('add_video', {
+      url: 'https://youtu.be/dQw4w9WgXcQ?si=x',
+      title: 'Mobility',
+    })
+    expect(added.video).toMatchObject({
+      youtubeId: 'dQw4w9WgXcQ',
+      url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    })
+
+    const bad = await call('add_video', {
+      url: 'https://vimeo.com/1',
+      title: 'x',
+    })
+    expect(bad.error).toMatch(/YouTube/)
+
+    const updated = await call('update_video', {
+      videoId: added.video.id,
+      title: 'Hip mobility',
+      url: null,
+    })
+    expect(updated.video.title).toBe('Hip mobility')
+    expect(updated.video.youtubeId).toBe('dQw4w9WgXcQ')
+
+    expect((await call('list_videos', {})).videos).toHaveLength(1)
+
+    const { tools } = await client.listTools()
+    expect(
+      tools.find((t) => t.name === 'delete_video')?.annotations
+        ?.destructiveHint,
+    ).toBe(true)
+
+    expect(await call('delete_video', { videoId: added.video.id })).toEqual({
+      deleted: true,
+      id: added.video.id,
+    })
+    expect(videos.list(userId)).toEqual([])
   })
 })

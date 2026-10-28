@@ -2,18 +2,20 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import type { AnyTool } from '@tanstack/ai'
 import type { PlanRepository } from '../repositories/plan-repository'
 import type { WorkoutLogRepository } from '../repositories/workout-log-repository'
+import type { VideoRepository } from '../repositories/video-repository'
 import { buildTools } from './tools'
 
 // Tools that delete or overwrite data — flagged so MCP clients ask the user
 // before running them.
-const DESTRUCTIVE = new Set(['delete_plan'])
+const DESTRUCTIVE = new Set(['delete_plan', 'delete_video'])
 
 // Tools whose effect only exists inside the browser UI (e.g. opening the timer).
 const UI_ONLY = new Set(['start_workout'])
 
-const INSTRUCTIONS = `Tools for the user's training app: create, edit and review training plans and workout logs.
+const INSTRUCTIONS = `Tools for the user's training app: create, edit and review training plans and workout logs, and manage a library of saved YouTube videos.
 All tools are already scoped to the token owner — never ask for a user id.
-Call list_plans before referring to a plan by id. A plan has name, description, daysPerWeek (1–7) and ordered activities; each activity has name, type ('exercise' | 'rest' | 'learning'), duration in seconds, and optional sets, reps, weight, description.`
+Call list_plans before referring to a plan by id. A plan has name, description, daysPerWeek (1–7) and ordered activities; each activity has name, type ('exercise' | 'rest' | 'learning'), duration in seconds, and optional sets, reps, weight, description.
+Call list_videos before referring to a video by id. A video has a title and a YouTube URL.`
 
 /**
  * MCP server exposing the same user-bound tool set as the in-app assistant
@@ -24,13 +26,14 @@ export function buildMcpServer(
   userId: string,
   repo: PlanRepository,
   logRepo?: WorkoutLogRepository,
+  videoRepo?: VideoRepository,
 ): McpServer {
   const server = new McpServer(
     { name: 'training-app', version: '1.0.0' },
     { instructions: INSTRUCTIONS },
   )
 
-  const tools: Array<AnyTool> = buildTools(userId, repo, logRepo)
+  const tools: Array<AnyTool> = buildTools(userId, repo, logRepo, videoRepo)
   for (const tool of tools) {
     if (UI_ONLY.has(tool.name)) continue
     server.registerTool(

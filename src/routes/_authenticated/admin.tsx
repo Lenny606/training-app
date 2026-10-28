@@ -7,8 +7,11 @@ import { PlanMetaForm } from '../../components/admin/PlanMetaForm'
 import { ActivitiesList } from '../../components/admin/ActivitiesList'
 import { AddActivityForm } from '../../components/admin/AddActivityForm'
 import { EmptyPlanEditorState } from '../../components/admin/EmptyPlanEditorState'
+import { VideosAdmin } from '../../components/admin/VideosAdmin'
+import { listVideos } from '../../server/videos'
 
 export const Route = createFileRoute('/_authenticated/admin')({
+  loader: () => listVideos(),
   component: Admin,
 })
 
@@ -85,6 +88,7 @@ function PlanEditorPanel({
 }
 
 function Admin() {
+  const videos = Route.useLoaderData()
   const {
     plans,
     selectedPlanId,
@@ -137,6 +141,9 @@ function Admin() {
             <EmptyPlanEditorState onCreateNewPlan={handleCreateNewPlan} />
           )}
         </section>
+      </div>
+      <div className="mt-6">
+        <VideosAdmin videos={videos} />
       </div>
     </main>
   )

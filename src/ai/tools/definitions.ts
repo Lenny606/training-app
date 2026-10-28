@@ -291,3 +291,62 @@ export const getExerciseProgressDef = toolDefinition({
     hasData: z.boolean(),
   }),
 })
+
+// ---------------------------------------------------------------------------
+// YouTube video library
+// ---------------------------------------------------------------------------
+
+const videoShape = z.object({
+  id: z.string(),
+  title: z.string(),
+  youtubeId: z.string(),
+  url: z.string(),
+})
+
+const videoResult = z.object({
+  video: videoShape.optional(),
+  error: z.string().optional(),
+})
+
+const youTubeUrl = z.string().trim().min(1).max(500).meta({
+  description:
+    'YouTube link (watch, youtu.be, shorts, embed, live) or a bare 11-char video id',
+})
+const videoTitle = z.string().trim().min(1).max(200)
+
+export const listVideosDef = toolDefinition({
+  name: 'list_videos',
+  description:
+    "List the user's saved YouTube videos (id, title, youtubeId, url), newest first. Call this before referring to a video by id.",
+  inputSchema: z.object({}),
+  outputSchema: z.object({ videos: z.array(videoShape) }),
+})
+
+export const addVideoDef = toolDefinition({
+  name: 'add_video',
+  description:
+    "Save a YouTube video to the user's video library. Requires a YouTube URL and a title.",
+  inputSchema: z.object({ url: youTubeUrl, title: videoTitle }),
+  outputSchema: videoResult,
+})
+
+export const updateVideoDef = toolDefinition({
+  name: 'update_video',
+  description:
+    'Change the title and/or URL of a saved video. Provide videoId plus only the fields to change.',
+  inputSchema: z.object({
+    videoId: z.string(),
+    url: optionalish(youTubeUrl),
+    title: optionalish(videoTitle),
+  }),
+  outputSchema: videoResult,
+})
+
+export const deleteVideoDef = toolDefinition({
+  name: 'delete_video',
+  description:
+    'Permanently remove a saved video. Destructive — the user must explicitly approve this before it runs.',
+  inputSchema: z.object({ videoId: z.string() }),
+  outputSchema: z.object({ deleted: z.boolean(), id: z.string() }),
+  needsApproval: true,
+})

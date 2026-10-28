@@ -19,6 +19,7 @@ import { Route as ApiUploadRouteImport } from './routes/api.upload'
 import { Route as ApiMcpRouteImport } from './routes/api.mcp'
 import { Route as ApiGenerateImageRouteImport } from './routes/api.generate-image'
 import { Route as ApiChatRouteImport } from './routes/api.chat'
+import { Route as AuthenticatedVideosRouteImport } from './routes/_authenticated/videos'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedAssistantRouteImport } from './routes/_authenticated/assistant'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -74,6 +75,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedVideosRoute = AuthenticatedVideosRouteImport.update({
+  id: '/videos',
+  path: '/videos',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/assistant': typeof AuthenticatedAssistantRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/videos': typeof AuthenticatedVideosRoute
   '/api/chat': typeof ApiChatRouteWithChildren
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/mcp': typeof ApiMcpRoute
@@ -124,6 +131,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/assistant': typeof AuthenticatedAssistantRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/videos': typeof AuthenticatedVideosRoute
   '/api/chat': typeof ApiChatRouteWithChildren
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/mcp': typeof ApiMcpRoute
@@ -142,6 +150,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/assistant': typeof AuthenticatedAssistantRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/videos': typeof AuthenticatedVideosRoute
   '/api/chat': typeof ApiChatRouteWithChildren
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/mcp': typeof ApiMcpRoute
@@ -161,6 +170,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/assistant'
     | '/settings'
+    | '/videos'
     | '/api/chat'
     | '/api/generate-image'
     | '/api/mcp'
@@ -176,6 +186,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/assistant'
     | '/settings'
+    | '/videos'
     | '/api/chat'
     | '/api/generate-image'
     | '/api/mcp'
@@ -193,6 +204,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/assistant'
     | '/_authenticated/settings'
+    | '/_authenticated/videos'
     | '/api/chat'
     | '/api/generate-image'
     | '/api/mcp'
@@ -287,6 +299,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/videos': {
+      id: '/_authenticated/videos'
+      path: '/videos'
+      fullPath: '/videos'
+      preLoaderRoute: typeof AuthenticatedVideosRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/settings': {
       id: '/_authenticated/settings'
       path: '/settings'
@@ -329,6 +348,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAssistantRoute: typeof AuthenticatedAssistantRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedVideosRoute: typeof AuthenticatedVideosRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
@@ -336,6 +356,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedAssistantRoute: AuthenticatedAssistantRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedVideosRoute: AuthenticatedVideosRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
 

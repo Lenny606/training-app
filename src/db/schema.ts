@@ -78,6 +78,17 @@ export const media = sqliteTable('media', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 })
 
+// YouTube videos saved by the user; only the parsed video id is stored.
+export const videos = sqliteTable('videos', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  youtubeId: text('youtube_id').notNull(),
+  title: text('title').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+})
+
 // ---------------------------------------------------------------------------
 // AI Chat history
 // ---------------------------------------------------------------------------
@@ -144,6 +155,7 @@ export type UserRow = typeof users.$inferSelect
 export type RefreshTokenRow = typeof refreshTokens.$inferSelect
 export type ApiTokenRow = typeof apiTokens.$inferSelect
 export type MediaRow = typeof media.$inferSelect
+export type VideoRow = typeof videos.$inferSelect
 export type ChatSessionRow = typeof chatSessions.$inferSelect
 export type ChatMessageRow = typeof chatMessages.$inferSelect
 export type WorkoutLogRow = typeof workoutLogs.$inferSelect

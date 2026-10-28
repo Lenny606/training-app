@@ -13,6 +13,7 @@ import type { RouterContext } from '../routes/__root'
 const NAV_LINKS = [
   { to: '/', label: 'Workout' },
   { to: '/admin', label: 'Administration' },
+  { to: '/videos', label: 'Videos' },
   { to: '/assistant', label: 'Assistant' },
   { to: '/settings', label: 'Settings' },
 ] as const
