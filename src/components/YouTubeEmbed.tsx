@@ -8,8 +8,12 @@ interface YouTubeEmbedProps {
 
 /**
  * Click-to-load YouTube player: renders only the thumbnail until played, so a
- * page full of videos doesn't load a heavy iframe per video. Uses the
- * privacy-enhanced youtube-nocookie domain. Playback starts muted.
+ * page full of videos doesn't load a heavy iframe per video. Playback starts
+ * muted.
+ *
+ * Uses www.youtube.com, not youtube-nocookie.com: the cookieless player can't
+ * see the viewer's YouTube session, so when YouTube asks to "sign in to confirm
+ * you're not a bot" (VPNs, shared IPs) there is no way to get past it.
  */
 export function YouTubeEmbed({ youtubeId, title }: YouTubeEmbedProps) {
   const [playing, setPlaying] = useState(false)
@@ -20,7 +24,7 @@ export function YouTubeEmbed({ youtubeId, title }: YouTubeEmbedProps) {
         <iframe
           // Starts muted (also lets autoplay through on mobile); the user
           // unmutes in the player. fs=1 keeps the fullscreen button.
-          src={`https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&mute=1&fs=1&playsinline=1&rel=0`}
+          src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&fs=1&playsinline=1&rel=0`}
           title={title}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture; web-share"
           referrerPolicy="strict-origin-when-cross-origin"
