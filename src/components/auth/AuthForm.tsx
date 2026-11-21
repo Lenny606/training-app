@@ -45,11 +45,14 @@ export function AuthForm({
   }
 
   return (
-    <main className="page-wrap px-4 py-10 sm:py-16 max-w-sm mx-auto">
+    <main className="page-wrap py-10 sm:py-16 max-w-sm mx-auto">
       <div className="demo-panel p-6 sm:p-8 flex flex-col gap-6 rise-in">
-        <h1 className="m-0 font-display text-xl font-black uppercase tracking-wider text-ink">
-          {title}
-        </h1>
+        <div className="flex flex-col gap-1">
+          <p className="island-kicker m-0">Apex Training</p>
+          <h1 className="m-0 font-display text-2xl font-extrabold tracking-tight text-ink">
+            {title}
+          </h1>
+        </div>
 
         <form
           onSubmit={handleSubmit}
@@ -65,7 +68,7 @@ export function AuthForm({
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="demo-input text-sm focus-visible:ring-2 focus-visible:outline-none"
+              className="demo-input text-sm"
             />
           </div>
 
@@ -84,12 +87,12 @@ export function AuthForm({
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 aria-describedby={passwordHint ? passwordHintId : undefined}
-                className="demo-input text-sm focus-visible:ring-2 focus-visible:outline-none w-full pr-10"
+                className="demo-input text-sm w-full pr-11"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 text-ink-soft hover:text-ink focus-visible:ring-2 focus-visible:outline-none rounded-sm"
+                className="absolute right-1 inline-flex h-9 w-9 items-center justify-center rounded-lg text-ink-soft hover:text-ink"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? (
@@ -122,7 +125,7 @@ export function AuthForm({
           <button
             type="submit"
             disabled={submitting}
-            className="demo-button min-h-11 justify-center flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:outline-none"
+            className="demo-button demo-button-primary min-h-11 disabled:opacity-70"
           >
             {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
             {submitting ? 'Please wait…' : submitLabel}

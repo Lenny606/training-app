@@ -6,12 +6,18 @@
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Outfit', sans-serif;
 
-  /* Custom font sizes */
-  --font-size-xxs: 0.6875rem; /* 11px */
-  --font-size-2xs: 0.625rem; /* 10px */
-  --font-size-3xs: 0.5625rem; /* 9px */
-  --font-size-4xs: 0.5rem; /* 8px */
-  --font-size-5xs: 0.4375rem; /* 7px */
+  /* Small label sizes. Floored at 9px: anything smaller is unreadable on a
+     phone held at arm's length mid-workout. */
+  --text-xxs: 0.6875rem; /* 11px */
+  --text-xxs--line-height: 1.45;
+  --text-2xs: 0.625rem; /* 10px */
+  --text-2xs--line-height: 1.4;
+  --text-3xs: 0.625rem; /* 10px */
+  --text-3xs--line-height: 1.4;
+  --text-4xs: 0.5625rem; /* 9px */
+  --text-4xs--line-height: 1.35;
+  --text-5xs: 0.5625rem; /* 9px */
+  --text-5xs--line-height: 1.35;
 
   /* Custom radii */
   --radius-4xl: 2.5rem;
@@ -39,7 +45,7 @@
   --shadow-glow-lagoon-strong: 0 0 15px
     color-mix(in oklab, var(--lagoon) 25%, transparent);
   --shadow-timer: 0 22px 50px color-mix(in oklab, var(--lagoon) 6%, transparent);
-  --shadow-toggle: 0 8px 22px rgba(30, 90, 72, 0.08);
+  --shadow-toggle: 0 8px 22px rgba(15, 23, 42, 0.06);
 
   /* Custom backgrounds */
   --background-image-timer-glow: radial-gradient(
@@ -52,6 +58,8 @@
   --scale-98: 0.98;
   --scale-102: 1.02;
   --scale-103: 1.03;
+
+  --animate-pop-in: pop-in 420ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 /* The `dark` class on <html> drives the theme (see THEME_INIT_SCRIPT), not the
@@ -66,6 +74,8 @@
   --color-lagoon: var(--lagoon);
   --color-lagoon-deep: var(--lagoon-deep);
   --color-lagoon-ink: var(--lagoon-ink);
+  --color-rest: var(--rest);
+  --color-learning: var(--learning);
   --color-line: var(--line);
   --color-chip: var(--chip-bg);
   --color-chip-line: var(--chip-line);
@@ -81,6 +91,10 @@
   --lagoon: #0ea5e9;
   --lagoon-deep: #0284c7;
   --palm: #38bdf8;
+  /* Activity types: exercise = lagoon, rest and learning get their own hue so
+     the phase is readable from the ring colour alone. */
+  --rest: #059669;
+  --learning: #9333ea;
   --sand: #f8fafc;
   --foam: #e2e8f0;
   --surface: rgba(255, 255, 255, 0.7);
@@ -93,6 +107,7 @@
   --chip-bg: rgba(226, 232, 240, 0.8);
   --chip-line: rgba(14, 165, 233, 0.2);
   --link-bg-hover: rgba(226, 232, 240, 0.5);
+  --link-hover: #0369a1;
   --hero-a: rgba(14, 165, 233, 0.1);
   --hero-b: rgba(56, 189, 248, 0.05);
   --lagoon-ink: #ffffff;
@@ -100,12 +115,11 @@
   --success: #047857;
 
   /* Custom properties to consolidate styling value sprawl */
-  --shadow-soft-a: 0 22px 44px rgba(30, 90, 72, 0.1);
-  --shadow-soft-b: 0 6px 18px rgba(23, 58, 64, 0.08);
-  --shadow-soft-c: 0 18px 34px rgba(30, 90, 72, 0.1);
-  --shadow-soft-d: 0 4px 14px rgba(23, 58, 64, 0.06);
+  --shadow-soft-a: 0 22px 44px rgba(15, 23, 42, 0.07);
+  --shadow-soft-b: 0 6px 18px rgba(15, 23, 42, 0.05);
+  --shadow-soft-c: 0 18px 34px rgba(15, 23, 42, 0.07);
+  --shadow-soft-d: 0 4px 14px rgba(15, 23, 42, 0.04);
 
-  --color-link-hover: #246f76;
   --color-gradient-teal: #7ed3bf;
 
   --radius-panel: 1.25rem;
@@ -117,10 +131,10 @@
   --radius-list-item: 0.9rem;
   --radius-code: 7px;
 
-  --bg-gradient-radial-a: rgba(79, 184, 178, 0.1);
+  --bg-gradient-radial-a: rgba(14, 165, 233, 0.08);
   --bg-gradient-radial-b: rgba(255, 255, 255, 0.8);
-  --bg-gradient-radial-c: rgba(79, 184, 178, 0.2);
-  --bg-gradient-radial-d: rgba(47, 106, 74, 0.14);
+  --bg-gradient-radial-c: rgba(14, 165, 233, 0.16);
+  --bg-gradient-radial-d: rgba(56, 189, 248, 0.12);
 }
 
 .dark {
@@ -129,6 +143,8 @@
   --lagoon: #00f0ff;
   --lagoon-deep: #00b8cc;
   --palm: #38bdf8;
+  --rest: #34d399;
+  --learning: #c084fc;
   --sand: #0b0f19;
   --foam: #0f172a;
   --surface: rgba(20, 26, 45, 0.6);
@@ -141,6 +157,7 @@
   --chip-bg: rgba(30, 41, 59, 0.8);
   --chip-line: rgba(0, 240, 255, 0.2);
   --link-bg-hover: rgba(30, 41, 59, 0.5);
+  --link-hover: #7df6ff;
   --hero-a: rgba(0, 240, 255, 0.15);
   --hero-b: rgba(56, 189, 248, 0.08);
   --lagoon-ink: #0b0f19;
@@ -153,312 +170,373 @@
   --shadow-soft-c: 0 18px 34px rgba(0, 0, 0, 0.4);
   --shadow-soft-d: 0 4px 14px rgba(0, 0, 0, 0.3);
 
-  --bg-gradient-radial-a: rgba(79, 184, 178, 0.05);
+  --bg-gradient-radial-a: rgba(0, 240, 255, 0.04);
   --bg-gradient-radial-b: rgba(255, 255, 255, 0.1);
-  --bg-gradient-radial-c: rgba(79, 184, 178, 0.1);
-  --bg-gradient-radial-d: rgba(47, 106, 74, 0.08);
+  --bg-gradient-radial-c: rgba(0, 240, 255, 0.07);
+  --bg-gradient-radial-d: rgba(56, 189, 248, 0.06);
 }
 
-* {
-  box-sizing: border-box;
-}
+/* Element defaults and the `.demo-*` / `.island-*` classes live in cascade
+   layers so Tailwind utilities on the same element win (`demo-button px-3`,
+   `<a class="text-ink">`). Unlayered, these rules silently beat every utility. */
+@layer base {
+  * {
+    box-sizing: border-box;
+    --tw-ring-color: color-mix(in oklab, var(--lagoon) 55%, transparent);
+  }
 
-html,
-body,
-#app {
-  min-height: 100%;
-}
+  html,
+  body,
+  #app {
+    min-height: 100%;
+  }
 
-body {
-  margin: 0;
-  color: var(--sea-ink);
-  font-family: var(--font-sans);
-  background-color: var(--bg-base);
-  background:
-    radial-gradient(1100px 620px at -8% -10%, var(--hero-a), transparent 58%),
-    radial-gradient(1050px 620px at 112% -12%, var(--hero-b), transparent 62%),
-    radial-gradient(
-      720px 380px at 50% 115%,
-      var(--bg-gradient-radial-a),
-      transparent 68%
-    ),
-    linear-gradient(
-      180deg,
-      color-mix(in oklab, var(--sand) 68%, white) 0%,
-      var(--foam) 44%,
-      var(--bg-base) 100%
+  body {
+    margin: 0;
+    color: var(--sea-ink);
+    font-family: var(--font-sans);
+    background-color: var(--bg-base);
+    background:
+      radial-gradient(1100px 620px at -8% -10%, var(--hero-a), transparent 58%),
+      radial-gradient(
+        1050px 620px at 112% -12%,
+        var(--hero-b),
+        transparent 62%
+      ),
+      radial-gradient(
+        720px 380px at 50% 115%,
+        var(--bg-gradient-radial-a),
+        transparent 68%
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--sand) 68%, white) 0%,
+        var(--foam) 44%,
+        var(--bg-base) 100%
+      );
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.28;
+    background:
+      radial-gradient(
+        circle at 20% 15%,
+        var(--bg-gradient-radial-b),
+        transparent 34%
+      ),
+      radial-gradient(
+        circle at 78% 26%,
+        var(--bg-gradient-radial-c),
+        transparent 42%
+      ),
+      radial-gradient(
+        circle at 42% 82%,
+        var(--bg-gradient-radial-d),
+        transparent 36%
+      );
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.14;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(circle at 50% 30%, black, transparent 78%);
+  }
+
+  a {
+    color: var(--lagoon-deep);
+    text-decoration-color: color-mix(
+      in oklab,
+      var(--lagoon-deep) 40%,
+      transparent
     );
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+  }
 
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: -1;
-  opacity: 0.28;
-  background:
-    radial-gradient(
-      circle at 20% 15%,
-      var(--bg-gradient-radial-b),
-      transparent 34%
-    ),
-    radial-gradient(
-      circle at 78% 26%,
-      var(--bg-gradient-radial-c),
-      transparent 42%
-    ),
-    radial-gradient(
-      circle at 42% 82%,
-      var(--bg-gradient-radial-d),
-      transparent 36%
-    );
-}
+  a:hover {
+    color: var(--link-hover);
+  }
 
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: -1;
-  opacity: 0.14;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-  background-size: 28px 28px;
-  mask-image: radial-gradient(circle at 50% 30%, black, transparent 78%);
-}
+  button:not(:disabled),
+  select:not(:disabled),
+  [role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
 
-a {
-  color: var(--lagoon-deep);
-  text-decoration-color: rgba(50, 143, 151, 0.4);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
-}
+  :focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--lagoon) 70%, transparent);
+    outline-offset: 2px;
+  }
 
-a:hover {
-  color: var(--color-link-hover);
-}
+  code {
+    font-size: 0.9em;
+    border: 1px solid var(--line);
+    background: color-mix(in oklab, var(--surface-strong) 82%, white 18%);
+    border-radius: var(--radius-code);
+    padding: 2px 7px;
+  }
 
-code {
-  font-size: 0.9em;
-  border: 1px solid var(--line);
-  background: color-mix(in oklab, var(--surface-strong) 82%, white 18%);
-  border-radius: var(--radius-code);
-  padding: 2px 7px;
-}
+  pre code {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    font-size: inherit;
+    color: inherit;
+  }
 
-pre code {
-  border: 0;
-  background: transparent;
-  padding: 0;
-  border-radius: 0;
-  font-size: inherit;
-  color: inherit;
-}
-
-.page-wrap {
-  width: min(1080px, calc(100% - 2rem));
-  margin-inline: auto;
-}
-
-.display-title {
-  font-family: 'Fraunces', Georgia, serif;
-}
-
-.island-shell {
-  border: 1px solid var(--line);
-  background: linear-gradient(165deg, var(--surface-strong), var(--surface));
-  box-shadow:
-    0 1px 0 var(--inset-glint) inset,
-    var(--shadow-soft-a),
-    var(--shadow-soft-b);
-  backdrop-filter: blur(4px);
-}
-
-.demo-panel,
-.demo-card {
-  border: 1px solid var(--line);
-  background: linear-gradient(165deg, var(--surface-strong), var(--surface));
-  box-shadow:
-    0 1px 0 var(--inset-glint) inset,
-    var(--shadow-soft-c),
-    var(--shadow-soft-d);
-  backdrop-filter: blur(4px);
-}
-
-.demo-panel {
-  border-radius: var(--radius-panel);
-  padding: clamp(1.25rem, 4vw, 2rem);
-}
-
-.demo-card {
-  border-radius: var(--radius-card);
-  padding: 1rem;
-}
-
-.demo-input,
-.demo-select,
-.demo-textarea {
-  width: 100%;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-input);
-  background: color-mix(in oklab, var(--surface-strong) 88%, white 12%);
-  color: var(--sea-ink);
-  outline: none;
-  transition:
-    border-color 180ms ease,
-    box-shadow 180ms ease,
-    background-color 180ms ease;
-}
-
-.demo-input,
-.demo-select {
-  padding: 0.7rem 0.9rem;
-}
-
-.demo-textarea {
-  min-height: 7rem;
-  padding: 0.8rem 0.9rem;
-  resize: vertical;
-}
-
-.demo-input:focus,
-.demo-select:focus,
-.demo-textarea:focus {
-  border-color: color-mix(in oklab, var(--lagoon-deep) 58%, var(--line));
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--lagoon) 24%, transparent);
-}
-
-.demo-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  border: 1px solid color-mix(in oklab, var(--lagoon-deep) 34%, var(--line));
-  border-radius: var(--radius-button);
-  background: color-mix(in oklab, var(--lagoon) 22%, var(--surface-strong));
-  color: var(--sea-ink);
-  padding: 0.72rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 700;
-  line-height: 1;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.demo-button:hover {
-  transform: translateY(-1px);
-  background: color-mix(in oklab, var(--lagoon) 30%, var(--surface-strong));
-}
-
-.demo-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-  transform: none;
-}
-
-.demo-button-secondary {
-  border-color: var(--line);
-  background: color-mix(in oklab, var(--surface-strong) 74%, transparent);
-  color: var(--sea-ink-soft);
-}
-
-/* Compact button for admin UI — text labels fit without wrapping */
-.demo-button-sm {
-  padding: 0.35rem 0.75rem;
-  font-size: 0.75rem;
-  border-radius: var(--radius-button-sm);
-  gap: 0.35rem;
-}
-
-/* Icon-only button for admin controls (move up/down, delete) */
-.demo-button-icon {
-  padding: 0.35rem;
-  border-radius: var(--radius-button-icon);
-  flex-shrink: 0;
-}
-
-.demo-list-item {
-  border: 1px solid var(--line);
-  border-radius: var(--radius-list-item);
-  background: color-mix(in oklab, var(--chip-bg) 82%, transparent);
-  padding: 0.9rem 1rem;
-}
-
-.demo-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  border: 1px solid var(--chip-line);
-  border-radius: 999px;
-  background: var(--chip-bg);
-  color: var(--sea-ink-soft);
-  padding: 0.35rem 0.65rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-button,
-.island-shell,
-a {
-  transition:
-    background-color 180ms ease,
-    color 180ms ease,
-    border-color 180ms ease,
-    transform 180ms ease;
-}
-
-.island-kicker {
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  font-weight: 700;
-  font-size: 0.69rem;
-  color: var(--kicker);
-}
-
-.nav-link {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
-  color: var(--sea-ink-soft);
-}
-
-.nav-link::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -6px;
-  width: 100%;
-  height: 2px;
-  transform: scaleX(0);
-  transform-origin: left;
-  background: linear-gradient(90deg, var(--lagoon), var(--color-gradient-teal));
-  transition: transform 170ms ease;
-}
-
-.nav-link:hover,
-.nav-link.is-active {
-  color: var(--sea-ink);
-}
-
-.nav-link:hover::after,
-.nav-link.is-active::after {
-  transform: scaleX(1);
-}
-
-@media (max-width: 640px) {
-  .nav-link::after {
-    bottom: -4px;
+  button,
+  .island-shell,
+  a {
+    transition:
+      background-color 180ms ease,
+      color 180ms ease,
+      border-color 180ms ease,
+      box-shadow 180ms ease,
+      transform 180ms ease;
   }
 }
 
-.rise-in {
-  animation: rise-in 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+@layer components {
+  .page-wrap {
+    width: min(1080px, calc(100% - 2rem));
+    margin-inline: auto;
+  }
+
+  .display-title {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
+  .island-shell {
+    border: 1px solid var(--line);
+    background: linear-gradient(165deg, var(--surface-strong), var(--surface));
+    box-shadow:
+      0 1px 0 var(--inset-glint) inset,
+      var(--shadow-soft-a),
+      var(--shadow-soft-b);
+    backdrop-filter: blur(4px);
+  }
+
+  .demo-panel,
+  .demo-card {
+    border: 1px solid var(--line);
+    background: linear-gradient(165deg, var(--surface-strong), var(--surface));
+    box-shadow:
+      0 1px 0 var(--inset-glint) inset,
+      var(--shadow-soft-c),
+      var(--shadow-soft-d);
+    backdrop-filter: blur(4px);
+  }
+
+  .demo-panel {
+    border-radius: var(--radius-panel);
+    padding: clamp(1.25rem, 4vw, 2rem);
+  }
+
+  .demo-card {
+    border-radius: var(--radius-card);
+    padding: 1rem;
+  }
+
+  .demo-input,
+  .demo-select,
+  .demo-textarea {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-input);
+    background: color-mix(in oklab, var(--surface-strong) 88%, white 12%);
+    color: var(--sea-ink);
+    outline: none;
+    transition:
+      border-color 180ms ease,
+      box-shadow 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .demo-input,
+  .demo-select {
+    padding: 0.7rem 0.9rem;
+  }
+
+  .demo-textarea {
+    min-height: 7rem;
+    padding: 0.8rem 0.9rem;
+    resize: vertical;
+  }
+
+  .demo-input:hover,
+  .demo-select:hover,
+  .demo-textarea:hover {
+    border-color: color-mix(in oklab, var(--lagoon-deep) 32%, var(--line));
+  }
+
+  .demo-input:focus,
+  .demo-select:focus,
+  .demo-textarea:focus {
+    border-color: color-mix(in oklab, var(--lagoon-deep) 58%, var(--line));
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--lagoon) 24%, transparent);
+  }
+
+  .demo-input::placeholder,
+  .demo-textarea::placeholder {
+    color: color-mix(in oklab, var(--sea-ink-soft) 65%, transparent);
+  }
+
+  .demo-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid color-mix(in oklab, var(--lagoon-deep) 34%, var(--line));
+    border-radius: var(--radius-button);
+    background: color-mix(in oklab, var(--lagoon) 22%, var(--surface-strong));
+    color: var(--sea-ink);
+    padding: 0.72rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .demo-button:hover {
+    transform: translateY(-1px);
+    color: var(--sea-ink);
+    background: color-mix(in oklab, var(--lagoon) 30%, var(--surface-strong));
+  }
+
+  .demo-button:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  .demo-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    transform: none;
+  }
+
+  /* Solid call-to-action: one per view, for the action the screen exists for. */
+  .demo-button-primary {
+    border-color: var(--lagoon-deep);
+    background: var(--lagoon-deep);
+    color: var(--lagoon-ink);
+    box-shadow: 0 6px 16px color-mix(in oklab, var(--lagoon) 22%, transparent);
+  }
+
+  .demo-button-primary:hover {
+    background: color-mix(in oklab, var(--lagoon-deep) 88%, var(--sea-ink));
+    color: var(--lagoon-ink);
+  }
+
+  .demo-button-secondary {
+    border-color: var(--line);
+    background: color-mix(in oklab, var(--surface-strong) 74%, transparent);
+    color: var(--sea-ink-soft);
+  }
+
+  .demo-button-secondary:hover {
+    background: var(--link-bg-hover);
+    color: var(--sea-ink);
+  }
+
+  /* Destructive actions stay quiet until hovered, so they never compete with
+     the primary action next to them. */
+  .demo-button-danger {
+    border-color: var(--line);
+    background: transparent;
+    color: var(--sea-ink-soft);
+  }
+
+  .demo-button-danger:hover {
+    border-color: color-mix(in oklab, var(--danger) 40%, transparent);
+    background: color-mix(in oklab, var(--danger) 10%, transparent);
+    color: var(--danger);
+  }
+
+  /* Compact button for admin UI — text labels fit without wrapping */
+  .demo-button-sm {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.75rem;
+    border-radius: var(--radius-button-sm);
+    gap: 0.35rem;
+  }
+
+  /* Icon-only button for admin controls (move up/down, delete) */
+  .demo-button-icon {
+    padding: 0.35rem;
+    border-radius: var(--radius-button-icon);
+    flex-shrink: 0;
+  }
+
+  .demo-list-item {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-list-item);
+    background: color-mix(in oklab, var(--chip-bg) 82%, transparent);
+    padding: 0.9rem 1rem;
+  }
+
+  .demo-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: 1px solid var(--chip-line);
+    border-radius: 999px;
+    background: var(--chip-bg);
+    color: var(--sea-ink-soft);
+    padding: 0.35rem 0.65rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .island-kicker {
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 0.69rem;
+    color: var(--kicker);
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border-radius: 999px;
+    padding: 0.45rem 0.8rem;
+    text-decoration: none;
+    color: var(--sea-ink-soft);
+  }
+
+  .nav-link:hover {
+    color: var(--sea-ink);
+    background: var(--link-bg-hover);
+  }
+
+  .nav-link.is-active {
+    color: var(--lagoon-deep);
+    background: color-mix(in oklab, var(--lagoon) 12%, transparent);
+  }
+
+  .rise-in {
+    animation: rise-in 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
 }
 
 @keyframes rise-in {
@@ -469,5 +547,31 @@ a {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+
+  .demo-button:hover,
+  .demo-button:active {
+    transform: none;
   }
 }

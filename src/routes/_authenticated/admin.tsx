@@ -110,7 +110,7 @@ function Admin() {
   } = useAdminState()
 
   return (
-    <main className="page-wrap px-4 py-8 sm:py-12">
+    <main className="page-wrap py-6 sm:py-12">
       <div className="flex flex-col gap-6 lg:flex-row">
         <PlansSidebar
           plans={plans}

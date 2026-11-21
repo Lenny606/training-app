@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react'
+import { Monitor, Moon, Sun } from 'lucide-react'
 
 type ThemeMode = 'light' | 'dark' | 'auto'
+
+const MODE_META = {
+  auto: { icon: Monitor, name: 'Auto' },
+  light: { icon: Sun, name: 'Light' },
+  dark: { icon: Moon, name: 'Dark' },
+} as const
 
 function getInitialMode(): ThemeMode {
   if (typeof window === 'undefined') return 'auto'
@@ -25,7 +32,12 @@ function applyThemeMode(mode: ThemeMode) {
   document.documentElement.style.colorScheme = resolved
 }
 
-export default function ThemeToggle() {
+interface ThemeToggleProps {
+  /** Show the mode name next to the icon (used where there is room for it). */
+  showLabel?: boolean
+}
+
+export default function ThemeToggle({ showLabel = false }: ThemeToggleProps) {
   const [mode, setMode] = useState<ThemeMode>('auto')
 
   useEffect(() => {
@@ -61,15 +73,18 @@ export default function ThemeToggle() {
       ? 'Theme mode: auto (system). Click to switch to light mode.'
       : `Theme mode: ${mode}. Click to switch mode.`
 
+  const { icon: Icon, name } = MODE_META[mode]
+
   return (
     <button
       type="button"
       onClick={toggleMode}
       aria-label={label}
       title={label}
-      className="inline-flex min-h-11 items-center justify-center rounded-full border border-chip-line bg-chip px-3 py-1.5 text-sm font-semibold text-ink shadow-toggle transition hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:outline-none"
+      className="inline-flex h-11 min-w-11 items-center justify-center gap-2 rounded-full border border-chip-line bg-chip px-3 text-sm font-semibold text-ink-soft hover:text-ink"
     >
-      {mode === 'auto' ? 'Auto' : mode === 'dark' ? 'Dark' : 'Light'}
+      <Icon className="h-4 w-4" aria-hidden />
+      {showLabel && <span>{name}</span>}
     </button>
   )
 }

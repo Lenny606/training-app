@@ -79,7 +79,7 @@ export default function App() {
   const nextActivity = selectedPlan?.activities[currentActivityIndex + 1]
 
   return (
-    <main className="page-wrap px-4 py-6 sm:py-10 max-w-lg mx-auto flex flex-col gap-6">
+    <main className="page-wrap py-5 sm:py-10 max-w-lg mx-auto flex flex-col gap-4 sm:gap-5">
       <TimerDisplay
         selectedPlan={selectedPlan}
         currentActivity={currentActivity}
@@ -87,10 +87,12 @@ export default function App() {
         secondsRemaining={secondsRemaining}
         isCompleted={isCompleted}
         isPlaying={isPlaying}
+        soundEnabled={soundEnabled}
         onSkipBackward={handleSkipBackward}
         onPlayPause={handlePlayPause}
         onStop={handleStop}
         onSkipForward={handleSkipForward}
+        onToggleSound={() => setSoundEnabled((prev) => !prev)}
       />
 
       {selectedPlan && selectedPlan.activities.length > 0 && (
@@ -103,9 +105,7 @@ export default function App() {
       <WorkoutPlanSelector
         plans={plans}
         selectedPlanId={selectedPlanId}
-        soundEnabled={soundEnabled}
         onPlanChange={setSelectedPlanId}
-        onToggleSound={() => setSoundEnabled((prev) => !prev)}
       />
     </main>
   )

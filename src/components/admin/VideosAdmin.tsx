@@ -116,7 +116,7 @@ function VideoRow({ video }: { video: Video }) {
             </button>
           </div>
         </form>
-        {error && <p className="m-0 mt-2 text-xs text-red-500">{error}</p>}
+        {error && <p className="m-0 mt-2 text-xs text-danger">{error}</p>}
       </li>
     )
   }
@@ -151,7 +151,7 @@ function VideoRow({ video }: { video: Video }) {
       <button
         type="button"
         onClick={handleDelete}
-        className="demo-button text-xs py-1.5 px-3"
+        className="demo-button demo-button-danger text-xs py-1.5 px-3"
         aria-label={`Delete video ${video.title}`}
       >
         <Trash2 className="h-4 w-4" aria-hidden />
@@ -202,12 +202,16 @@ export function VideosAdmin({ videos }: { videos: Video[] }) {
           onUrlChange={setUrl}
           onTitleChange={setTitle}
         />
-        <button type="submit" disabled={busy} className="demo-button">
+        <button
+          type="submit"
+          disabled={busy}
+          className="demo-button demo-button-primary min-h-11"
+        >
           <Plus className="h-4 w-4" aria-hidden /> Add
         </button>
       </form>
       {error && (
-        <p role="alert" className="m-0 text-xs text-red-500">
+        <p role="alert" className="m-0 text-xs text-danger">
           {error}
         </p>
       )}

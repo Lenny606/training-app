@@ -123,7 +123,9 @@ function ActivityInputs({
   const isLearning = activity.type === 'learning'
 
   return (
-    <div className="flex-grow min-w-0 flex flex-col gap-2">
+    // On phones the fields drop below the handle/actions row and take the full
+    // card width — next to the buttons they are too narrow to show a value.
+    <div className="order-last basis-full sm:order-none sm:basis-auto flex-grow min-w-0 flex flex-col gap-2">
       {/* Line 1: Name & Duration */}
       <div className="grid grid-cols-12 gap-2">
         <div className="col-span-8 sm:col-span-9">
@@ -253,20 +255,21 @@ export function ActivityItem({
 
   return (
     <div ref={setNodeRef} style={style} className={containerClass}>
-      <div className="flex flex-row items-start gap-2.5 w-full">
+      <div className="flex flex-row flex-wrap sm:flex-nowrap items-center sm:items-start gap-2.5 w-full">
         <button
           ref={setActivatorNodeRef}
           {...attributes}
           {...listeners}
-          className="demo-button demo-button-icon flex-shrink-0 mt-1 touch-none cursor-grab active:cursor-grabbing border-line bg-chip text-ink-soft hover:text-ink focus-visible:ring-2 focus-visible:outline-none"
+          className="demo-button demo-button-icon flex-shrink-0 sm:mt-1 touch-none cursor-grab active:cursor-grabbing border-line bg-chip text-ink-soft hover:text-ink focus-visible:ring-2 focus-visible:outline-none"
           title="Drag to reorder"
           aria-label={`Reorder activity ${index + 1}: ${activity.name}`}
         >
           <GripVertical className="h-4 w-4" />
         </button>
-        <span className="flex-shrink-0 mt-2.5 w-5 text-right text-2xs text-ink-soft font-mono font-bold">
+        <span className="flex-shrink-0 sm:mt-2.5 w-5 text-right text-2xs text-ink-soft font-mono font-bold">
           {index + 1}
         </span>
+        <span className="flex-grow sm:hidden" aria-hidden />
         <ActivityInputs
           activity={activity}
           index={index}
@@ -276,7 +279,7 @@ export function ActivityItem({
           <button
             type="button"
             onClick={() => setMediaOpen((o) => !o)}
-            className="demo-button demo-button-icon flex-shrink-0 mt-1 gap-0.5 border-transparent bg-transparent text-ink-soft hover:text-ink focus-visible:ring-2 focus-visible:outline-none"
+            className="demo-button demo-button-icon flex-shrink-0 sm:mt-1 gap-0.5 border-transparent bg-transparent text-ink-soft hover:text-ink focus-visible:ring-2 focus-visible:outline-none"
             title="Media"
             aria-expanded={mediaOpen}
             aria-label={`Media for ${activity.name || 'Unnamed Activity'}`}
@@ -288,7 +291,7 @@ export function ActivityItem({
             />
           </button>
         )}
-        <div className="flex-shrink-0 mt-1">
+        <div className="flex-shrink-0 sm:mt-1">
           <ActivityActions
             index={index}
             activityName={activity.name || 'Unnamed Activity'}

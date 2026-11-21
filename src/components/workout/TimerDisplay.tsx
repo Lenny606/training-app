@@ -1,9 +1,10 @@
 import { Link } from '@tanstack/react-router'
-import { Settings } from 'lucide-react'
+import { ClipboardList } from 'lucide-react'
 import type { TrainingPlan, Activity } from '../../domain/plans'
 import { ProgressCircle } from './ProgressCircle'
 import { CurrentActivityInfo } from './CurrentActivityInfo'
 import { PlaybackControls } from './PlaybackControls'
+import { WorkoutProgress } from './WorkoutProgress'
 
 interface TimerDisplayProps {
   selectedPlan: TrainingPlan | undefined
@@ -12,14 +13,16 @@ interface TimerDisplayProps {
   secondsRemaining: number
   isCompleted: boolean
   isPlaying: boolean
+  soundEnabled: boolean
   onSkipBackward: () => void
   onPlayPause: () => void
   onStop: () => void
   onSkipForward: () => void
+  onToggleSound: () => void
 }
 
 const TIMER_PANEL_CLASS =
-  'demo-panel p-6 rounded-4xl rise-in shadow-timer relative overflow-hidden flex flex-col items-center justify-center gap-6'
+  'demo-panel p-5 sm:p-6 rounded-4xl rise-in shadow-timer relative overflow-hidden flex flex-col items-center justify-center gap-6'
 
 const TIMER_PANEL_GLOW_CLASS =
   'pointer-events-none absolute inset-0 bg-timer-glow'
@@ -28,16 +31,18 @@ function EmptyTimerDisplay() {
   return (
     <section className={TIMER_PANEL_CLASS}>
       <div className={TIMER_PANEL_GLOW_CLASS} />
-      <div className="text-center py-10">
-        <Settings className="h-8 w-8 text-ink-soft mx-auto mb-3 animate-spin" />
-        <h3 className="m-0 text-sm font-bold text-ink mb-2">
-          No Activities Defined
+      <div className="z-10 flex flex-col items-center py-10 text-center">
+        <span className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-line bg-chip text-ink-soft">
+          <ClipboardList className="h-6 w-6" aria-hidden />
+        </span>
+        <h3 className="m-0 mb-1.5 font-display text-lg font-bold text-ink">
+          No activities yet
         </h3>
-        <p className="text-xs text-ink-soft max-w-xs mb-4">
-          This plan has no activities. Head to the administration screen to set
-          some up.
+        <p className="m-0 mb-5 max-w-xs text-sm text-ink-soft">
+          This plan is empty. Add exercises and rest blocks in the plan builder
+          to start a session.
         </p>
-        <Link to="/admin" className="demo-button text-xs py-1.5 px-3">
+        <Link to="/admin" className="demo-button demo-button-primary">
           Go to Plan Builder
         </Link>
       </div>
@@ -80,10 +85,12 @@ export function TimerDisplay({
   secondsRemaining,
   isCompleted,
   isPlaying,
+  soundEnabled,
   onSkipBackward,
   onPlayPause,
   onStop,
   onSkipForward,
+  onToggleSound,
 }: TimerDisplayProps) {
   if (!selectedPlan || selectedPlan.activities.length === 0) {
     return <EmptyTimerDisplay />
@@ -102,6 +109,14 @@ export function TimerDisplay({
   return (
     <section className={TIMER_PANEL_CLASS}>
       <div className={TIMER_PANEL_GLOW_CLASS} />
+
+      <WorkoutProgress
+        planName={selectedPlan.name}
+        activities={selectedPlan.activities}
+        currentActivityIndex={currentActivityIndex}
+        secondsRemaining={secondsRemaining}
+        isCompleted={isCompleted}
+      />
 
       <ProgressCircle
         radius={radius}
@@ -126,10 +141,12 @@ export function TimerDisplay({
         isPlaying={isPlaying}
         canSkipBackward={canSkipBackward}
         canSkipForward={canSkipForward}
+        soundEnabled={soundEnabled}
         onSkipBackward={onSkipBackward}
         onPlayPause={onPlayPause}
         onStop={onStop}
         onSkipForward={onSkipForward}
+        onToggleSound={onToggleSound}
       />
     </section>
   )

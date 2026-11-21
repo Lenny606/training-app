@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { Copy, KeyRound, Trash2 } from 'lucide-react'
+import { Check, Copy, KeyRound, Trash2 } from 'lucide-react'
 import {
   createApiToken,
   listApiTokens,
@@ -18,6 +18,7 @@ function Settings() {
   const [name, setName] = useState('Claude Code')
   const [created, setCreated] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   const origin = typeof window === 'undefined' ? '' : window.location.origin
   const command = `claude mcp add --transport http training ${origin}/api/mcp --header "Authorization: Bearer ${created ?? '<token>'}"`
@@ -34,6 +35,12 @@ function Settings() {
     }
   }
 
+  async function handleCopy() {
+    await navigator.clipboard.writeText(command)
+    setCopied(true)
+    window.setTimeout(() => setCopied(false), 2000)
+  }
+
   async function handleRevoke(id: string, tokenName: string) {
     if (!window.confirm(`Revoke “${tokenName}”?`)) return
     await revokeApiToken({ data: { id } })
@@ -41,8 +48,8 @@ function Settings() {
   }
 
   return (
-    <main className="page-wrap px-4 py-8 sm:py-12">
-      <section className="demo-panel p-5 flex flex-col gap-4">
+    <main className="page-wrap py-6 sm:py-12">
+      <section className="demo-panel mx-auto max-w-2xl p-5 flex flex-col gap-5">
         <div>
           <h1 className="m-0 mb-1 font-display text-xl font-bold text-ink">
             API tokens
@@ -56,7 +63,7 @@ function Settings() {
           onSubmit={handleCreate}
           className="flex flex-wrap items-end gap-3"
         >
-          <label className="flex flex-col gap-1 text-xs text-ink-soft">
+          <label className="flex min-w-48 flex-1 flex-col gap-1 text-xs font-semibold text-ink-soft">
             Name
             <input
               value={name}
@@ -66,8 +73,12 @@ function Settings() {
               className="demo-input"
             />
           </label>
-          <button type="submit" disabled={busy} className="demo-button">
-            <KeyRound className="h-4 w-4" aria-hidden /> Create
+          <button
+            type="submit"
+            disabled={busy}
+            className="demo-button demo-button-primary min-h-11"
+          >
+            <KeyRound className="h-4 w-4" aria-hidden /> Create token
           </button>
         </form>
 
@@ -79,15 +90,21 @@ function Settings() {
             <strong className="text-success">
               Copy now — shown only once.
             </strong>
-            <div className="flex items-start gap-2">
-              <code className="flex-1 break-all">{command}</code>
+            <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-start">
+              <code className="flex-1 break-all leading-relaxed">
+                {command}
+              </code>
               <button
                 type="button"
-                className="demo-button text-xs py-1.5 px-3"
-                aria-label="Copy command"
-                onClick={() => navigator.clipboard.writeText(command)}
+                className="demo-button demo-button-sm min-h-9"
+                onClick={handleCopy}
               >
-                <Copy className="h-4 w-4" aria-hidden />
+                {copied ? (
+                  <Check className="h-4 w-4" aria-hidden />
+                ) : (
+                  <Copy className="h-4 w-4" aria-hidden />
+                )}
+                <span aria-live="polite">{copied ? 'Copied' : 'Copy'}</span>
               </button>
             </div>
           </div>
@@ -95,16 +112,18 @@ function Settings() {
 
         <ul className="m-0 flex list-none flex-col gap-2 p-0">
           {tokens.length === 0 && (
-            <li className="text-sm text-ink-soft">No active tokens.</li>
+            <li className="rounded-xl border border-dashed border-line px-4 py-6 text-center text-sm text-ink-soft">
+              No active tokens.
+            </li>
           )}
           {tokens.map((t) => (
             <li
               key={t.id}
               className="flex items-center justify-between gap-3 rounded-xl border border-line px-4 py-2.5 text-sm"
             >
-              <span>
-                <strong>{t.name}</strong>
-                <span className="ml-2 text-xs text-ink-soft">
+              <span className="flex min-w-0 flex-col gap-0.5">
+                <strong className="truncate">{t.name}</strong>
+                <span className="text-xs text-ink-soft">
                   created {new Date(t.createdAt).toLocaleDateString()} · last
                   used{' '}
                   {t.lastUsedAt
@@ -114,7 +133,8 @@ function Settings() {
               </span>
               <button
                 type="button"
-                className="demo-button text-xs py-1.5 px-3"
+                className="demo-button demo-button-danger h-9 w-9 flex-shrink-0 p-0"
+                title="Revoke token"
                 aria-label={`Revoke token ${t.name}`}
                 onClick={() => handleRevoke(t.id, t.name)}
               >

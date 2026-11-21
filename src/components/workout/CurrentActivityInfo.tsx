@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import {
-  Image as ImageIcon,
+  CheckCircle2,
   Film,
   X,
   ChevronLeft,
   ChevronRight,
+  ZoomIn,
 } from 'lucide-react'
 import type { Activity, Media } from '../../domain/plans'
 
@@ -18,7 +19,7 @@ interface CurrentActivityInfoProps {
 function ActivityMetadata({ activity }: { activity: Activity }) {
   if (activity.type === 'learning') {
     return (
-      <div className="text-center mt-2 px-4 py-3 bg-purple-500/5 border border-purple-500/15 rounded-xl text-xs text-ink-soft italic">
+      <div className="text-center mt-2 px-4 py-3 bg-learning/5 border border-learning/15 rounded-xl text-sm leading-relaxed text-ink-soft">
         {activity.description || 'No instruction description provided.'}
       </div>
     )
@@ -35,9 +36,9 @@ function ActivityMetadata({ activity }: { activity: Activity }) {
   if (items.length === 0) return null
 
   return (
-    <div className="flex items-center justify-center gap-2 mt-1.5">
+    <div className="flex flex-wrap items-center justify-center gap-2 mt-2">
       {items.map((text, idx) => (
-        <span key={idx} className="demo-pill text-2xs py-0.5 px-2">
+        <span key={idx} className="demo-pill tabular-nums">
           {text}
         </span>
       ))}
@@ -77,7 +78,7 @@ function ActivityMediaGallery({ media }: { media: Media[] }) {
             <button
               key={item.id}
               onClick={() => setActiveMedia(item)}
-              className="relative flex-shrink-0 w-28 h-20 rounded-xl overflow-hidden border border-line bg-chip/40 hover:scale-103 active:scale-98 transition-all focus:outline-none focus:ring-1 focus:ring-lagoon snap-start cursor-pointer shadow-sm group"
+              className="relative flex-shrink-0 w-28 h-20 rounded-xl overflow-hidden border border-line bg-chip/40 hover:scale-103 active:scale-98 snap-start shadow-sm group"
               aria-label={
                 isVideo
                   ? `Preview video ${item.originalName}`
@@ -95,10 +96,9 @@ function ActivityMediaGallery({ media }: { media: Media[] }) {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
-                  <div className="absolute bottom-1 left-1 bg-black/60 backdrop-blur-sm rounded-sm px-1 py-0.5 text-5xs text-white flex items-center gap-0.5 font-bold">
-                    <Film className="h-1.5 w-1.5" />
-                    <span>PREVIEW</span>
-                  </div>
+                  <span className="absolute bottom-1 left-1 inline-flex h-5 w-5 items-center justify-center rounded-md bg-black/60 text-white backdrop-blur-sm">
+                    <Film className="h-3 w-3" aria-hidden />
+                  </span>
                 </div>
               ) : (
                 <div className="w-full h-full relative">
@@ -108,10 +108,9 @@ function ActivityMediaGallery({ media }: { media: Media[] }) {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
-                  <div className="absolute bottom-1 left-1 bg-black/60 backdrop-blur-sm rounded-sm px-1 py-0.5 text-5xs text-white flex items-center gap-0.5 font-bold">
-                    <ImageIcon className="h-1.5 w-1.5" />
-                    <span>VIEW</span>
-                  </div>
+                  <span className="absolute bottom-1 left-1 inline-flex h-5 w-5 items-center justify-center rounded-md bg-black/60 text-white backdrop-blur-sm">
+                    <ZoomIn className="h-3 w-3" aria-hidden />
+                  </span>
                 </div>
               )}
             </button>
@@ -192,12 +191,15 @@ export function CurrentActivityInfo({
 }: CurrentActivityInfoProps) {
   if (isCompleted) {
     return (
-      <div className="flex flex-col gap-1 items-center">
-        <h2 className="m-0 font-display text-xl font-extrabold text-lagoon animate-bounce">
-          Session Complete!
+      <div className="flex flex-col gap-2 items-center">
+        <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-success/10 text-success animate-pop-in">
+          <CheckCircle2 className="h-7 w-7" aria-hidden />
+        </span>
+        <h2 className="m-0 font-display text-2xl font-extrabold text-ink">
+          Session complete
         </h2>
-        <p className="text-xs text-ink-soft m-0">
-          Excellent work completing the {planName} routine.
+        <p className="text-sm text-ink-soft m-0">
+          Nice work finishing {planName}.
         </p>
       </div>
     )
@@ -207,10 +209,10 @@ export function CurrentActivityInfo({
 
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-2xs tracking-widest font-black uppercase text-lagoon">
-        CURRENT ACTIVITY
+      <span className="text-2xs tracking-widest font-black uppercase text-ink-soft">
+        Now
       </span>
-      <h2 className="m-0 font-display text-xl font-black text-ink">
+      <h2 className="m-0 font-display text-2xl font-extrabold leading-tight text-ink">
         {currentActivity.name}
       </h2>
       <ActivityMetadata activity={currentActivity} />
